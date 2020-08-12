@@ -16,7 +16,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/storeinformation", controller.ReturnAllStoreInformation).Methods("GET")
-	router.HandleFunc("/storeinformation?limit=10&offset=20", controller.ReturnAllStoreInformationPagination).Methods("GET")
+	router.HandleFunc("/storeinformation/{page}", controller.ReturnAllStoreInformationPagination).Methods("GET")
 
 	router.HandleFunc("/departement-information", controller.ReturnAllDepartementInformation).Methods("GET")
 	router.HandleFunc("/departement-information/{page}", controller.ReturnAllDepartementInformationPagination).Methods("GET")
