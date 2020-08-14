@@ -3,6 +3,7 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -88,6 +89,42 @@ func ReturnAllPrefectPagination(w http.ResponseWriter, r *http.Request) {
 	response.Status = 200
 	response.Message = "Success"
 	response.Data = arrPrefect
+	response.TotalPage = totalPage
+	response.CurrentPage = page
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+
+}
+
+func CreatePrefect(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var response initialize.Response
+
+	db := db.Connect()
+	stmt, err := db.Prepare("INSERT INTO prefecture (prefecture_name) VALUES(?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	keyVal := make(map[string]string)
+	json.Unmarshal(body, &keyVal)
+	name := keyVal["prefecture_name"]
+
+	_, err = stmt.Exec(name)
+	if err != nil {
+		panic(err.Error())
+	}
+	fmt.Fprintf(w, "Data baru telah dibuat")
+
+	response.Status = 200
+	response.Message = "Success"
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

@@ -91,6 +91,8 @@ func ReturnAllPartTimeAbove18SalaryPagination(w http.ResponseWriter, r *http.Req
 	response.Status = 200
 	response.Message = "Success"
 	response.Data = arrPartTimeAbove18Salary
+	response.TotalPage = totalPage
+	response.CurrentPage = page
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

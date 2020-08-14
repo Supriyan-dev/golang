@@ -90,6 +90,8 @@ func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.
 	response.Status = 200
 	response.Message = "Success"
 	response.Data = arrStoreSectionInformation
+	response.TotalPage = totalPage
+	response.CurrentPage = page
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

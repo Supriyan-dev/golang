@@ -88,6 +88,8 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 	response.Status = 200
 	response.Message = "Success"
 	response.Data = arrBank
+	response.TotalPage = totalPage
+	response.CurrentPage = page
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
