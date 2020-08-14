@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	controller "../controller/data_master_controller"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -15,20 +15,23 @@ func main() {
 
 	router := mux.NewRouter()
 	// start data master
-
+	// start crud store information
 	router.HandleFunc("/storeinformation", controller.ReturnAllStoreInformation).Methods("GET")
 	router.HandleFunc("/storeinformation/{page}/{perPage}", controller.ReturnAllStoreInformationPagination).Methods("GET")
 	router.HandleFunc("/storeinformation/{id_code_store}", controller.GetStoreInformation).Methods("GET")
 	router.HandleFunc("/storeinformation", controller.CreateStoreInformation).Methods("POST")
 	router.HandleFunc("/storeinformation", controller.UpdateStoreInformation).Methods("PUT")
 	router.HandleFunc("/storeinformation/{id_code_store}", controller.DeleteStoreInformation).Methods("DELETE")
+	// end crud store information
 
-	router.HandleFunc("/departement-information", controller.ReturnAllDepartementInformation).Methods("GET")
-	router.HandleFunc("/departement-information/{page}/{perPage}", controller.ReturnAllDepartementInformationPagination).Methods("GET")
-	router.HandleFunc("/storeinformation/{id_code_store}", controller.GetDepartementInformation).Methods("GET")
-	router.HandleFunc("/storeinformation", controller.CreateDepartementInformation).Methods("POST")
-	router.HandleFunc("/storeinformation", controller.UpdateDepartementInformation).Methods("PUT")
-	router.HandleFunc("/storeinformation/{id_code_store}", controller.DeleteDepartementInformation).Methods("DELETE")
+	// start crud departement information
+	// router.HandleFunc("/departement-information", controller.ReturnAllDepartementInformation).Methods("GET")
+	// router.HandleFunc("/departement-information/{page}/{perPage}", controller.ReturnAllDepartementInformationPagination).Methods("GET")
+	// router.HandleFunc("/departement-information/{id_code_store}", controller.GetDepartementInformation).Methods("GET")
+	// router.HandleFunc("/departement-information", controller.CreateDepartementInformation).Methods("POST")
+	// router.HandleFunc("/departement-information", controller.UpdateDepartementInformation).Methods("PUT")
+	// router.HandleFunc("/departement-information/{id_code_store}", controller.DeleteDepartementInformation).Methods("DELETE")
+	// end crud deaprtemen information
 
 	// router.HandleFunc("/store-section-information", controller.ReturnAllStroreSectionInformation).Methods("GET")
 	// router.HandleFunc("/store-section-information/{page}/{perPage}", controller.ReturnAllStroreSectionInformationPagination).Methods("GET")
