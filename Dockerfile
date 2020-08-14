@@ -2,9 +2,9 @@ FROM golang:latest
 LABEL maintainer="Derandi Hermanda"
 WORKDIR /golang
 COPY . .
-RUN go get github.com/gin-gonic/gin
-RUN go get gopkg.in/mgo.v2
-RUN go get gopkg.in/mgo.v2/bson
-RUN go build -o main ../golang
+RUN go get github.com/gorilla/mux
+RUN go get github.com/go-sql-driver/mysql
+RUN go build -o main .
+
 ENTRYPOINT [ "./main" ]
-EXPOSE 3000
+EXPOSE 9000
