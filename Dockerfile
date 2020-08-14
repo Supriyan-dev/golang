@@ -4,6 +4,7 @@ WORKDIR /golang
 COPY . .
 RUN go get github.com/gorilla/mux
 RUN go get github.com/go-sql-driver/mysql
-RUN go build -o main ../golang
+RUN go build -o main .
+
 ENTRYPOINT [ "./main" ]
-EXPOSE 3000
+EXPOSE 9000
