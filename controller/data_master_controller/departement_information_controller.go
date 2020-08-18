@@ -98,42 +98,41 @@ func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Re
 }
 
 func GetDepartementInformation(w http.ResponseWriter, r *http.Request) {
-	var DeptInfo initialize.StoreInformation
+	var DeptInfo initialize.DepartementInformation
 	var response initialize.Response
-	var arrStoreInformation []initialize.StoreInformation
+	var arrDepartementInformation []initialize.DepartementInformation
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_code_store"])
+	fmt.Fprintf(w, "Category: %v\n", code["id_department"])
 
-	result, err := db.Query("SELECT id_code_store, code_store, store_name FROM department_information WHERE id_code_store = ?", code["id_code_store"])
+	result, err := db.Query("SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE id_department = ?", code["id_department"])
 	if err != nil {
 		panic(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
-		err := result.Scan(&DeptInfo.Id_code_store, &DeptInfo.Code_store, &DeptInfo.Store_name, &DeptInfo.Store_name)
+		err := result.Scan(&DeptInfo.Id_department, &DeptInfo.Department_code, &DeptInfo.Department_name, &DeptInfo.Id_code_store)
 		if err != nil {
 			panic(err.Error())
 		} else {
-			arrStoreInformation = append(arrStoreInformation, storeInformation)
+			arrDepartementInformation = append(arrDepartementInformation, DeptInfo)
 		}
 	}
 	response.Status = 200
 	response.Message = "Success"
-	response.Data = arrStoreInformation
+	response.Data = arrDepartementInformation
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
 func CreateDepartementInformation(w http.ResponseWriter, r *http.Request) {
-
 	var response initialize.Response
 
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO store_information (code_store,store_name) VALUES (?,?)")
+	stmt, err := db.Prepare("INSERT INTO department_information (department_code,department_name,id_code_store) VALUES (?,?,?)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -146,10 +145,11 @@ func CreateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 	keyVal := make(map[string]string)
 	json.Unmarshal(body, &keyVal)
-	CodeStore := keyVal["code_store"]
-	StoreName := keyVal["store_name"]
+	DeptCode := keyVal["department_code"]
+	DeptName := keyVal["department_name"]
+	IdDeptStore := keyVal["id_code_store"]
 
-	result, err := stmt.Exec(CodeStore, StoreName)
+	result, err := stmt.Exec(DeptCode, DeptName, IdDeptStore)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -175,7 +175,7 @@ func UpdateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE store_information SET code_store = ?, store_name = ? WHERE id_code_store = ?")
+	stmt, err := db.Prepare("UPDATE department_information SET department_code = ?, department_name = ?, id_code_store = ? WHERE id_department = ?")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -187,13 +187,14 @@ func UpdateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 	keyVal := make(map[string]string)
 	json.Unmarshal(body, &keyVal)
-	idCode := keyVal["id_code_store"]
-	newCode := keyVal["code_store"]
-	newName := keyVal["store_name"]
+	idCodeDept := keyVal["id_department"]
+	newCode := keyVal["department_code"]
+	newName := keyVal["department_name"]
+	IdCodeStore := keyVal["id_code_store"]
 
-	id, err := strconv.Atoi(idCode)
+	id, err := strconv.Atoi(idCodeDept)
 
-	result, err := stmt.Exec(newCode, newName, id)
+	result, err := stmt.Exec(newCode, newName, IdCodeStore, id)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -217,18 +218,18 @@ func DeleteDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM store_information WHERE id_code_store = ?")
+	stmt, err := db.Prepare("DELETE FROM department_information WHERE id_department = ?")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	_, err = stmt.Exec(params["id_code_store"])
+	_, err = stmt.Exec(params["id_department"])
 	if err != nil {
 		panic(err.Error())
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
 	w.Header().Set("Content-Type", "Aplication/json")
-	json.NewEncoder(w).Encode(params["id_code_store"])
+	json.NewEncoder(w).Encode(params["id_department"])
 
 }

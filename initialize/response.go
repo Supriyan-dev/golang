@@ -7,3 +7,6 @@ type Response struct {
 	CurrentPage int         `json:"currentPage"`
 	Data        interface{} `json:"data"`
 }
+
+type Pagination struct {
+}
