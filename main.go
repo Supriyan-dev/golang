@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	controller "./controller/data_master_controller"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"

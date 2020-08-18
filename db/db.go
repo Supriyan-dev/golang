@@ -9,7 +9,8 @@ import (
 
 func Connect() *sql.DB {
 	var err error
-	db, err := sql.Open("mysql", "root:@/kasumi_development")
+	// db, err := sql.Open("mysql", "root:@/kasumi_development")
+	db, err := sql.Open("mysql", "root:P%40ssw0rdKasum1@/kasumi_development")
 
 	if err != nil {
 		log.Fatal(err)
