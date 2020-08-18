@@ -10,7 +10,7 @@ import (
 func Connect() *sql.DB {
 	var err error
 	// db, err := sql.Open("mysql", "root:@/kasumi_development")
-	db, err := sql.Open("mysql", "root:P%40ssw0rdKasum1@tcp(0.0.0.0:8082)/kasumi_dx")
+	db, err := sql.Open("mysql", "root:P%40ssw0rdKasum1@tcp(mysql_lara:8082)/kasumi_dx")
 
 	if err != nil {
 		log.Fatal(err)
