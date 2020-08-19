@@ -9,10 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"../../GO_DX_SERVICES/db"
+	".././db"
+	".././initialize"
 	"github.com/gorilla/mux"
-
-	"../../GO_DX_SERVICES/initialize"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrPartTimeAbove18Salary
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -95,7 +96,7 @@ func ReturnAllPartTimeAbove18SalaryPagination(w http.ResponseWriter, r *http.Req
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -127,7 +128,7 @@ func GetPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrPartTimeAbove18Salary
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -171,7 +172,7 @@ func CreatePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -218,7 +219,7 @@ func UpdatePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -237,7 +238,7 @@ func DeletePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_part_time_above_18_salary"])
 
 }

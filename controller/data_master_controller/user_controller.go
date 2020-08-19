@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"../../db"
-	"../../initialize"
+	".././db"
+	".././initialize"
 	"github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +41,7 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrUsers
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -91,7 +93,7 @@ func ReturnAllUserPagination(w http.ResponseWriter, r *http.Request) {
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -123,7 +125,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrUser
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -172,7 +174,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -223,7 +225,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -242,7 +244,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_user"])
 
 }

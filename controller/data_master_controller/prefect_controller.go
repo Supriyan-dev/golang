@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"../../db"
-	"../../initialize"
+	".././db"
+	".././initialize"
 	"github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +41,7 @@ func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrPrefect
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -91,7 +93,7 @@ func ReturnAllPrefectPagination(w http.ResponseWriter, r *http.Request) {
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -123,7 +125,7 @@ func GetPrefect(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrPrefect
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -164,7 +166,7 @@ func CreatePrefect(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -208,7 +210,7 @@ func UpdatePrefect(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -227,7 +229,7 @@ func DeletePrefect(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_prefecture"])
 
 }

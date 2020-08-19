@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"../../db"
-	"../../initialize"
+	".././db"
+	".././initialize"
 	"github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllStroreSectionInformation(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +44,7 @@ func ReturnAllStroreSectionInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrStoreSectionInformation
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -93,7 +95,7 @@ func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -125,7 +127,7 @@ func GetStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrStoreSectionInformation
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -166,7 +168,7 @@ func CreateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Tambahkan": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -210,7 +212,7 @@ func UpdateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -229,7 +231,7 @@ func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_store_section"])
 
 }

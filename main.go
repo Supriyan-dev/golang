@@ -6,18 +6,17 @@ import (
 	"net/http"
 
 	controller "./controller/data_master_controller"
-	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 
 	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func main() {
 
 	router := mux.NewRouter()
-	router.Use(mux.CORSMethodMiddleware(router))
 	// start data master
 	// start crud store information
 	router.HandleFunc("/storeinformation", controller.ReturnAllStoreInformation).Methods("GET")
@@ -137,8 +136,13 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "application/json", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"GET", "POST", "PUT", "DELETE"})
+	methodsOk := handlers.AllowedMethods([]string{"*"})
+
 	http.Handle("/", router)
 	fmt.Println("Connected to port 9000")
-	log.Fatal(http.ListenAndServe(":9000", router))
+	// log.Fatal(http.ListenAndServe(":9000", router))
+	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, originsOk, methodsOk)(router)))
 
 }

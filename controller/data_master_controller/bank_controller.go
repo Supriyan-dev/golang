@@ -9,9 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"../../db"
-	"../../initialize"
+	".././db"
+	".././initialize"
 	"github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +43,7 @@ func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrBank
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -92,7 +94,7 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -123,7 +125,7 @@ func GetBank(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrBank
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -167,7 +169,7 @@ func CreateBank(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -214,7 +216,7 @@ func UpdateBank(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -233,7 +235,7 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_bank"])
 
 }

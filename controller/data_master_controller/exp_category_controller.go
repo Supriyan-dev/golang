@@ -12,6 +12,8 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +43,7 @@ func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrExpCategory
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -94,7 +96,7 @@ func ReturnAllExpCategoryPagination(w http.ResponseWriter, r *http.Request) {
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -126,7 +128,7 @@ func GetExpCategory(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrExpCategory
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -171,7 +173,7 @@ func CreateExpCategory(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -219,7 +221,7 @@ func UpdateExpCategory(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -238,7 +240,7 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(params["id_exp"])
 
 }
