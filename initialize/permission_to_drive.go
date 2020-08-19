@@ -71,3 +71,15 @@ type CommutingBasicInformation struct {
 	time_approve                       string `json:"time_approve"`
 	date_submit                        string `json:"date_submit"`
 }
+
+type Join struct {
+	id_general_information             int    `json:"id_general_information"`
+	id_basic_information               int    `json:"id_basic_information "`
+	id_store_code                      int    `json:"id_store_code "`
+	Code_store                         string `json:"code_store"`
+	employee_code                      int    `json:"employee_code "`
+	first_name                         string `json:"first_name "`
+	last_name                          string `json:"last_name "`
+	driver_license_expiry_date         string `json:"driver_license_expiry_date "`
+	car_insurance_document_expiry_date string `json:"car_insurance_document_expiry_date "`
+}

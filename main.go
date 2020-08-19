@@ -6,9 +6,8 @@ import (
 	"net/http"
 
 	controller "./controller/data_master_controller"
+	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/List_input_information"
 	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
-
-	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -17,6 +16,10 @@ import (
 func main() {
 
 	router := mux.NewRouter()
+	// Start permission to drive
+	// var permission = new(controller.List_input_information)
+	// router.HandleFunc("/test", permission.permissionToDrive).Methods("GET")
+	// end permission to drive
 	// start data master
 	// start crud store information
 	router.HandleFunc("/storeinformation", controller.ReturnAllStoreInformation).Methods("GET")
@@ -116,12 +119,6 @@ func main() {
 	router.HandleFunc("/exp-category", controller.UpdateExpCategory).Methods("PUT")
 	router.HandleFunc("/exp-category/{id_exp}", controller.DeleteExpCategory).Methods("DELETE")
 	// end crud exp category
-
-	// Start permission to drive
-	// router.HandleFunc("/test", controller.permissionToDrive).Methods("GET")
-
-	// end permission to drive
-
 	//end data master
 
 	// router.HandleFunc("/basic-information", controller.ReturnAllBasicInformation).Methods("GET")
