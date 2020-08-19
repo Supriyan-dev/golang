@@ -1,5 +1,7 @@
 FROM golang:latest
 LABEL maintainer="Derandi Hermanda"
+LABEL version="1.0"
+LABEL description="Golang Services."
 WORKDIR /golang
 COPY . .
 RUN go get github.com/gorilla/mux

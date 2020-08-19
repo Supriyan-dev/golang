@@ -5,8 +5,12 @@ import (
 	"log"
 	"net/http"
 
+<<<<<<< HEAD
 	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
+=======
+	controller "./controller/data_master_controller"
+>>>>>>> e6c5bfa6c492e0c423eb6c789d24c93f09af8030
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
