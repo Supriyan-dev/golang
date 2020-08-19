@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"../../db"
+	"../../initialize"
 )
 
 func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
