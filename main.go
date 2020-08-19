@@ -17,6 +17,7 @@ import (
 func main() {
 
 	router := mux.NewRouter()
+	router.Use(mux.CORSMethodMiddleware(router))
 	// start data master
 	// start crud store information
 	router.HandleFunc("/storeinformation", controller.ReturnAllStoreInformation).Methods("GET")
