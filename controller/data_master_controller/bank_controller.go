@@ -41,7 +41,7 @@ func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrBank
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -92,7 +92,7 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -123,7 +123,7 @@ func GetBank(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrBank
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -167,7 +167,7 @@ func CreateBank(w http.ResponseWriter, r *http.Request) {
 		"Data baru telah dibuat": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -214,7 +214,7 @@ func UpdateBank(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -233,7 +233,7 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "Aplication/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(params["id_bank"])
 
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -113,6 +114,11 @@ func main() {
 	router.HandleFunc("/exp-category", controller.UpdateExpCategory).Methods("PUT")
 	router.HandleFunc("/exp-category/{id_exp}", controller.DeleteExpCategory).Methods("DELETE")
 	// end crud exp category
+
+	// Start permission to drive
+	// router.HandleFunc("/test", controller.permissionToDrive).Methods("GET")
+
+	// end permission to drive
 
 	//end data master
 

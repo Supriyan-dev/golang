@@ -41,7 +41,7 @@ func ReturnAllStoreInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrStoreInformation
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -92,7 +92,7 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -123,7 +123,7 @@ func GetStoreInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrStoreInformation
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -164,7 +164,7 @@ func CreateStoreInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Tambahkan": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -208,7 +208,7 @@ func UpdateStoreInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -227,7 +227,7 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "Aplication/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(params["id_code_store"])
 
 }

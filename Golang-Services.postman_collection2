@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "112c2181-8958-4437-b13d-2769af09d79a",
+		"name": "Golang-Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Data_master",
+			"item": [
+				{
+					"name": "store-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // \"id_department\" : \"256\",\r\n    \"code_store\" : \"323\",\r\n    \"store_name\": \"lsdasdasdas\"\r\n    // \"id_code_store\" : \"90\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://104.41.162.39:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"104",
+								"41",
+								"162",
+								"39"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://104.41.162.39:9000/bank",
+							"protocol": "http",
+							"host": [
+								"104",
+								"41",
+								"162",
+								"39"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-information",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://104.41.162.39:9000/bank",
+							"protocol": "http",
+							"host": [
+								"104",
+								"41",
+								"162",
+								"39"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"type": "text",
+								"value": "90"
+							},
+							{
+								"key": "name",
+								"type": "text",
+								"value": "jsa"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"department_code\" : \"190\",\r\n    \"department_name\" : \"dasdasdas\",\r\n    \"id_code_store\" : \"123\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://104.41.162.39:9000/storeinformation/2/2",
+							"protocol": "http",
+							"host": [
+								"104",
+								"41",
+								"162",
+								"39"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"2",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store information pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/storeinformation/2/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"2",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -1,0 +1,2244 @@
+{
+	"info": {
+		"_postman_id": "112c2181-8958-4437-b13d-2769af09d79a",
+		"name": "Golang-Services",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Data_master",
+			"item": [
+				{
+					"name": "store-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_department\" : \"256\",\r\n    \"code_store\" : \"323\",\r\n    \"store_name\": \"lsdasdasdas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bank",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-information",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://104.41.162.39:9000/bank",
+							"protocol": "http",
+							"host": [
+								"104",
+								"41",
+								"162",
+								"39"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"type": "text",
+								"value": "90"
+							},
+							{
+								"key": "name",
+								"type": "text",
+								"value": "jsa"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"department_code\" : \"190\",\r\n    \"department_name\" : \"dasdasdas\",\r\n    \"id_code_store\" : \"123\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation/2/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"2",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store information pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/storeinformation/2/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"2",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"090\",\r\n\t\"created_time\": \"8909\",\r\n\t\"code_category\": \"73\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\": \"127\",\r\n    \"salary\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bank",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "storeinformation",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\" : \"238\",\r\n    \"code_store\" : \"90\",\r\n    \"store_name\" : \"pentol\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "prefecture",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"test\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/prefecture",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"prefecture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "storeinformation",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code_store\" : \"20\",\r\n    \"store_name\" : \"asin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation/212",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"212"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "storeinformation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code_store\" : \"12\",\r\n    \"store_name\" : \"terindah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "storeinformation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code_store\" : \"12\",\r\n    \"store_name\" : \"terindah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_department\" : \"256\",\r\n    \"department_code\" : \"80980\",\r\n    \"department_name\" : \"dasdasda\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // \"id_department\" : \"256\",\r\n    \"department_code\" : \"80980\",\r\n    \"department_name\" : \"dasdasda\",\r\n    // \"id_code_store\" : \"78098\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-section-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // \"id_department\" : \"256\",\r\n    \"store_section_code\" : \"123\",\r\n    \"store_section_name\": \"test\"\r\n    // \"id_code_store\" : \"90\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/store-section-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"store-section-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "storeinformation/238",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\" : \"238\"\r\n\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/storeinformation/238",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"storeinformation",
+								"238"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-section-information",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_store_section\": \"18\",\r\n    \"store_section_code\": \"900\",\r\n    \"store_section_name\" : \"doang\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/store-section-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"store-section-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-section-information/18",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_store_section\": \"18\",\r\n    \"store_section_code\": \"90\",\r\n    \"store_section_name\" : \"simbril\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/store-section-information/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"store-section-information",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "store-section-information/18",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_store_section\": \"18\",\r\n    \"store_section_code\": \"90\",\r\n    \"store_section_name\" : \"simbril\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/store-section-information/18",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"store-section-information",
+								"18"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"department_code\": \"90\",\r\n    \"department_name\" : \"simbril\",  \r\n    \"id_code_store\" : \"20\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"department_code\" : \"190\",\r\n    \"department_name\" : \"dasdasdas\",\r\n    \"id_code_store\" : \"123\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_department\": \"90\",\r\n    \"department_code\": \"89\",\r\n    \"department_name\" : \"dom\",  \r\n    \"id_code_store\" : \"32\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "departement-information/284",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_department\": \"284\",\r\n    \"department_code\": \"89\",\r\n    \"department_name\" : \"dom\",  \r\n    \"id_code_store\" : \"32\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/departement-information/284",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"departement-information",
+								"284"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unit-information/3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_department\": \"284\",\r\n    \"department_code\": \"89\",\r\n    \"department_name\" : \"dom\",  \r\n    \"id_code_store\" : \"32\"  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/unit-information/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"unit-information",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unit-information/30",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_unit\": \"30\",\r\n    \"unit_code\": \"12\",\r\n    \"unit_name\" : \"00\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/unit-information/30",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"unit-information",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unit-information",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"unit_code\": \"89\",\r\n    \"unit_name\" : \"9\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/unit-information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"unit-information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unit-information/30",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_unit\": \"30\",\r\n    \"unit_code\": \"12\",\r\n    \"unit_name\" : \"00\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/unit-information/30",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"unit-information",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "prefecture",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ISO\": \"12\",\r\n    \"prefecture_name\" : \"test\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/prefecture",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"prefecture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "prefecture/2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ISO\": \"12\",\r\n    \"prefecture_name\" : \"test\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/prefecture/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"prefecture",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "prefecture",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_prefecture\": \"62\",\r\n    \"ISO\": \"143\",\r\n    \"prefecture_name\" : \"dksjakdlasj\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/prefecture",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"prefecture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "prefecture/62",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_prefecture\": \"62\",\r\n    \"ISO\": \"143\",\r\n    \"prefecture_name\" : \"dksjakdlasj\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/prefecture/62",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"prefecture",
+								"62"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bank_code\": \"62\",\r\n    \"bank_name\": \"BCA\",\r\n    \"branch_code\" : \"12\",\r\n    \"branch_name\" : \"mandir\",\r\n    \"special\" : \"1\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bank",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_bank\": \"89\",\r\n    \"bank_code\": \"90\",\r\n    \"bank_name\": \"BNI\",\r\n    \"branch_code\" : \"01\",\r\n    \"branch_name\" : \"BRI\",\r\n    \"special\" : \"0\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bank",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bank"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bank/89",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_bank\": \"89\"\r\n     \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/bank/89",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"bank",
+								"89"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "full-time-salary/8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_bank\": \"89\"\r\n     \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/full-time-salary/8",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"full-time-salary",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "full-time-salary",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\": \"123\",\r\n    \"salary\": \"800\",\r\n    \"fish_section_salary\" : \"80\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/full-time-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"full-time-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "full-time-salary",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"id_full_time_salary\": \"195\",\r\n    \"id_code_store\": \"89\",\r\n    \"salary\": \"80\",\r\n    \"fish_section_salary\" : \"90\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/full-time-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"full-time-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-above-18-salary",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\": \"124\",\r\n    \"day_salary\": \"1000\",\r\n    \"night_salary\" : \"900\",\r\n    \"morning_salary\" : \"900\",\r\n    \"pee_time_salary\" : \"900\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-above-18-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-above-18-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-above-18-salary",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_above_18_salary\":\"196\",\r\n    \"id_code_store\": \"125\",\r\n    \"day_salary\": \"10\",\r\n    \"night_salary\" : \"9\",\r\n    \"morning_salary\" : \"9\",\r\n    \"peek_time_salary\" : \"1\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-above-18-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-above-18-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-above-18-salary/195",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_above_18_salary\":\"196\",\r\n    \"id_code_store\": \"125\",\r\n    \"day_salary\": \"10\",\r\n    \"night_salary\" : \"9\",\r\n    \"morning_salary\" : \"9\",\r\n    \"peek_time_salary\" : \"1\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-above-18-salary/195",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-above-18-salary",
+								"195"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary/12",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_above_18_salary\":\"196\",\r\n    \"id_code_store\": \"125\",\r\n    \"day_salary\": \"10\",\r\n    \"night_salary\" : \"9\",\r\n    \"morning_salary\" : \"9\",\r\n    \"peek_time_salary\" : \"1\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary/12",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_above_18_salary\":\"196\",\r\n    \"id_code_store\": \"125\",\r\n    \"day_salary\": \"10\",\r\n    \"night_salary\" : \"9\",\r\n    \"morning_salary\" : \"9\",\r\n    \"peek_time_salary\" : \"1\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_code_store\": \"125\",\r\n    \"day_salary\": \"10\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_under_18_salary\": \"196\",\r\n    \"id_code_store\": \"123\",\r\n    \"salary\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "part-time-under-18-salary/196",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_under_18_salary\": \"196\",\r\n    \"id_code_store\": \"123\",\r\n    \"salary\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/part-time-under-18-salary/196",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"part-time-under-18-salary",
+								"196"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_part_time_under_18_salary\": \"196\",\r\n    \"id_code_store\": \"123\",\r\n    \"salary\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/user/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"user",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"first_name\": \"jeffri\",\r\n\t\"last_name\": \"yanto\",\r\n\t\"employee_number\": \"9090\",\r\n\t\"id_code_store\": \"123\",\r\n\t\"password\": \"supriyanto12345\",\r\n\t\"id_role\": \"19\",\r\n\t\"email\": \"jeffryyanto19091997@gmail.com\",\r\n\t\"recovery_pin\": \"19091997\",\r\n\t\"photo_url\": \"http.StatusOk\",\r\n\t\"photo_name\": \"jeffri_jelajah\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_user\": \"16924\",\r\n\t\"first_name\": \"jeffris\",\r\n\t\"last_name\": \"yantos\",\r\n\t\"employee_number\": \"1\",\r\n\t\"id_code_store\": \"124\",\r\n\t\"password\": \"supriyanto12345test\",\r\n\t\"id_role\": \"190\",\r\n\t\"email\": \"jeffryyanto@gmail.com\",\r\n\t\"recovery_pin\": \"1997\",\r\n\t\"photo_url\": \"http.Null\",\r\n\t\"photo_name\": \"jeffri_Ganteng\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user/16924",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_user\": \"16924\",\r\n\t\"first_name\": \"jeffri\",\r\n\t\"last_name\": \"yanto\",\r\n\t\"employee_number\": \"19\",\r\n\t\"id_code_store\": \"123\",\r\n\t\"password\": \"supriyanto12345\",\r\n\t\"id_role\": \"19\",\r\n\t\"email\": \"jeffryyanto19091997@gmail.com\",\r\n\t\"recovery_pin\": \"19091997\",\r\n\t\"photo_url\": \"http.StatusOk\",\r\n\t\"photo_name\": \"jeffri_Kerren\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/user/16924",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"user",
+								"16924"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_user\": \"16924\",\r\n\t\"first_name\": \"jeffri\",\r\n\t\"last_name\": \"yanto\",\r\n\t\"employee_number\": \"19\",\r\n\t\"id_code_store\": \"123\",\r\n\t\"password\": \"supriyanto12345\",\r\n\t\"id_role\": \"19\",\r\n\t\"email\": \"jeffryyanto19091997@gmail.com\",\r\n\t\"recovery_pin\": \"19091997\",\r\n\t\"photo_url\": \"http.StatusOk\",\r\n\t\"photo_name\": \"jeffri_Kerren\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category/6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_user\": \"16924\",\r\n\t\"first_name\": \"jeffri\",\r\n\t\"last_name\": \"yanto\",\r\n\t\"employee_number\": \"19\",\r\n\t\"id_code_store\": \"123\",\r\n\t\"password\": \"supriyanto12345\",\r\n\t\"id_role\": \"19\",\r\n\t\"email\": \"jeffryyanto19091997@gmail.com\",\r\n\t\"recovery_pin\": \"19091997\",\r\n\t\"photo_url\": \"http.StatusOk\",\r\n\t\"photo_name\": \"jeffri_Kerren\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"exp_category\": \"jeffri\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"123\",\r\n\t\"content\": \"testing\",\r\n\t\"rule_code\": \"19\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"20\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category/20",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"20\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category/20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category",
+								"20"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "exp-category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "iso",
+								"value": "90",
+								"type": "text"
+							},
+							{
+								"key": "name",
+								"value": "jsa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id_exp\": \"21\",\r\n\t\"exp_category\": \"yanto\",\r\n\t\"create_date\": \"19-19-1997\",\r\n\t\"created_time\": \"19-19-1997\",\r\n\t\"code_category\": \"78\",\r\n\t\"content\": \"test doang\",\r\n\t\"rule_code\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/exp-category",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"exp-category"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -41,7 +41,7 @@ func ReturnAllDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrDepartementInformation
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -92,7 +92,7 @@ func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Re
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -124,7 +124,7 @@ func GetDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrDepartementInformation
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -165,7 +165,7 @@ func CreateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Tambahkan": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -210,7 +210,7 @@ func UpdateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -229,7 +229,7 @@ func DeleteDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "Aplication/json")
+	w.Header().Set("Content-Type", "application/json", "*")
 	json.NewEncoder(w).Encode(params["id_department"])
 
 }
