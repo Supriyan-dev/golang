@@ -9,9 +9,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"../../GO_DX_SERVICES/db"
 	"github.com/gorilla/mux"
-	"../../db"
-	"../../initialize"
+
+	"../../GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {

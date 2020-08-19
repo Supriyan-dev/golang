@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	"../../db"
 	"../../initialize"
+	"github.com/gorilla/mux"
 )
 
 func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
