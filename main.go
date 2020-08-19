@@ -5,9 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	controller "./controller/data_master_controller"
 	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/List_input_information"
-	// controller "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	controller "./controller/data_master_controller"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -133,9 +132,13 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "application/json", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"GET", "POST", "PUT", "DELETE"})
-	methodsOk := handlers.AllowedMethods([]string{"*"})
+	headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})
+	methodsOk := handlers.AllowedOrigins([]string{"Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"})
+	originsOk := handlers.AllowedMethods([]string{"Access-Control-Allow-Origin", "*"})
+
+	// (w).Header().Set("Access-Control-Allow-Origin", "")
+	// (*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	// (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
 	http.Handle("/", router)
 	fmt.Println("Connected to port 9000")

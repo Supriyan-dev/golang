@@ -11,6 +11,7 @@ import (
 
 	"../../db"
 	"../../initialize"
+	"../../db"
 	"github.com/gorilla/mux"
 	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
 	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"

@@ -11,9 +11,9 @@ import (
 
 	"../../db"
 	"../../initialize"
-	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	"../../db"
+	// "github.com/gorilla/mux"
+	// "github.com/jeffri/golang-test/Go_DX_Services/initialize"
 )
 
 func ReturnAllStoreInformation(w http.ResponseWriter, r *http.Request) {
