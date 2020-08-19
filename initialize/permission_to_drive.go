@@ -1,5 +1,7 @@
 package initialize
 
+import "database/sql"
+
 // type GeneralInformation struct {
 // 	id_general_information                        int    `json:"id_general_information"`
 // 	id_basic_information                          int    `json:"id_basic_information "`
@@ -73,13 +75,10 @@ package initialize
 // }
 
 type Join struct {
-	id_general_information             int    `json:"id_general_information"`
-	id_basic_information               int    `json:"id_basic_information "`
-	id_store_code                      int    `json:"id_store_code "`
-	code_store                         string `json:"code_store"`
-	employee_code                      int    `json:"employee_code "`
-	first_name                         string `json:"first_name "`
-	last_name                          string `json:"last_name "`
-	driver_license_expiry_date         string `json:"driver_license_expiry_date "`
-	car_insurance_document_expiry_date string `json:"car_insurance_document_expiry_date "`
+	Id_store_code                      int            `json:"id_store_code "`
+	Employee_code                      int            `json:"employee_code "`
+	First_name                         string         `json:"first_name "`
+	Last_name                          string         `json:"last_name "`
+	Driver_license_expiry_date         sql.NullString `json:"driver_license_expiry_date "`
+	Car_insurance_document_expiry_date sql.NullString `json:"car_insurance_document_expiry_date "`
 }
