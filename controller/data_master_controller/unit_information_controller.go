@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	"../../db"
 	"../../initialize"
+	"github.com/gorilla/mux"
 )
 
 func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +41,7 @@ func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrUnitInformation
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -93,7 +93,7 @@ func ReturnAllUnitInformationPagination(w http.ResponseWriter, r *http.Request) 
 	response.TotalPage = totalPage
 	response.CurrentPage = page
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -125,7 +125,7 @@ func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
 	response.Message = "Success"
 	response.Data = arrUnitInformation
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -165,7 +165,7 @@ func CreateUnitInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Tambahkan": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 
 }
@@ -209,7 +209,7 @@ func UpdateUnitInformation(w http.ResponseWriter, r *http.Request) {
 		"Data Yang Behasil Di Update": rowsAffected,
 	}
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -228,7 +228,7 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
 
-	w.Header().Set("Content-Type", "application/json", "*")
+	w.Header().Set("Content-Type", "application/json", "Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(params["id_unit"])
 
 }
