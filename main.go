@@ -143,6 +143,6 @@ func main() {
 	originsOk := handlers.AllowedMethods([]string{"Access-Control-Allow-Origin", "*"})
 	http.Handle("/", router)
 	fmt.Println("Connected to port 9000")
-	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, originsOk, methodsOk)(router)))
+	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, methodsOk, originsOk)(router)))
 
 }
