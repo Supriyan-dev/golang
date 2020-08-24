@@ -1,17 +1,17 @@
 package controller
 
 import (
+	initialize2 "Go_DX_Services/initialize/map"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/jeffri/golang-test/db"
-	"github.com/jeffri/golang-test/initialize"
+	"Go_DX_Services/db"
+	"Go_DX_Services/initialize"
 )
 
 func ReturnAllCashClaimCode(w http.ResponseWriter, r *http.Request) {
-	var cashCode initialize.CashClaimCode
-	var arrCashClaimCode []initialize.CashClaimCode
+	var cashCode initialize2.CashClaim
+	var arrCashClaimCode []initialize2.CashClaimCode
 	var response initialize.Response
 
 	db := db.Connect()

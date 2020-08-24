@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+	entertheinformation "./controller/Enter_the_information"
 	controllerDataMaster "./controller/data_master_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 
@@ -137,6 +137,11 @@ func main() {
 	// router.HandleFunc("/code-commuting", controller.ReturnAllCodeCommuting).Methods("GET")
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
+
+	// start Commuting Basic Information
+	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
+	// end Commuting Basic Information
+
 
 	headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})
 	methodsOk := handlers.AllowedOrigins([]string{"Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"})
