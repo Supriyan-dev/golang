@@ -9,11 +9,11 @@ import (
 	"net/http"
 	"strconv"
 
-	// "../../db"
-	// "../../initialize"
+	"../../db"
+	"../../initialize"
 	"github.com/gorilla/mux"
-	"github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	"github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
+	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllDepartementInformation(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +60,7 @@ func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Re
 	page, _ := strconv.Atoi(code["page"])
 
 	var totalData int
-	err := db.QueryRow("SELECT COUNT(*) FROM store_information").Scan(&totalData)
+	err := db.QueryRow("SELECT COUNT(*) FROM department_information").Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
