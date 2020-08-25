@@ -140,6 +140,9 @@ func main() {
 
 	// start Commuting Basic Information
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
+	router.HandleFunc("/commting-UsageRecord-ById", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
+	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
+	router.HandleFunc("/commuting-UsageRecord-DetailApply", entertheinformation.ReturnDetailInsertUsageRecordApplyForTravelExpenses).Methods("POST")
 	// end Commuting Basic Information
 
 
