@@ -3,8 +3,16 @@ package enter_the_information
 import (
 	db2 "../../db"
 	"log"
+	"strconv"
+	"strings"
 )
-
+func ReplaceSQL(old, searchPattern string) string {
+	tmpCount := strings.Count(old, searchPattern)
+	for m := 1; m <= tmpCount; m++ {
+		old = strings.Replace(old, searchPattern, "$"+strconv.Itoa(m), 1)
+	}
+	return old
+}
 func CheckDataById(sql string, id string) (CountData int) {
 	db := db2.Connect()
 	err := db.QueryRow(sql,id).Scan(&CountData)

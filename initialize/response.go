@@ -7,6 +7,12 @@ type Response struct {
 	CurrentPage int         `json:"currentPage"`
 	Data        interface{} `json:"data"`
 }
+
+type ResponseMaster struct {
+	Status      int         `json:"status"`
+	Message     string      `json:"message"`
+	Data        interface{} `json:"data"`
+}
 type NameTest struct {
 	RouteProfileName string `json:"route_profile_name"`
 	Date string `json:"date"`
