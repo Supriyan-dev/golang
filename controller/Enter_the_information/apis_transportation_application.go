@@ -1,9 +1,9 @@
 package enter_the_information
 
 import (
-	"Go_DX_Services/db"
-	"Go_DX_Services/initialize"
-	_Response "Go_DX_Services/response"
+	"../../db"
+	"../../initialize"
+	_Response "../../response"
 	"encoding/json"
 	"net/http"
 )

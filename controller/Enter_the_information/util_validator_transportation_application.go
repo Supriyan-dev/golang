@@ -1,7 +1,7 @@
 package enter_the_information
 
 import (
-	db2 "Go_DX_Services/db"
+	db2 "../../db"
 	"log"
 )
 

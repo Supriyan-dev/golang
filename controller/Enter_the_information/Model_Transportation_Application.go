@@ -1,7 +1,7 @@
 package enter_the_information
 
 import (
-	"Go_DX_Services/models"
+	"../../models"
 	"log"
 )
 
@@ -42,11 +42,11 @@ func (model models_init) Model_GetIdByCodeCommuting(store_number string, employe
 func (model models_init) Model_InsertBasicInformation(insertD *InsertBasicInformation) (it []InsertBasicInformation, condition string) {
 
 	checkdata := CheckDataById(`select count(*) from commuting_basic_information where id_general_information = ? `, insertD.IdGeneralInformation)
-
+	log.Println(checkdata)
 	if checkdata > 1 {
 		rows, err := model.DB.Prepare(`update commuting_basic_information set insurance_company = ?, driver_license_expiry_date =?,
  									personal_injury = ?, property_damage = ?, car_insurance_document_expiry_date = ?
- 									,where id_general_information = ?  `)
+ 									where id_general_information = ?  `)
 
 		if err != nil {
 			log.Println(err.Error())

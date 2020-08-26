@@ -1,6 +1,6 @@
 package enter_the_information
 
-import models "Go_DX_Services/models/map"
+import models "../../models/map"
 
 //type ShowDetailTransportationApplication struct {
 //	RouteProfileName string `json:"route_profile_name"`
