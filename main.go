@@ -143,5 +143,4 @@ func main() {
 	http.Handle("/", router)
 	fmt.Println("Connected to port 9000")
 	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, methodsOk, originsOk)(router)))
-
 }
