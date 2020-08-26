@@ -18,7 +18,6 @@ import (
 func main() {
 
 	router := mux.NewRouter()
-
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDriveUpdate).Methods("PUT")
