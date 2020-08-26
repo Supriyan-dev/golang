@@ -138,12 +138,12 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-	// start Commuting Basic Information
+	// start Commuting Transportation Application
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
-	router.HandleFunc("/commting-UsageRecord-ById", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
+	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
 	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
 	router.HandleFunc("/commuting-UsageRecord-DetailApply", entertheinformation.ReturnDetailInsertUsageRecordApplyForTravelExpenses).Methods("POST")
-	// end Commuting Basic Information
+	// end Commuting Transportation Application
 
 
 	headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})

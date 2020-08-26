@@ -23,6 +23,15 @@ type ShowDetailTransportationApplication struct {
 	GoOutDistance float64 `json:"go_out_distance"`
 }
 
+type InsertBasicInformation struct {
+	InsuranceCompany string `json:"insurance_company"`
+	DriverLicenseExpiryDate string `json:"driver_license_expiry_date"`
+	PersonalInjury string `json:"personal_injury"`
+	PropertyDamage string `json:"property_damage"`
+	CarInsuranceDocumentExpiryDate string `json:"car_insurance_document_expiry_date"`
+	IdGeneralInformation string `json:"id_general_information"`
+}
+
 type InsertTransportationApplication struct {
 	RouteProfileName string `json:"route_profile_name"`
 	Date string `json:"date"`
