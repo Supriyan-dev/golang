@@ -136,7 +136,6 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
 	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
 	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
@@ -147,4 +146,4 @@ func main() {
 	handler := cors.AllowAll().Handler(router)
 	http.ListenAndServe(":9000", handler)
 
-
+}
