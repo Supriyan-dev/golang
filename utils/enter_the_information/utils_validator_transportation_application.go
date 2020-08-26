@@ -1,18 +1,11 @@
 package enter_the_information
 
 import (
-	db2 "../../db"
 	"log"
-	"strconv"
-	"strings"
+	"../../initialize/enter_the_information"
+	db2 "../../db"
 )
-func ReplaceSQL(old, searchPattern string) string {
-	tmpCount := strings.Count(old, searchPattern)
-	for m := 1; m <= tmpCount; m++ {
-		old = strings.Replace(old, searchPattern, "$"+strconv.Itoa(m), 1)
-	}
-	return old
-}
+
 func CheckDataById(sql string, id string) (CountData int) {
 	db := db2.Connect()
 	err := db.QueryRow(sql,id).Scan(&CountData)
@@ -22,7 +15,7 @@ func CheckDataById(sql string, id string) (CountData int) {
 	return CountData
 }
 
-func ValidatorInsertBasicInformation(Request *InsertBasicInformation) (valid bool, message string) {
+func ValidatorInsertBasicInformation(Request *enter_the_information.InsertBasicInformation) (valid bool, message string) {
 
 	if Request.CarInsuranceDocumentExpiryDate == "" {
 		return false, "Missing required field in body request → CarInsuranceDocumentExpiryDate = <empty string>"
@@ -58,7 +51,7 @@ func ValidatorInsertBasicInformation(Request *InsertBasicInformation) (valid boo
 	return true, "done"
 }
 
-func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *InsertTransportationApplication) (valid bool, message string) {
+func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertTransportationApplication) (valid bool, message string) {
 
 	if Request.RouteProfileName == "" {
 		return false, "Missing required field in body request → RouteProfileName  = <empty string>"
@@ -78,7 +71,7 @@ func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *InsertTransportat
 	return true, "done"
 }
 
-func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *InsertDetailTransportationApplication) (valid bool, message string) {
+func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertDetailTransportationApplication) (valid bool, message string) {
 
 	if Request.IdCommutingTrip == 0 {
 		return false, "Missing required field in body request → TypeOfTransport = 0"
@@ -102,3 +95,4 @@ func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *InsertDetai
 	return true, "done"
 
 }
+

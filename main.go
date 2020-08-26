@@ -1,7 +1,7 @@
 package main
 
 import (
-	entertheinformation "./controller/Enter_the_information"
+	entertheinformation "./controller/Enter_the_information/transportation_application"
 	controllerDataMaster "./controller/data_master_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 	"fmt"
