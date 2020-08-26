@@ -7,15 +7,55 @@ import (
 
 type models_init models.DB_init
 
-func (model models_init) Model_GetIdByCodeCommuting(store_number string, employee_number string) (sh []ShowDetailTransportationApplication, err error) {
+func (model models_init) Model_GetIdByCodeCommutingGet() (sh []ShowDetailTransportationApplicationGet, err error) {
+
+	//rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, b.type_of_transport, b.purpose, b.detail_from, b.detail_to,
+	//									b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
+	//								   from commuting_trip a,detail_commuting_trip b, basic_information c , store_information d,
+	//								   general_information gen
+	//								   where a.id_commuting_trip = b.id_commuting_trip and a.id_general_information = gen.id_general_information
+	//								   and gen.id_store_code = d.id_store_code and gen.id_basic_information = c.id_code_store
+	//								   and c.employee_code =? and d.code_store =? group by b.id_commuting_trip`, store_number, employee_number)
 
 	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, b.type_of_transport, b.purpose, b.detail_from, b.detail_to,
 										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
-									   from commuting_trip a,detail_commuting_trip b, basic_information c , store_information d,
-									   general_information gen
-									   where a.id_commuting_trip = b.id_commuting_trip and a.id_general_information = gen.id_general_information
-									   and gen.id_store_code = d.id_store_code and gen.id_basic_information = c.id_code_store
-									   and c.employee_code =? and d.code_store =? group by b.id_commuting_trip`, store_number, employee_number)
+									   from detail_commuting_trip b LIMIT 10`)
+
+
+	var init_container ShowDetailTransportationApplicationGet
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		sh = append(sh, init_container)
+
+	}
+
+	return sh, nil
+}
+
+
+func (model models_init) Model_GetIdByCodeCommuting(store_number string, employee_number string) (sh []ShowDetailTransportationApplication, err error) {
+
+	//rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, b.type_of_transport, b.purpose, b.detail_from, b.detail_to,
+	//									b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
+	//								   from commuting_trip a,detail_commuting_trip b, basic_information c , store_information d,
+	//								   general_information gen
+	//								   where a.id_commuting_trip = b.id_commuting_trip and a.id_general_information = gen.id_general_information
+	//								   and gen.id_store_code = d.id_store_code and gen.id_basic_information = c.id_code_store
+	//								   and c.employee_code =? and d.code_store =? group by b.id_commuting_trip`, store_number, employee_number)
+
+	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, b.type_of_transport, b.purpose, b.detail_from, b.detail_to,
+										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
+									   from detail_commuting_trip b where b.id_detail_commuting_trip = ? and b.id_commuting_trip = ?`, store_number, employee_number)
+
+
 	var init_container ShowDetailTransportationApplication
 	if err != nil {
 		log.Println(err.Error())

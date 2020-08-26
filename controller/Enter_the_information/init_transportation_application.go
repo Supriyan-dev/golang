@@ -1,5 +1,7 @@
 package enter_the_information
 
+import models "Go_DX_Services/models/map"
+
 //type ShowDetailTransportationApplication struct {
 //	RouteProfileName string `json:"route_profile_name"`
 //	Date string `json:"date"`
@@ -7,6 +9,21 @@ package enter_the_information
 //	AttendanceCode string `json:"attendance_code"`
 //	Purpose string `json:"purpose"`
 //}
+
+type ShowDetailTransportationApplicationGet struct {
+	IdDetailCommutingTrip models.NullInt64 `json:"id_detail_commuting_trip"`
+	IdCommutingTrip models.NullInt64 `json:"id_commuting_trip"`
+	TypeOfTransport models.NullString `json:"type_of_transport"`
+	Purpose models.NullString `json:"purpose"`
+	DetailFrom models.NullString `json:"detail_from"`
+	DetailTo models.NullString `json:"detail_to"`
+	Distance models.NullFloat64 `json:"distance"`
+	Cost models.NullInt64 `json:"cost"`
+	PointTrip models.NullFloat64 `json:"point_trip"`
+	TransitPoint models.NullString `json:"transit_point"`
+	CommuteDistance models.NullFloat64 `json:"commute_distance"`
+	GoOutDistance models.NullFloat64 `json:"go_out_distance"`
+}
 
 type ShowDetailTransportationApplication struct {
 	IdDetailCommutingTrip int `json:"id_detail_commuting_trip"`

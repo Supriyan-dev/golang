@@ -1,17 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
 	entertheinformation "./controller/Enter_the_information"
 	controllerDataMaster "./controller/data_master_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
+	"github.com/rs/cors"
+	"net/http"
 
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
-	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -139,18 +137,24 @@ func main() {
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
 	// start Commuting Transportation Application
+	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecordGet).Methods("GET")
+
+
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
 	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
 	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
 	router.HandleFunc("/commuting-UsageRecord-DetailApply", entertheinformation.ReturnDetailInsertUsageRecordApplyForTravelExpenses).Methods("POST")
 	// end Commuting Transportation Application
 
+	handler := cors.AllowAll().Handler(router)
+	http.ListenAndServe(":9000", handler)
 
-	headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})
-	methodsOk := handlers.AllowedOrigins([]string{"Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"})
-	originsOk := handlers.AllowedMethods([]string{"Access-Control-Allow-Origin", "*"})
-	http.Handle("/", router)
-	fmt.Println("Connected to port 9000")
-	log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, methodsOk, originsOk)(router)))
+	//
+	//headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})
+	//methodsOk := handlers.AllowedOrigins([]string{"Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"})
+	//originsOk := handlers.AllowedMethods([]string{"Access-Control-Allow-Origin", "*"})
+	//http.Handle("/", router)
+	//fmt.Println("Connected to port 9000")
+	//log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, methodsOk, originsOk)(router)))
 
 }
