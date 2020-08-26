@@ -33,29 +33,6 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 
 }
 
-func ReturnGetByCommutingUsageRecordGet(w http.ResponseWriter, r *http.Request) {
-
-	var _response initialize.Response
-
-	db := db.Connect()
-
-	_model := models_init{DB: db}
-	ResultData, err := _model.Model_GetIdByCodeCommutingGet()
-
-	if err != nil {
-		_response.Status = http.StatusInternalServerError
-		_response.Message = err.Error()
-		_response.Data = ""
-		_Response.ResponseJson(w, _response.Status, _response)
-	} else {
-		_response.Status = http.StatusOK
-		_response.Message = "found data"
-		_response.Data = ResultData
-		_Response.ResponseJson(w, _response.Status, _response)
-	}
-
-}
-
 func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 
 	var _response initialize.Response
