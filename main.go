@@ -4,6 +4,7 @@ import (
 	entertheinformation "./controller/Enter_the_information"
 	controllerDataMaster "./controller/data_master_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
+	"fmt"
 	"github.com/rs/cors"
 	"net/http"
 
@@ -16,7 +17,6 @@ import (
 func main() {
 
 	router := mux.NewRouter()
-
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDriveUpdate).Methods("PUT")
@@ -136,8 +136,6 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-	// start Commuting Transportation Application
-
 
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
 	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
@@ -145,15 +143,8 @@ func main() {
 	router.HandleFunc("/commuting-UsageRecord-DetailApply", entertheinformation.ReturnDetailInsertUsageRecordApplyForTravelExpenses).Methods("POST")
 	// end Commuting Transportation Application
 
+	fmt.Println("Connected to port 9000")
 	handler := cors.AllowAll().Handler(router)
 	http.ListenAndServe(":9000", handler)
 
-	//
-	//headersOk := handlers.AllowedHeaders([]string{"Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"})
-	//methodsOk := handlers.AllowedOrigins([]string{"Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"})
-	//originsOk := handlers.AllowedMethods([]string{"Access-Control-Allow-Origin", "*"})
-	//http.Handle("/", router)
-	//fmt.Println("Connected to port 9000")
-	//log.Fatal(http.ListenAndServe(":9000", handlers.CORS(headersOk, methodsOk, originsOk)(router)))
 
-}
