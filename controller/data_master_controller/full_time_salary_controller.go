@@ -108,7 +108,6 @@ func GetFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_full_time_salary"])
 
 	result, err := db.Query("SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE id_full_time_salary = ?", code["id_full_time_salary"])
 	if err != nil {

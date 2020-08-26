@@ -107,7 +107,6 @@ func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_unit"])
 
 	result, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information WHERE id_unit = ?", code["id_unit"])
 	if err != nil {

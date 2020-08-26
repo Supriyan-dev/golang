@@ -105,7 +105,6 @@ func main() {
 	router.HandleFunc("/part-time-under-18-salary", controllerDataMaster.UpdatePartTimeUnder18Salary).Methods("PUT")
 	router.HandleFunc("/part-time-under-18-salary/{id_part_time_under_18_salary}", controllerDataMaster.DeletePartTimeUnder18Salary).Methods("DELETE")
 	// end crud under 18 salary
-
 	// start crud user
 	router.HandleFunc("/user", controllerDataMaster.ReturnAllUser).Methods("GET")
 	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination).Methods("GET")

@@ -103,7 +103,6 @@ func GetStoreInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_code_store"])
 
 	result, err := db.Query("SELECT id_code_store, code_store, store_name FROM store_information WHERE id_code_store = ?", code["id_code_store"])
 	if err != nil {

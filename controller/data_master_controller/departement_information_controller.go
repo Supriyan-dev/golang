@@ -106,7 +106,6 @@ func GetDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_department"])
 
 	result, err := db.Query("SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE id_department = ?", code["id_department"])
 	if err != nil {

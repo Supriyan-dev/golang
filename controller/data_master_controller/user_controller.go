@@ -105,7 +105,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_user"])
 
 	result, err := db.Query("SELECT id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE id_user = ?", code["id_user"])
 	if err != nil {
