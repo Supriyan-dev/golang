@@ -1,7 +1,0 @@
-unexpected directory layout:
-	import path: _/C_/Users/Jeffri/go/src/github.com/jeffri/golang-test/Go_DX_Services/db
-	root: C:\Users\Jeffri\go\src
-	dir: C:\Users\Jeffri\go\src\github.com\jeffri\golang-test\Go_DX_Services\db
-	expand root: C:\Users\Jeffri\go
-	expand dir: C:\Users\Jeffri\go\src\github.com\jeffri\golang-test\Go_DX_Services\db
-	separator: \

@@ -12,8 +12,7 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	
 )
 
 func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +107,6 @@ func GetPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_part_time_above_18_salary"])
 
 	result, err := db.Query("SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary FROM part_time_above_18_salary WHERE id_part_time_above_18_salary = ?", code["id_part_time_above_18_salary"])
 	if err != nil {

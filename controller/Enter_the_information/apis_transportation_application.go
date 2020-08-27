@@ -1,11 +1,12 @@
 package enter_the_information
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"../../db"
 	"../../initialize"
 	_Response "../../response"
-	"encoding/json"
-	"net/http"
 )
 
 func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Request) {

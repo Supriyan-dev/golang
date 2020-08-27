@@ -12,8 +12,6 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +103,6 @@ func GetBank(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_bank"])
 
 	result, err := db.Query("SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE id_bank = ?", code["id_bank"])
 	if err != nil {

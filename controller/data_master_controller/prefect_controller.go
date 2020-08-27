@@ -12,8 +12,7 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	
 )
 
 func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +104,6 @@ func GetPrefect(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_prefecture"])
 
 	result, err := db.Query("SELECT id_prefecture, ISO, prefecture_name FROM prefecture WHERE id_prefecture = ?", code["id_prefecture"])
 	if err != nil {

@@ -11,9 +11,9 @@ import (
 
 	"../../db"
 	"../../initialize"
+	"../../model1"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllStoreInformation(w http.ResponseWriter, r *http.Request) {
@@ -97,77 +97,66 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 }
 
 func GetStoreInformation(w http.ResponseWriter, r *http.Request) {
-	var storeInformation initialize.StoreInformation
-	var response initialize.Response
-	var arrStoreInformation []initialize.StoreInformation
 
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_code_store"])
+	_id := r.URL.Query().Get("id_code_store")
 
-	result, err := db.Query("SELECT id_code_store, code_store, store_name FROM store_information WHERE id_code_store = ?", code["id_code_store"])
+	_con := model1.Models_init{DB: db}
+	ExcuteData, err := _con.GetIdStoreInformation(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrStoreInformation = append(arrStoreInformation, storeInformation)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "data ketemu"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrStoreInformation
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
-func CreateStoreInformation(w http.ResponseWriter, r *http.Request) {
+// func CreateStoreInformation(w http.ResponseWriter, r *http.Request) {
+// 	var storeS initialize.StoreInformation
+// 	var _response initialize.Response
 
-	var response initialize.Response
+// 	db := db.Connect()
 
-	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO store_information (code_store,store_name) VALUES (?,?)")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+// 	_model := models_init{DB: db}
+// 	json.NewDecoder(r.Body).Decode(&storeS)
+// 	result, err := _model.InsertStoreInformation(&storeS)
 
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
+// 	if errExcuteData != nil {
+// 		_response.Status = http.StatusMethodNotAllowed
+// 		_response.Message = "Sorry Your Input Method Allowed"
+// 		_response.Data = "Null"
+// 		api.ResponeWithJson(response, _response.Status, _response)
+// 	}
+// 	if ExcuteData == nil {
+// 		_response.Status = http.StatusBadRequest
+// 		_response.Message = "Sorry Your Input Missing Body Bad Request"
+// 		_response.Data = "Null"
+// 		api.ResponeWithJson(response, _response.Status, _response)
+// 	} else {
+// 		_response.Status = http.StatusOK
+// 		_response.Message = "Success"
+// 		_response.Data = arrStoreInformation
+// 		api.ResponeWithJson(response, _response.Status, _response)
+// 	}
 
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	CodeStore := keyVal["code_store"]
-	StoreName := keyVal["store_name"]
-
-	result, err := stmt.Exec(CodeStore, StoreName)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Tambahkan": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
-}
+// }
 
 func UpdateStoreInformation(w http.ResponseWriter, r *http.Request) {
 	var response initialize.Response

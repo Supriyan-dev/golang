@@ -12,8 +12,7 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	
 )
 
 func ReturnAllStroreSectionInformation(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +106,6 @@ func GetStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_store_section"])
 
 	result, err := db.Query("SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE id_store_section = ?", code["id_store_section"])
 	if err != nil {

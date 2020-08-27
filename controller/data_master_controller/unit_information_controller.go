@@ -12,8 +12,7 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	
 )
 
 func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +106,6 @@ func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_unit"])
 
 	result, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information WHERE id_unit = ?", code["id_unit"])
 	if err != nil {

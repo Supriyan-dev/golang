@@ -12,8 +12,7 @@ import (
 	"../../db"
 	"../../initialize"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
+	
 )
 
 func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +107,6 @@ func GetExpCategory(w http.ResponseWriter, r *http.Request) {
 
 	db := db.Connect()
 	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_exp"])
 
 	result, err := db.Query("SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code FROM exp_category WHERE id_exp = ?", code["id_exp"])
 	if err != nil {
