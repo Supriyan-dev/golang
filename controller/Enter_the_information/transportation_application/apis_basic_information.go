@@ -1,16 +1,14 @@
 package transportation_application
 
 import (
-	models_enter_the_information "../../../models/enter_the_information/transportation_application"
 	"../../../db"
 	"../../../initialize"
+	"../../../initialize/enter_the_information"
+	models_enter_the_information "../../../models/enter_the_information/transportation_application"
 	_Response "../../../response"
 	"encoding/json"
 	"net/http"
-	"../../../initialize/enter_the_information"
 )
-
-
 
 func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Request) {
 
@@ -27,6 +25,11 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 		_response.Data = resultData
 		_Response.ResponseJson(w, _response.Status, _response)
 
+	} else if r.Method != "POST" {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Status Method Not Allowed"
+		_response.Data = nil
+		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_response.Status = http.StatusBadRequest
 		_response.Message = err
@@ -50,6 +53,11 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		_response.Status = http.StatusInternalServerError
 		_response.Message = err.Error()
+		_response.Data = nil
+		_Response.ResponseJson(w, _response.Status, _response)
+	} else if r.Method != "POST" {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Status Method Not Allowed"
 		_response.Data = nil
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {

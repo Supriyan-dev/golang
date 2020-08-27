@@ -9,6 +9,16 @@ import (
 
 type Models_init_basic_information models.DB_init
 
+// indonesia
+// - nampilin data berdasarkan employee_code dan code_store
+// - menggunakan table commuting_basic_information, basic_information, store_inormation dan general_information
+// - data di looping dari pencarian di atas
+
+// english
+// - displays data based on employee_code and code_store
+// - using table commuting_basic_information, basic_information, store_inormation and general_information
+// - looped data from the above search
+
 func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string) (sh []enter_the_information.ShowBasicInformation, err error) {
 
 	rows, err := model.DB.Query(`select cbi.id_commuting_basic_information, cbi.id_general_information,
@@ -38,6 +48,16 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 
 	return sh, nil
 }
+
+// indonesia
+// check jumlah data dari commuting_basic_information berdasarkan id_general_information
+// jika ada akan melakukan update ke table commuting_basic_information
+// jika tidak ada akan melakukan insert ke table commuting_basic_information
+
+// english
+// check the amount of data from commuting_basic_information based on id_general_information
+// if there is an update to the commuting_basic_information table by id_general_information
+// if not present will insert into the commuting_basic_information table
 
 func (model Models_init_basic_information) Model_InsertBasicInformation(insertD *enter_the_information.InsertBasicInformation) (it []enter_the_information.InsertBasicInformation, condition string) {
 

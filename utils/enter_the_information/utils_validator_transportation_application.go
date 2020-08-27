@@ -15,6 +15,15 @@ func CheckDataById(sql string, id string) (CountData int) {
 	return CountData
 }
 
+func CheckDataByStoreAndEmployee(sql string, store string,employee string) (CountData int) {
+	db := db2.Connect()
+	err := db.QueryRow(sql,store,employee).Scan(&CountData)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return CountData
+}
+
 func ValidatorInsertBasicInformation(Request *enter_the_information.InsertBasicInformation) (valid bool, message string) {
 
 	if Request.CarInsuranceDocumentExpiryDate == "" {
@@ -51,7 +60,7 @@ func ValidatorInsertBasicInformation(Request *enter_the_information.InsertBasicI
 	return true, "done"
 }
 
-func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertTransportationApplication) (valid bool, message string) {
+func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertUsageRecordApplyForTravelExpenses) (valid bool, message string) {
 
 	if Request.RouteProfileName == "" {
 		return false, "Missing required field in body request → RouteProfileName  = <empty string>"
@@ -71,7 +80,7 @@ func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_informa
 	return true, "done"
 }
 
-func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertDetailTransportationApplication) (valid bool, message string) {
+func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses) (valid bool, message string) {
 
 	if Request.IdCommutingTrip == 0 {
 		return false, "Missing required field in body request → TypeOfTransport = 0"

@@ -136,10 +136,13 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
-	router.HandleFunc("/commuting-basic-information-CheckData", entertheinformation.ReturnGetByCommutingBasicInformation).Methods("POST")
-	router.HandleFunc("/commuting-UsageRecord-CheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
-	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
+	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation)
+	router.HandleFunc("/commuting-basic-information-CheckData", entertheinformation.ReturnGetByCommutingBasicInformation)
+	router.HandleFunc("/commuting-UsageRecord-CheckData", entertheinformation.ReturnGetByCommutingUsageRecord)
+	router.HandleFunc("/commuting-UsageRecord-Apply/{condition}/{store_id}/{employee_id}", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses)
+	router.HandleFunc("/commuting-UsageRecord-Apply-Update", entertheinformation.ReturnUpdateUsageRecordApplyForTravelExpenses)
+	router.HandleFunc("/commuting-UsageRecord-Delete/{id_commuting_trip}", entertheinformation.ReturnDeleteUsageRecord)
+	router.HandleFunc("/commuting-UsageRecord-ShowUseMyRoute", entertheinformation.ReturnGetByCommutingUsageRecordUseMyRoute)
 	// end Commuting Transportation Application
 
 	fmt.Println("Connected to port 9000")
