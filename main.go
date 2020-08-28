@@ -136,13 +136,16 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
+	// start Commuting Transportation Application
 	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation)
 	router.HandleFunc("/commuting-basic-information-CheckData", entertheinformation.ReturnGetByCommutingBasicInformation)
 	router.HandleFunc("/commuting-UsageRecord-CheckData", entertheinformation.ReturnGetByCommutingUsageRecord)
+	router.HandleFunc("/commuting-UsageRecord-CheckDataForEdit", entertheinformation.ReturnGetByCommutingUsageRecordForEdit)
 	router.HandleFunc("/commuting-UsageRecord-Apply/{condition}/{store_id}/{employee_id}", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses)
 	router.HandleFunc("/commuting-UsageRecord-Apply-Update", entertheinformation.ReturnUpdateUsageRecordApplyForTravelExpenses)
 	router.HandleFunc("/commuting-UsageRecord-Delete/{id_commuting_trip}", entertheinformation.ReturnDeleteUsageRecord)
 	router.HandleFunc("/commuting-UsageRecord-ShowUseMyRoute", entertheinformation.ReturnGetByCommutingUsageRecordUseMyRoute)
+	router.HandleFunc("/commuting-UsageRecord-Draft/{id_commuting_trip}", entertheinformation.ReturnUpdateUsageRecordDraft)
 	// end Commuting Transportation Application
 
 	fmt.Println("Connected to port 9000")

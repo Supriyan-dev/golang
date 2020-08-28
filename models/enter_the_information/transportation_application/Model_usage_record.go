@@ -19,12 +19,44 @@ type Models_init_Usage_Record models.DB_init
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []enter_the_information.ShowUsageRecord, err error) {
 
-	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, b.type_of_transport, b.purpose, b.detail_from, b.detail_to,
+	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
 										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
-										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi
-										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information 
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
+										and b.type_of_transport =  trans.code_transportation
 										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information and si.code_store =? and bi.employee_code=?
 										group by b.id_commuting_trip`, store_number, employee_number)
+
+	var init_container enter_the_information.ShowUsageRecord
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		sh = append(sh, init_container)
+
+	}
+
+	return sh, nil
+}
+
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.ShowUsageRecord, err error) {
+
+	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
+										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi,
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information 
+										and b.type_of_transport =  trans.code_transportation
+										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information 
+										and si.code_store =? and bi.employee_code=? and b.id_commuting_trip = ?
+										`, store_number, employee_number, id_commuting_trip)
 
 	var init_container enter_the_information.ShowUsageRecord
 	if err != nil {
@@ -57,7 +89,7 @@ geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_
 	}
 
 	for rows.Next() {
-		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.TypeOfTransport, &init_container.AttendanceCode, &init_container.Purpose, &init_container.DetailTo, &init_container.DetailFrom, &init_container.CommuteDistance, &init_container.GoOutDistance,&init_container.Cost)
+		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.TypeOfTransport, &init_container.AttendanceCode, &init_container.Purpose, &init_container.DetailTo, &init_container.DetailFrom, &init_container.CommuteDistance, &init_container.GoOutDistance, &init_container.Cost)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -204,7 +236,7 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 
 }
 
-func (model Models_init_Usage_Record) Model_DeleteUsageRecordApplyForTravelExpenses(id string) (response int64 ,condition string) {
+func (model Models_init_Usage_Record) Model_DeleteUsageRecordApplyForTravelExpenses(id string) (response int64, condition string) {
 
 	rows, err := model.DB.Prepare(`DELETE commuting_trip, detail_commuting_trip FROM commuting_trip INNER JOIN detail_commuting_trip 
 WHERE commuting_trip.id_commuting_trip = detail_commuting_trip.id_commuting_trip
@@ -217,13 +249,29 @@ and commuting_trip.id_commuting_trip =?`)
 	execute, errExecute := rows.Exec(id)
 
 	if errExecute != nil && execute == nil {
-		return 0,"Wrong ID"
+		return 0, "Wrong ID"
 	}
-	rowsAffected ,errRowAffected := execute.RowsAffected()
+	rowsAffected, errRowAffected := execute.RowsAffected()
 
 	if errRowAffected != nil {
 		log.Println(errRowAffected)
 	}
 
-	return rowsAffected,"Success Response"
+	return rowsAffected, "Success Response"
+}
+
+func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (response int64, condition string) {
+
+	sqlUpdate := `update commuting_trip set draft = 'Y' where id_commuting_trip IN(`+id+`)`
+
+	stmtUpdate, errStmtUpdate := model.DB.Query(sqlUpdate)
+
+	if errStmtUpdate != nil {
+		return 0, "Please Check Your ID"
+	}
+	defer stmtUpdate.Close()
+	
+
+	return 1, "Success Response"
+
 }
