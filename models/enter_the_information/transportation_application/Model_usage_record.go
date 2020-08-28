@@ -46,6 +46,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	return sh, nil
 }
 
+// indonesia
+// Menampilkan data Usage Record untuk di edit berdasarkan id commuting trip ,store number dan employee number
+
+// english
+// Show Data Usage Record to edit by id commuting trip, store number dan employee number
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.ShowUsageRecord, err error) {
 
 	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
@@ -75,6 +80,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 
 	return sh, nil
 }
+// indonesia
+// Menampilkan Semua route favorit berdasarkan store number dan employee number
+
+// english
+// get all data route favorite by store number and employee number
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []enter_the_information.ShowUseMyRoute, err error) {
 
@@ -236,6 +246,12 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 
 }
 
+// indonesia
+// Hapus Semua data commuting_trip and detail_commuting_trip berdasar kan id_commuting_trip = id_commuting_trip ( table detail)
+
+// english
+// delete all data commuting_trip and detail_commuting_trip by id_commuting_trip = id_commuting_trip in table detail
+
 func (model Models_init_Usage_Record) Model_DeleteUsageRecordApplyForTravelExpenses(id string) (response int64, condition string) {
 
 	rows, err := model.DB.Prepare(`DELETE commuting_trip, detail_commuting_trip FROM commuting_trip INNER JOIN detail_commuting_trip 
@@ -259,6 +275,12 @@ and commuting_trip.id_commuting_trip =?`)
 
 	return rowsAffected, "Success Response"
 }
+
+// indonesia
+// Usage Record -> update data menjadi draft [commuting_trip]
+
+// english
+// Usage Record -> update data be draft [commuting_trip]
 
 func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (response int64, condition string) {
 
