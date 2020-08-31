@@ -15,6 +15,15 @@ func CheckDataById(sql string, id string) (CountData int) {
 	return CountData
 }
 
+func CheckDataByIdInt(sql string, id int) (CountData int) {
+	db := db2.Connect()
+	err := db.QueryRow(sql,id).Scan(&CountData)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return CountData
+}
+
 func CheckDataByStoreAndEmployee(sql string, store string,employee string) (CountData int) {
 	db := db2.Connect()
 	err := db.QueryRow(sql,store,employee).Scan(&CountData)
@@ -70,9 +79,6 @@ func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_informa
 	}
 	if Request.Attendance == "" {
 		return false, "Missing required field in body request → Attendance  = <empty string>"
-	}
-	if Request.CodeCommuting == "" {
-		return false, "Missing required field in body request → CodeCommuting  = <empty string>"
 	}
 	if Request.IdGeneralInformation == "" {
 		return false, "Missing required field in body request → IdGeneralInformation  = <empty string>"

@@ -4,6 +4,10 @@ import (
 	"../../../initialize/enter_the_information"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"math/rand"
+	"strconv"
+
+	//models2 "Go_DX_Services/models/map"
 	"log"
 )
 
@@ -17,33 +21,148 @@ type Models_init_Usage_Record models.DB_init
 // Show all detail_commuting_trip based on code_store and employee_store in group by based on id_commuting_trip
 // data is looped
 
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []enter_the_information.ShowUsageRecord, err error) {
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []enter_the_information.FormatShowUsageRecord, err error) {
 
-	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
-										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
-										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
+	var typeOfTransportation string
+	var DetailTo string
+	var DetailFrom string
+	var Purpose string
+	var DatatypeOfTransportation string
+	var DataRoute string
+	var DataPurpose string
+
+	CountHistory := utils_enter_the_information.CheckDataByStoreAndEmployee(`SELECT COUNT(*) FROM (SELECT COUNT(detcomtrip.id_commuting_trip) FROM commuting_trip ct INNER JOIN detail_commuting_trip detcomtrip ON ct.id_commuting_trip = detcomtrip.id_commuting_trip inner join general_information gi on gi.id_general_information = ct.id_general_information INNER JOIN basic_information bi ON bi.id_basic_information = gi.id_basic_information inner join store_information si on si.id_code_store = gi.id_store_code where ct.save_trip ='N' and ct.submit ='Y' and si.code_store =? and bi.employee_code =? group by detcomtrip.id_commuting_trip) t`, store_number, employee_number)
+
+	GetBasicInformation, errGetBasicInformation := model.DB.Query(`select bi.id_basic_information,bi.first_name, bi.last_name, bi.adress, bi.adress_kana,
+										bi.adress_detail,bi.adress_detail_kana, bi.add_phone_number
+										from basic_information bi,store_information si , general_information gi where
+										gi.id_basic_information = bi.id_basic_information and 
+ 									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
+ 									   	bi.employee_code=?`, store_number, employee_number)
+
+	rows, err := model.DB.Query(`select  b.id_commuting_trip,COALESCE(SUM(b.commute_distance),0)
+ 										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , ct.draft
+ 										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
 										and b.type_of_transport =  trans.code_transportation
 										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information and si.code_store =? and bi.employee_code=?
+										and ct.submit ='N' and ct.save_trip ='N'
 										group by b.id_commuting_trip`, store_number, employee_number)
-
-	var init_container enter_the_information.ShowUsageRecord
-	if err != nil {
+	var init_biC interface{}
+	var init_bi enter_the_information.ShowBasicInformation1
+	//var Arr_bi []enter_the_information.ShowBasicInformation1
+	var init_ur enter_the_information.ShowUsageRecord2
+	var Arr_ur []enter_the_information.ShowUsageRecord2
+	if err != nil && errGetBasicInformation != nil {
 		log.Println(err.Error())
+		log.Println(errGetBasicInformation.Error())
 	}
+	GetBasicInformation.Next()
+	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
+	var KodeBasicInformation models.NullInt
+	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
+	LPAD(RIGHT(department_information.department_code, 2), 2 , '0'),
+	LPAD(RIGHT(store_section_information.store_section_code, 2), 2 , '0'),
+	LPAD(RIGHT(unit_information.unit_code, 2), 2 , '0')) AS 'division_code'
+	FROM general_information LEFT OUTER JOIN store_information ON general_information.id_store_code = store_information.id_code_store
+	LEFT OUTER JOIN department_information ON general_information.id_department = department_information.id_department LEFT OUTER JOIN 
+	unit_information ON general_information.id_unit = unit_information.id_unit LEFT OUTER JOIN store_section_information ON
+	general_information.id_store_section = store_section_information.id_store_section LEFT OUTER JOIN basic_information ON
+	basic_information.id_basic_information = general_information.id_basic_information WHERE basic_information.id_basic_information = ?`).Scan(&KodeBasicInformation)
+
+	if GetKodeBasicInformation != nil {
+		log.Println(GetKodeBasicInformation)
+	}
+
+	if errScanBasicInformation != nil {
+		init_biC = nil
+	} else {
+		init_biC = init_bi
+	}
+	StatusTemporari := ""
 
 	for rows.Next() {
-		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
+		err := rows.Scan(&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari)
+		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
+			Arr_ur = nil
+		} else {
+			if StatusTemporari == "Y" {
+				//yes
+				StatusTemporari = "はい"
+			} else {
+				//no
+				StatusTemporari = "いいえ"
+			}
+			// Get Data Transportation, detail from, detail to and purpose (horizontal)
+			GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := model.DB.Query(`select trans.name_transportation_japanese, 
+ 										b.detail_from, b.detail_to, b.purpose
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
+										and b.type_of_transport =  trans.code_transportation
+										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information
+										and si.code_store =? and bi.employee_code=?
+										and ct.submit ='N' and ct.save_trip ='N' and b.id_commuting_trip = ?
+										`, store_number, employee_number, init_ur.IdCommutingTrip)
+
+			if errGetDataTypeOfTransportationAndRoute != nil {
+				log.Println(0)
+				typeOfTransportation = ""
+				DetailTo = ""
+				DetailFrom = ""
+				Purpose = ""
+			} else {
+				for GetDataTypeOfTransportationAndRoute.Next() {
+					errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
+
+					if errGetDataT != nil {
+						log.Println(errGetDataT.Error())
+					}
+					DatatypeOfTransportation += typeOfTransportation + ` - `
+					DataRoute += DetailFrom + ` - - ` + DetailTo + `-`
+					DataPurpose += Purpose + ` - `
+
+				}
+				if typeOfTransportation != "" {
+					DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+				}
+				if DataRoute != "" {
+					DataRoute = DataRoute[0 : len(DataRoute)-1]
+				}
+				if DataPurpose != "" {
+					DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+				}
+				//log.Println(DatatypeOfTransportation)
+				//log.Println(DataRoute)
+				//log.Println(DataPurpose)
+			}
+			// end Get Data Transportation, detail from, detail to and purpose (horizontal)
+			dataCommutingTrip := enter_the_information.ShowUsageRecord2{
+				IdCommutingTrip: init_ur.IdCommutingTrip,
+				TypeOfTransport: DatatypeOfTransportation,
+				Purpose:         DataPurpose,
+				Route:           DataRoute,
+				Distance:        init_ur.Distance,
+				Cost:            init_ur.Cost,
+				StatusTemporary: StatusTemporari,
+			}
+			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
-
-		sh = append(sh, init_container)
-
 	}
-
-	return sh, nil
+	if init_biC != nil && Arr_ur != nil {
+		FinallyData := enter_the_information.FormatShowUsageRecord{
+			CountHistory:         CountHistory,
+			KodeBasicInformation: KodeBasicInformation,
+			DataBasicInformation: init_biC,
+			DataUsageRecord:      Arr_ur,
+		}
+		sh = append(sh, FinallyData)
+		return sh, nil
+	}
+	return nil, nil
 }
 
 // indonesia
@@ -51,7 +170,26 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 
 // english
 // Show Data Usage Record to edit by id commuting trip, store number dan employee number
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.ShowUsageRecord, err error) {
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.FormatShowUsageRecordForEdit, err error) {
+	var inter_CommutingTrip interface{}
+	var shCommutingTrip enter_the_information.ShowCommutingTrip
+	//var Arr_shCommutingTrip []enter_the_information.ShowCommutingTrip
+	var Arr_shCommutingTripDetail []enter_the_information.ShowUsageRecord
+	QueryShowCommutingTrip, errShowCommutingTrip := model.DB.Query(`select ct.id_commuting_trip, ct.route_profile_name,
+ 										ct.date, ct.attendance_code from commuting_trip ct where ct.id_commuting_trip = ?`, id_commuting_trip)
+
+	if errShowCommutingTrip != nil {
+		log.Println(errShowCommutingTrip)
+	}
+
+	QueryShowCommutingTrip.Next()
+	errShowCommutingTripScan := QueryShowCommutingTrip.Scan(&shCommutingTrip.IdCommutingTrip, &shCommutingTrip.RouteProfileName, &shCommutingTrip.Date, &shCommutingTrip.AttendanceCode)
+
+	if errShowCommutingTripScan != nil {
+		inter_CommutingTrip = nil
+	} else {
+		inter_CommutingTrip = shCommutingTrip
+	}
 
 	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
 										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
@@ -71,15 +209,22 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
 		if err != nil {
-			panic(err.Error())
+			return nil, nil
 		}
 
-		sh = append(sh, init_container)
+		Arr_shCommutingTripDetail = append(Arr_shCommutingTripDetail, init_container)
 
 	}
 
+	FinnalyData := enter_the_information.FormatShowUsageRecordForEdit{
+		DataTrip:       inter_CommutingTrip,
+		DetailDataTrip: Arr_shCommutingTripDetail,
+	}
+	sh = append(sh, FinnalyData)
+
 	return sh, nil
 }
+
 // indonesia
 // Menampilkan Semua route favorit berdasarkan store number dan employee number
 
@@ -88,10 +233,19 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []enter_the_information.ShowUseMyRoute, err error) {
 
-	rows, err := model.DB.Query(`select comtrip.id_commuting_trip, detcomtrip.id_detail_commuting_trip, comtrip.route_profile_name, detcomtrip.type_of_transport, comtrip.attendance_code,
-detcomtrip.purpose, detcomtrip.detail_to, detcomtrip.detail_from, detcomtrip.commute_distance, detcomtrip.go_out_distance, detcomtrip.cost from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+	var typeOfTransportation string
+	var DetailTo string
+	var DetailFrom string
+	var Purpose string
+	var DatatypeOfTransportation string
+	var DataRoute string
+	var DataPurpose string
+
+	rows, err := model.DB.Query(`select MIN(detcomtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), MIN(comtrip.route_profile_name),  MIN(comtrip.attendance_code),
+MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detcomtrip.commute_distance),0), COALESCE(SUM(detcomtrip.cost),0)  from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
 where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
-geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'`, store_number, employee_number)
+geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
+group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number, employee_number)
 
 	var init_container enter_the_information.ShowUseMyRoute
 	if err != nil {
@@ -99,12 +253,201 @@ geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_
 	}
 
 	for rows.Next() {
-		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.TypeOfTransport, &init_container.AttendanceCode, &init_container.Purpose, &init_container.DetailTo, &init_container.DetailFrom, &init_container.CommuteDistance, &init_container.GoOutDistance, &init_container.Cost)
+		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost)
+
 		if err != nil {
 			panic(err.Error())
 		}
 
-		sh = append(sh, init_container)
+		// Get Data Transportation, detail from, detail to and purpose (horizontal)
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := model.DB.Query(`select trans.name_transportation_japanese, 
+ 										b.detail_from, b.detail_to, b.purpose
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
+										and b.type_of_transport =  trans.code_transportation
+										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information
+										and si.code_store =? and bi.employee_code=?
+										and ct.submit ='N' and ct.save_trip ='N' and b.id_commuting_trip = ?
+										`, store_number, employee_number, init_container.IdCommutingTrip)
+
+		if errGetDataTypeOfTransportationAndRoute != nil {
+			log.Println(0)
+			typeOfTransportation = ""
+			DetailTo = ""
+			DetailFrom = ""
+			Purpose = ""
+		} else {
+			for GetDataTypeOfTransportationAndRoute.Next() {
+				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
+
+				if errGetDataT != nil {
+					log.Println(errGetDataT.Error())
+				}
+				DatatypeOfTransportation += typeOfTransportation + ` - `
+				DataRoute += DetailFrom + ` - - ` + DetailTo + `-`
+				DataPurpose += Purpose + ` - `
+
+			}
+			if typeOfTransportation != "" {
+				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+			}
+			if DataRoute != "" {
+				DataRoute = DataRoute[0 : len(DataRoute)-1]
+			}
+			if DataPurpose != "" {
+				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+			}
+			//log.Println(DatatypeOfTransportation)
+			//log.Println(DataRoute)
+			//log.Println(DataPurpose)
+		}
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
+
+		FinallyData := enter_the_information.ShowUseMyRoute{
+			IdCommutingTrip:       init_container.IdCommutingTrip,
+			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
+			RouteProfileName:      init_container.RouteProfileName,
+			TypeOfTransport:       typeOfTransportation,
+			AttendanceCode:        init_container.AttendanceCode,
+			Purpose:               init_container.Purpose,
+			Route:                 DataRoute,
+			Distance:              init_container.Distance,
+			CommuteDistance:       init_container.CommuteDistance,
+			Cost:                  init_container.Cost,
+		}
+		sh = append(sh, FinallyData)
+		//sh = append(sh, init_container)
+
+	}
+
+	return sh, nil
+}
+
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_number string,
+	employee_number string, page string, filter string, showData string, searching string) (sh []enter_the_information.ShowHistory, err error) {
+
+	var typeOfTransportation string
+	var DetailTo string
+	var DetailFrom string
+	var Purpose string
+	var DatatypeOfTransportation string
+	var DataRoute string
+	var DataPurpose string
+
+	var pageInt int
+	var showDataInt int
+	var limitPage string
+	if page != ""{
+		parsePage,_ := strconv.Atoi(page)
+		pageInt = parsePage
+	}
+
+	if showData != ""{
+		parseShowData,_ := strconv.Atoi(showData)
+		showDataInt = parseShowData
+	}
+
+   if page == "" && showData == ""{
+   	limitPage = ""
+   }else {
+	   limitPageInt := (pageInt - 1) * showDataInt
+	   DataPageInt := strconv.Itoa(limitPageInt)
+	   DataShowDataInt := strconv.Itoa(showDataInt)
+	   limitPage = `LIMIT`+ DataPageInt +`,`+DataShowDataInt
+   }
+	filterMonth := ``
+	if filter == "" {
+		filterMonth = ``
+	} else {
+		filterMonth = ` and MONTH(comtrip.date) =` + filter
+	}
+	searchingAction := ``
+	if searching == "" {
+		searchingAction = ``
+	} else {
+		searchingAction = ` and (MIN(comtrip.date) LIKE '% ` + searching + `%' OR MIN(comtrip.route_profile_name) LIKE '%
+							` + searching + `%' OR MIN(detcomtrip.purpose) LIKE '%` + searching + `%'
+								OR MIN(comtrip.attendance_code) LIKE '%` + searching + `%')`
+	}
+
+	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(detcomtrip.type_of_transport), MIN(comtrip.attendance_code), 
+										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
+										from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y' `+filterMonth+searchingAction+`
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc `+limitPage, store_number, employee_number)
+
+	var init_container enter_the_information.ShowHistory
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
+		if err != nil {
+			panic(err.Error())
+		}
+		// Get Data Transportation, detail from, detail to and purpose (horizontal)
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := model.DB.Query(`
+		select MIN(detcomtrip.id_commuting_trip) as id, MiN(comtrip.date), MIN(comtrip.route_profile_name), MIN(detcomtrip.type_of_transport),
+		MIN(comtrip.attendance_code) from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, 
+		basic_information bainfo, store_information storeinfo where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and
+		geninfo.id_general_information = comtrip.id_general_information AND geninfo.id_basic_information = bainfo.id_basic_information and
+		geninfo.id_store_code = storeinfo.id_code_store and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.submit ='Y' 
+		and comtrip.save_trip ='N' and detcomtrip.id_commuting_trip =? group by detcomtrip.id_commuting_trip order by comtrip.date asc
+		`, store_number, employee_number, init_container.IdCommutingTrip)
+
+		if errGetDataTypeOfTransportationAndRoute != nil {
+			log.Println(0)
+			typeOfTransportation = ""
+			DetailTo = ""
+			DetailFrom = ""
+			Purpose = ""
+		} else {
+			for GetDataTypeOfTransportationAndRoute.Next() {
+				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
+
+				if errGetDataT != nil {
+					log.Println(errGetDataT.Error())
+				}
+				DatatypeOfTransportation += typeOfTransportation + ` - `
+				DataRoute += DetailFrom + ` - - ` + DetailTo + `-`
+				DataPurpose += Purpose + ` - `
+
+			}
+			if typeOfTransportation != "" {
+				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+			}
+			if DataRoute != "" {
+				DataRoute = DataRoute[0 : len(DataRoute)-1]
+			}
+			if DataPurpose != "" {
+				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+			}
+			//log.Println(DatatypeOfTransportation)
+			//log.Println(DataRoute)
+			//log.Println(DataPurpose)
+		}
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
+		FinnalyData := enter_the_information.ShowHistory{
+			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
+			IdCommutingTrip:       init_container.IdCommutingTrip,
+			RouteProfileName:      init_container.RouteProfileName,
+			Date:                  init_container.Date,
+			TypeOfTransport:       typeOfTransportation,
+			AttendanceCode:        init_container.AttendanceCode,
+			Purpose:               init_container.Purpose,
+			Distance:              init_container.Distance,
+			CommuteDistance:       init_container.CommuteDistance,
+			Cost:                  init_container.Cost,
+			Route:                 DataRoute,
+			StatusCommuting:       init_container.StatusCommuting,
+			DateApprove:           init_container.DateApprove,
+		}
+		sh = append(sh, FinnalyData)
 
 	}
 
@@ -121,34 +464,64 @@ geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_
 // body row -> json
 
 func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpenses(con string, store_id string, employee_id string, initializeData *enter_the_information.InsertUsageRecordApplyForTravelExpenses) (it []enter_the_information.InsertUsageRecordApplyForTravelExpenses, condition string) {
+	Status_Draft := "N"
+	RandomInte := rand.Intn(999999)
+	var RandomInt int
+
+	checkIntRandom := utils_enter_the_information.CheckDataByIdInt(`select COUNT(*) from code_commuting where code_random = ?`, RandomInte)
+
+	if checkIntRandom == 0 {
+		RandomInt = RandomInte
+	} else {
+		for {
+			RandomInteg := rand.Intn(999999)
+			checkIntRandom := utils_enter_the_information.CheckDataByIdInt(`select COUNT(*) from code_commuting where code_random = ?`, RandomInteg)
+			if checkIntRandom == 0 {
+				RandomInt = RandomInteg
+				break
+			}
+		}
+	}
 
 	if con != "Y" && con != "N" {
 		return nil, "Missing required, Please use /Y or /N"
 	}
+	//else {
+	//	Status_Draft = "Y"
+	//}
 	checkCountData := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'`, store_id, employee_id)
-	log.Println(checkCountData)
+
 	if con == "Y" && checkCountData >= 3 {
 		return nil, "You cannot register up to more than 3 routes"
 	}
 	vals := []interface{}{}
+	//var Arr_DetailDataInsert [] enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses
 
-	rows, err := model.DB.Prepare(`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip)
- 		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?)`)
-
+	insertCommutingTrip, errInsertCommutingTrip := model.DB.Prepare(`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
+ 		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`)
+	insertCodeCommuting, errInsertCodeCommuting := model.DB.Prepare(`insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
+	VALUES(?,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`)
 	sqlDetail := `insert into detail_commuting_trip(id_commuting_trip,
 									type_of_Transport ,purpose ,detail_from ,detail_to,distance,
 									cost,point_trip,transit_point,commute_distance,go_out_distance)
 									VALUES`
-
+	//var initializeDataD enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses
 	for _, initializeDataD := range initializeData.DataDetail {
 		sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?),"
+		//Distance := initializeDataD.CommuteDistance + initializeDataD.GoOutDistance
+		//initializeDataD.Distance = Distance
+		//log.Println(initializeDataD.Distance)
 		vals = append(vals, initializeDataD.IdCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
 	sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
 	stmtDetail, _ := model.DB.Prepare(sqlDetail)
 
-	if err != nil {
-		panic(err.Error())
+	if errInsertCommutingTrip != nil {
+		log.Println(errInsertCommutingTrip.Error())
+	}
+
+	if errInsertCodeCommuting != nil {
+		log.Println(errInsertCodeCommuting.Error())
 	}
 
 	defer model.DB.Close()
@@ -158,21 +531,39 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 		return nil, message
 	}
 
-	execute, err1 := rows.Exec(initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, initializeData.CodeCommuting, con)
-	res, _ := stmtDetail.Exec(vals...)
-	if res == nil {
-		log.Println("gagal")
+	executeCodeCommuting, _ := insertCodeCommuting.Exec(RandomInt)
+	execute, err1 := insertCommutingTrip.Exec(initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
+	executeDetailCommutingTrip, _ := stmtDetail.Exec(vals...)
+	if executeDetailCommutingTrip == nil {
+		log.Println("gagal insert Detail Commuting Trip")
+	}
+	if executeCodeCommuting == nil {
+		log.Println("gagal insert Code Commuting")
 	}
 	if err1 != nil && execute == nil {
 		log.Println(err1)
 		return nil, "Missing required field in body request"
 	}
+	//DetailDataInsert := enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses{
+	//	IdCommutingTrip: initializeDataD.IdCommutingTrip,
+	//	TypeOfTransport: initializeDataD.TypeOfTransport,
+	//	Purpose:         initializeDataD.Purpose,
+	//	DetailFrom:      initializeDataD.DetailFrom,
+	//	DetailTo:        initializeDataD.DetailTo,
+	//	Distance:        initializeDataD.Distance,
+	//	Cost:            initializeDataD.Cost,
+	//	PointTrip:       initializeDataD.PointTrip,
+	//	TransitPoint:    initializeDataD.TransitPoint,
+	//	CommuteDistance: initializeDataD.CommuteDistance,
+	//	GoOutDistance:   initializeDataD.GoOutDistance,
+	//}
+	//Arr_DetailDataInsert = append(Arr_DetailDataInsert,DetailDataInsert)
 
 	datainsert := enter_the_information.InsertUsageRecordApplyForTravelExpenses{
 		RouteProfileName:     initializeData.RouteProfileName,
 		Date:                 initializeData.Date,
 		Attendance:           initializeData.Attendance,
-		CodeCommuting:        initializeData.CodeCommuting,
+		CodeCommuting:        RandomInt,
 		IdGeneralInformation: initializeData.IdGeneralInformation,
 		DataDetail:           initializeData.DataDetail,
 	}
@@ -200,9 +591,10 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 									type_of_Transport ,purpose ,detail_from ,detail_to,distance,
 									cost,point_trip,transit_point,commute_distance,go_out_distance)
 									VALUES`
-
+	DataIdCommutingTripDetail := ""
 	for _, initializeDataD := range initializeData.DataDetail {
 		sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?,?),"
+		DataIdCommutingTripDetail += strconv.Itoa(initializeDataD.IdCommutingTripDetail) + `,`
 		vals = append(vals, initializeDataD.IdCommutingTripDetail, initializeDataD.IdCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
 	sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
@@ -229,6 +621,13 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 		log.Println(err1)
 		return nil, "Missing required field in body request"
 	}
+	sqlDeleteDataDetail := `DELETE FROM detail_commuting_trip where id_commuting_trip =` + initializeData.IdCommutingTrip + `
+							and id_detail_commuting_trip NOT IN(` + DataIdCommutingTripDetail + `)`
+	stmtDeleteDataDetail, errstmtDeteleDataDetail := model.DB.Query(sqlDeleteDataDetail)
+	if errstmtDeteleDataDetail != nil {
+		log.Println(errstmtDeteleDataDetail)
+	}
+	defer stmtDeleteDataDetail.Close()
 
 	dataShow := enter_the_information.UpdateUsageRecordApplyForTravelExpenses{
 		IdCommutingTrip:      initializeData.IdCommutingTrip,
@@ -254,26 +653,19 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 
 func (model Models_init_Usage_Record) Model_DeleteUsageRecordApplyForTravelExpenses(id string) (response int64, condition string) {
 
-	rows, err := model.DB.Prepare(`DELETE commuting_trip, detail_commuting_trip FROM commuting_trip INNER JOIN detail_commuting_trip 
-WHERE commuting_trip.id_commuting_trip = detail_commuting_trip.id_commuting_trip
-and commuting_trip.id_commuting_trip =?`)
+	sqlDelete := `DELETE commuting_trip, detail_commuting_trip FROM commuting_trip
+					INNER JOIN detail_commuting_trip 
+					WHERE commuting_trip.id_commuting_trip = detail_commuting_trip.id_commuting_trip
+					and commuting_trip.id_commuting_trip IN(` + id + `)`
 
-	if err != nil {
-		log.Println(err)
+	QueryDelete, errQueryDelete := model.DB.Query(sqlDelete)
+
+	if errQueryDelete != nil {
+		return 0, "Please Check Your ID"
 	}
+	defer QueryDelete.Close()
 
-	execute, errExecute := rows.Exec(id)
-
-	if errExecute != nil && execute == nil {
-		return 0, "Wrong ID"
-	}
-	rowsAffected, errRowAffected := execute.RowsAffected()
-
-	if errRowAffected != nil {
-		log.Println(errRowAffected)
-	}
-
-	return rowsAffected, "Success Response"
+	return 1, "Success Response"
 }
 
 // indonesia
@@ -284,7 +676,7 @@ and commuting_trip.id_commuting_trip =?`)
 
 func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (response int64, condition string) {
 
-	sqlUpdate := `update commuting_trip set draft = 'Y' where id_commuting_trip IN(`+id+`)`
+	sqlUpdate := `update commuting_trip set draft = 'Y' where id_commuting_trip IN(` + id + `)`
 
 	stmtUpdate, errStmtUpdate := model.DB.Query(sqlUpdate)
 
@@ -292,8 +684,35 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (r
 		return 0, "Please Check Your ID"
 	}
 	defer stmtUpdate.Close()
-	
 
 	return 1, "Success Response"
+}
 
+func (model Models_init_Usage_Record) Model_UseUsageRecord(id string) (response int, condition string) {
+
+	sqlUseCommutingTrip := `insert into commuting_trip (id_general_information,
+	route_profile_name, date, attendance_code, created_date,created_time) 
+	select a.id_general_information, a.route_profile_name, a.date, a.attendance_code, 
+	DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),
+	TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s')
+	from commuting_trip a where a.id_commuting_trip IN(` + id + `)`
+
+	sqlUseDetailCommutingTrip := `INSERT INTO detail_commuting_trip( id_commuting_trip, type_of_transport, 
+	purpose, detail_from,detail_to, distance, cost, point_trip, transit_point, commute_distance,
+	go_out_distance)
+	select detcomtrip.id_commuting_trip,detcomtrip.type_of_transport,detcomtrip.purpose,
+	detcomtrip.detail_from, detcomtrip.detail_to, detcomtrip.distance, detcomtrip.cost, 
+	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
+	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip IN(` + id + `)`
+
+	stmtUseCommutingTrip, errstmtCommutingTrip := model.DB.Query(sqlUseCommutingTrip)
+	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := model.DB.Query(sqlUseDetailCommutingTrip)
+
+	if errstmtCommutingTrip != nil && errstmtDetailCommutingTrip != nil {
+		return 0, "Please Check Your ID"
+	}
+	defer stmtUseCommutingTrip.Close()
+	defer stmtUseDetailCommutingTrip.Close()
+
+	return 1, "Success Response"
 }

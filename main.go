@@ -145,7 +145,9 @@ func main() {
 	router.HandleFunc("/commuting-UsageRecord-Apply-Update", entertheinformation.ReturnUpdateUsageRecordApplyForTravelExpenses)
 	router.HandleFunc("/commuting-UsageRecord-Delete/{id_commuting_trip}", entertheinformation.ReturnDeleteUsageRecord)
 	router.HandleFunc("/commuting-UsageRecord-ShowUseMyRoute", entertheinformation.ReturnGetByCommutingUsageRecordUseMyRoute)
+	router.HandleFunc("/commuting-UsageRecord-ShowHistory", entertheinformation.ReturnGetByCommutingUsageRecordHistory)
 	router.HandleFunc("/commuting-UsageRecord-Draft/{id_commuting_trip}", entertheinformation.ReturnUpdateUsageRecordDraft)
+	router.HandleFunc("/commuting-UseUsageRecord/{id_commuting_trip}", entertheinformation.ReturnUseUsageRecord)
 	// end Commuting Transportation Application
 
 	fmt.Println("Connected to port 9000")

@@ -1,8 +1,7 @@
 package enter_the_information
 
 import (
-	models "../../models/map"
-	models2 "Go_DX_Services/models/map"
+	models3 "../../models"
 )
 
 //type ShowDetailTransportationApplication struct {
@@ -14,82 +13,115 @@ import (
 //}
 
 type ShowDetailTransportationApplicationGet struct {
-	IdDetailCommutingTrip models.NullInt64   `json:"id_detail_commuting_trip"`
-	IdCommutingTrip       models.NullInt64   `json:"id_commuting_trip"`
-	TypeOfTransport       models.NullString  `json:"type_of_transport"`
-	Purpose               models.NullString  `json:"purpose"`
-	DetailFrom            models.NullString  `json:"detail_from"`
-	DetailTo              models.NullString  `json:"detail_to"`
-	Distance              models.NullFloat64 `json:"distance"`
-	Cost                  models.NullInt64   `json:"cost"`
-	PointTrip             models.NullFloat64 `json:"point_trip"`
-	TransitPoint          models.NullString  `json:"transit_point"`
-	CommuteDistance       models.NullFloat64 `json:"commute_distance"`
-	GoOutDistance         models.NullFloat64 `json:"go_out_distance"`
+	IdDetailCommutingTrip models3.NullInt    `json:"id_detail_commuting_trip"`
+	IdCommutingTrip       models3.NullInt    `json:"id_commuting_trip"`
+	TypeOfTransport       models3.NullString `json:"type_of_transport"`
+	Purpose               models3.NullString `json:"purpose"`
+	DetailFrom            models3.NullString `json:"detail_from"`
+	DetailTo              models3.NullString `json:"detail_to"`
+	Distance              models3.NullFloat  `json:"distance"`
+	Cost                  models3.NullInt    `json:"cost"`
+	PointTrip             models3.NullFloat  `json:"point_trip"`
+	TransitPoint          models3.NullString `json:"transit_point"`
+	CommuteDistance       models3.NullFloat  `json:"commute_distance"`
+	GoOutDistance         models3.NullFloat  `json:"go_out_distance"`
 }
 
 type FormatShowBasicInformation struct {
 	DataBasicInformation interface{} `json:"data_basic_information"`
-	DataApprove        interface{}        `json:"data_approve"`
-	DataApply          interface{}        `json:"data_apply"`
+	DataApprove          interface{} `json:"data_approve"`
+	DataApply            interface{} `json:"data_apply"`
 }
 
 type ShowBasicInformation1 struct {
 	IdBasicInformation int                `json:"id_basic_information"`
-	FirstName          models2.NullString `json:"first_name"`
-	LastName           models2.NullString `json:"last_name"`
-	Address            models2.NullString `json:"address"`
-	AddressKana        models2.NullString `json:"address_kana"`
-	AddressDetail      models2.NullString `json:"address_detail"`
-	AddressDetailKana  models2.NullString `json:"address_detail_kana"`
-	AddPhoneNumber     models2.NullString `json:"add_phone_number"`
+	FirstName          models3.NullString `json:"first_name"`
+	LastName           models3.NullString `json:"last_name"`
+	Address            models3.NullString `json:"address"`
+	AddressKana        models3.NullString `json:"address_kana"`
+	AddressDetail      models3.NullString `json:"address_detail"`
+	AddressDetailKana  models3.NullString `json:"address_detail_kana"`
+	AddPhoneNumber     models3.NullString `json:"add_phone_number"`
 }
 
 type ShowBasicInformation2 struct {
 	IdGeneralBasicInformation int                `json:"id_commuting_basic_information"`
-	StatusApproved            models2.NullString `json:"status_approved"`
-	DateApprove               models2.NullString `json:"date_approve"`
-	TimeApprove               models2.NullString `json:"time_approve"`
-	DateSubmit                models2.NullString `json:"date_submit"`
+	StatusApproved            models3.NullString `json:"status_approved"`
+	DateApprove               models3.NullString `json:"date_approve"`
+	TimeApprove               models3.NullString `json:"time_approve"`
+	DateSubmit                models3.NullString `json:"date_submit"`
 }
 
 type ShowBasicInformation3 struct {
 	IdCommutingBasicInformation    int                `json:"id_commuting_basic_information"`
 	IdGeneralInformation           int                `json:"id_general_information"`
-	InsuranceCompany               models2.NullString `json:"insurance_company"`
-	DriverLicenseExpiryDate        models2.NullString `json:"driver_license_expiry_date"`
-	PersonalInjury                 models2.NullString `json:"personal_injury"`
-	PropertyDamage                 models2.NullString `json:"property_damage"`
-	CarInsuranceDocumentExpiryDate models2.NullString `json:"car_insurance_document_expiry_date"`
+	InsuranceCompany               models3.NullString `json:"insurance_company"`
+	DriverLicenseExpiryDate        models3.NullString `json:"driver_license_expiry_date"`
+	PersonalInjury                 models3.NullString `json:"personal_injury"`
+	PropertyDamage                 models3.NullString `json:"property_damage"`
+	CarInsuranceDocumentExpiryDate models3.NullString `json:"car_insurance_document_expiry_date"`
+}
+
+type FormatShowUsageRecord struct {
+	CountHistory         int             `json:"count_history"`
+	KodeBasicInformation models3.NullInt `json:"kode_basic_information"`
+	DataBasicInformation interface{}     `json:"data_basic_information"`
+	DataUsageRecord      interface{}     `json:"data_usage_record"`
+}
+
+type FormatShowUsageRecordForEdit struct {
+	DataTrip       interface{} `json:"data_trip"`
+	DetailDataTrip interface{} `json:"detail_data_trip"`
 }
 
 type ShowUsageRecord struct {
-	IdDetailCommutingTrip int                 `json:"id_detail_commuting_trip"`
-	IdCommutingTrip       int                 `json:"id_commuting_trip"`
-	TypeOfTransport       models2.NullString  `json:"type_of_transport"`
-	Purpose               models2.NullString  `json:"purpose"`
-	DetailFrom            models2.NullString  `json:"detail_from"`
-	DetailTo              models2.NullString  `json:"detail_to"`
-	Distance              models2.NullFloat64 `json:"distance"`
-	Cost                  models2.NullInt64   `json:"cost"`
-	PointTrip             models2.NullFloat64 `json:"point_trip"`
-	TransitPoint          models2.NullString  `json:"transit_point"`
-	CommuteDistance       models2.NullFloat64 `json:"commute_distance"`
-	GoOutDistance         models2.NullFloat64 `json:"go_out_distance"`
+	IdDetailCommutingTrip int                `json:"id_detail_commuting_trip"`
+	IdCommutingTrip       int                `json:"id_commuting_trip"`
+	TypeOfTransport       models3.NullString `json:"type_of_transport"`
+	Purpose               models3.NullString `json:"purpose"`
+	DetailFrom            models3.NullString `json:"detail_from"`
+	DetailTo              models3.NullString `json:"detail_to"`
+	Distance              models3.NullFloat  `json:"distance"`
+	Cost                  models3.NullInt    `json:"cost"`
+	PointTrip             models3.NullFloat  `json:"point_trip"`
+	TransitPoint          models3.NullString `json:"transit_point"`
+	CommuteDistance       models3.NullFloat  `json:"commute_distance"`
+	GoOutDistance         models3.NullFloat  `json:"go_out_distance"`
+}
+
+type ShowUsageRecord2 struct {
+	//IdDetailCommutingTrip int       `json:"id_detail_commuting_trip"`
+	IdCommutingTrip int               `json:"id_commuting_trip"`
+	TypeOfTransport string            `json:"type_of_transport"`
+	Purpose         string            `json:"purpose"`
+	Route           string            `json:"route"`
+	Distance        models3.NullFloat `json:"distance"`
+	CommuteDistance models3.NullFloat `json:"commute_distance"`
+	Cost            models3.NullInt   `json:"cost"`
+	StatusTemporary string            `json:"status_temporary"`
+	//PointTrip             models3.NullFloat `json:"point_trip"`
+	//TransitPoint          models3.NullString  `json:"transit_point"`
+	//GoOutDistance         models3.NullFloat `json:"go_out_distance"`
+}
+
+type ShowCommutingTrip struct {
+	IdCommutingTrip  int    `json:"id_commuting_trip"`
+	Date             string `json:"date"`
+	RouteProfileName string `json:"route_profile_name"`
+	AttendanceCode   string `json:"attendance_code"`
 }
 
 type ShowUseMyRoute struct {
-	IdCommutingTrip       int                 `json:"id_commuting_trip"`
-	IdDetailCommutingTrip int                 `json:"id_detail_commuting_trip"`
-	RouteProfileName      models2.NullString  `json:"route_profile_name"`
-	TypeOfTransport       models2.NullString  `json:"type_of_transport"`
-	AttendanceCode        models2.NullString  `json:"attendance_code"`
-	Purpose               models2.NullString  `json:"purpose"`
-	DetailTo              models2.NullString  `json:"detail_to"`
-	DetailFrom            models2.NullString  `json:"detail_from"`
-	CommuteDistance       models2.NullFloat64 `json:"commute_distance"`
-	GoOutDistance         models2.NullFloat64 `json:"go_out_distance"`
-	Cost                  models2.NullInt64   `json:"cost"`
+	IdCommutingTrip       int                `json:"id_commuting_trip"`
+	IdDetailCommutingTrip int                `json:"id_detail_commuting_trip"`
+	RouteProfileName      models3.NullString `json:"route_profile_name"`
+	TypeOfTransport       string             `json:"type_of_transport"`
+	AttendanceCode        models3.NullString `json:"attendance_code"`
+	Purpose               string             `json:"purpose"`
+	Route                 string             `json:"route"`
+	Distance              float64            `json:"distance"`
+	CommuteDistance       models3.NullFloat  `json:"commute_distance"`
+	Cost                  models3.NullInt    `json:"cost"`
 }
 
 type InsertBasicInformation struct {
@@ -105,7 +137,7 @@ type InsertUsageRecordApplyForTravelExpenses struct {
 	RouteProfileName     string                                          `json:"route_profile_name"`
 	Date                 string                                          `json:"date"`
 	Attendance           string                                          `json:"attendance"`
-	CodeCommuting        string                                          `json:"code_commuting"`
+	CodeCommuting        int                                             `json:"code_commuting"`
 	IdGeneralInformation string                                          `json:"id_general_information"`
 	DataDetail           []InsertDetailUsageRecordApplyForTravelExpenses `json:"data_detail"`
 }
@@ -115,7 +147,7 @@ type InsertDetailUsageRecordApplyForTravelExpenses struct {
 	Purpose         string  `json:"purpose"`
 	DetailFrom      string  `json:"detail_from"`
 	DetailTo        string  `json:"detail_to"`
-	Distance        string  `json:"distance"`
+	Distance        float64 `json:"distance"`
 	Cost            int     `json:"cost"`
 	PointTrip       float64 `json:"point_trip"`
 	TransitPoint    string  `json:"transit_point"`
@@ -151,4 +183,20 @@ type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	TransitPoint          string  `json:"transit_point"`
 	CommuteDistance       float64 `json:"commute_distance"`
 	GoOutDistance         float64 `json:"go_out_distance"`
+}
+
+type ShowHistory struct {
+	IdDetailCommutingTrip int                `json:"id_detail_commuting_trip"`
+	IdCommutingTrip       int                `json:"id_commuting_trip"`
+	RouteProfileName      models3.NullString `json:"route_profile_name"`
+	Date                  models3.NullString `json:"date"`
+	TypeOfTransport       string             `json:"type_of_transport"`
+	AttendanceCode        models3.NullString `json:"attendance_code"`
+	Purpose               models3.NullString `json:"purpose"`
+	Distance              float64            `json:"distance"`
+	CommuteDistance       float64            `json:"commute_distance"`
+	Cost                  int64              `json:"cost"`
+	Route                 string             `json:"route"`
+	StatusCommuting       string             `json:"status_commuting"`
+	DateApprove           models3.NullString `json:"date_approve"`
 }

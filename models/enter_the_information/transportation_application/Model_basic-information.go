@@ -106,9 +106,12 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 
 
 	FinallyData := enter_the_information.FormatShowBasicInformation{
-		DataBasicInformation: Arr_BasicInformation,
-		DataApprove:          Arr_DataApprove,
-		DataApply:            Arr_init_CommutingBasicInformation,
+		//DataBasicInformation: Arr_BasicInformation,
+		//DataApprove:          Arr_DataApprove,
+		//DataApply:            Arr_init_CommutingBasicInformation,
+		DataBasicInformation: init_BasicInformation,
+		DataApprove:          init_DataApprove,
+		DataApply:            init_DataApprove,
 	}
 	sh = append(sh,FinallyData)
 
