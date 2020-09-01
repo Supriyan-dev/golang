@@ -166,7 +166,6 @@ type UpdateUsageRecordApplyForTravelExpenses struct {
 	RouteProfileName     string                                          `json:"route_profile_name"`
 	Date                 string                                          `json:"date"`
 	Attendance           string                                          `json:"attendance"`
-	CodeCommuting        string                                          `json:"code_commuting"`
 	IdGeneralInformation string                                          `json:"id_general_information"`
 	DataDetail           []UpdateDetailUsageRecordApplyForTravelExpenses `json:"data_detail"`
 }
@@ -183,6 +182,18 @@ type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	TransitPoint          string  `json:"transit_point"`
 	CommuteDistance       float64 `json:"commute_distance"`
 	GoOutDistance         float64 `json:"go_out_distance"`
+}
+
+type FormatHistory struct {
+	DataCount interface{} `json:"data_count"`
+	Datahistory interface{} `json:"datahistory"`
+}
+
+type ShowAdditionalHistory struct {
+	CountDataSubmit int `json:"count_data_submit"`
+	CountDataDraft int `json:"count_data_draft"`
+	CountDataPartial int `json:"count_data_partial"`
+	CountDataNotApproved int `json:"count_data_not_approved"`
 }
 
 type ShowHistory struct {
