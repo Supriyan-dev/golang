@@ -612,7 +612,7 @@ func (model Models_init_Usage_Record) Model_DeleteUsageRecordApplyForTravelExpen
 
 func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (response int64, condition string) {
 
-	sqlUpdate := `update commuting_trip set draft = 'Y' where id_commuting_trip IN(` + id + `)`
+	sqlUpdate := `update commuting_trip set save_draft_status = 'Y' where id_commuting_trip IN(` + id + `)`
 
 	stmtUpdate, errStmtUpdate := model.DB.Query(sqlUpdate)
 

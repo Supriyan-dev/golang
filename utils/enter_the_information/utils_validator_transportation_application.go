@@ -5,9 +5,19 @@ import (
 	"../../initialize/enter_the_information"
 	db2 "../../db"
 	"strings"
+	models3 "../../models"
 )
 
 func CheckDataById(sql string, id string) (CountData int) {
+	db := db2.Connect()
+	err := db.QueryRow(sql,id).Scan(&CountData)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return CountData
+}
+
+func CheckDataByIdNullString(sql string, id models3.NullString) (CountData int) {
 	db := db2.Connect()
 	err := db.QueryRow(sql,id).Scan(&CountData)
 	if err != nil {
