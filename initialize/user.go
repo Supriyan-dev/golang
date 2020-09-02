@@ -28,11 +28,6 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type ResponseResult struct {
-	Error  string `json:"error"`
-	Result string `json:"result"`
-}
-
 type UsersEncrypt struct {
 	Id_user         string         `json:"id_user"`
 	First_name      string         `json:"first_name"`

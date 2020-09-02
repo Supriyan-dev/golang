@@ -24,11 +24,11 @@ func (model1 ModelUser_init) ReturnAllDataUser() (data string, err error) {
 	if errScan != nil {
 		log.Println(errScan)
 	}
-	tampungData := (all.Id_user + all.First_name + all.Last_name + all.Employee_number + all.Id_code_store + all.Password + all.Id_role + allNull.Email + allNull.Recovery_pin + allNull.Photo_url + allNull.Photo_name)
+	tampung := all.Id_user + all.First_name + all.Last_name + all.Employee_number + all.Id_code_store + all.Password + all.Id_role + allNull.Email + allNull.Recovery_pin + allNull.Photo_url + allNull.Photo_name
 
 	key := "P@ssw0rdL0g1n"
 
-	encrypted := aes256.Encrypt(tampungData, key)
+	encrypted := aes256.Encrypt(tampung, key)
 
 	decrypted := aes256.Decrypt(encrypted, key)
 
