@@ -16,6 +16,114 @@ type Models_init_Usage_Record models.DB_init
 // data di looping
 
 // english
+// Show Data Usage Record to edit by id commuting trip, store number dan employee number
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.FormatShowUsageRecordForEdit, err error) {
+	var inter_CommutingTrip interface{}
+	var shCommutingTrip enter_the_information.ShowCommutingTrip
+	//var Arr_shCommutingTrip []enter_the_information.ShowCommutingTrip
+	var Arr_shCommutingTripDetail []enter_the_information.ShowUsageRecord
+	QueryShowCommutingTrip, errShowCommutingTrip := model.DB.Query(`select ct.id_commuting_trip, ct.route_profile_name,
+ 										ct.date, ct.attendance_code from commuting_trip ct where ct.id_commuting_trip = ?`, id_commuting_trip)
+
+	if errShowCommutingTrip != nil {
+		log.Println("error show Commuting Trip")
+		log.Println(errShowCommutingTrip)
+	}
+
+	QueryShowCommutingTrip.Next()
+	errShowCommutingTripScan := QueryShowCommutingTrip.Scan(&shCommutingTrip.IdCommutingTrip, &shCommutingTrip.RouteProfileName, &shCommutingTrip.Date, &shCommutingTrip.AttendanceCode)
+
+	if errShowCommutingTripScan != nil {
+		inter_CommutingTrip = nil
+	} else {
+		inter_CommutingTrip = shCommutingTrip
+	}
+
+	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
+										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi,
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information 
+										and b.type_of_transport =  trans.code_transportation
+										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information 
+										and si.code_store =? and bi.employee_code=? and b.id_commuting_trip = ?
+										`, store_number, employee_number, id_commuting_trip)
+
+	var init_container enter_the_information.ShowUsageRecord
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
+		if err != nil {
+			return nil, nil
+		}
+
+		Arr_shCommutingTripDetail = append(Arr_shCommutingTripDetail, init_container)
+
+	}
+
+	FinnalyData := enter_the_information.FormatShowUsageRecordForEdit{
+		DataTrip:       inter_CommutingTrip,
+		DetailDataTrip: Arr_shCommutingTripDetail,
+	}
+	sh = append(sh, FinnalyData)
+
+	return sh, nil
+}
+
+// indonesia
+// Menampilkan data Usage Record untuk di edit berdasarkan id commuting trip ,store number dan employee number
+
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []enter_the_information.ShowUseMyRoute, err error) {
+
+	rows, err := model.DB.Query(`select MIN(detcomtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), MIN(comtrip.route_profile_name),  MIN(comtrip.attendance_code),
+MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detcomtrip.commute_distance),0), COALESCE(SUM(detcomtrip.cost),0)  from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
+group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number, employee_number)
+
+	var init_container enter_the_information.ShowUseMyRoute
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		DatatypeOfTransportation, DataRoute, _ :=	utils_enter_the_information.GetAdditionalUsageRecord(store_number,employee_number,init_container.IdCommutingTrip,"usageRecordUseRoute")
+		FinallyData := enter_the_information.ShowUseMyRoute{
+			IdCommutingTrip:       init_container.IdCommutingTrip,
+			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
+			RouteProfileName:      init_container.RouteProfileName,
+			TypeOfTransport:       DatatypeOfTransportation,
+			AttendanceCode:        init_container.AttendanceCode,
+			Purpose:               init_container.Purpose,
+			Route:                 DataRoute,
+			Distance:              init_container.Distance,
+			CommuteDistance:       init_container.CommuteDistance,
+			Cost:                  init_container.Cost,
+		}
+		sh = append(sh, FinallyData)
+		//sh = append(sh, init_container)
+
+	}
+
+	return sh, nil
+}
+
+// indonesia
+// Menampilkan Semua route favorit berdasarkan store number dan employee number
+
+// english
+// get all data route favorite by store number and employee number
+
+// english
 // Show all detail_commuting_trip based on code_store and employee_store in group by based on id_commuting_trip
 // data is looped
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []enter_the_information.FormatShowUsageRecord, err error) {
@@ -113,113 +221,6 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 		return sh, nil
 	}
 	return nil, nil
-}
-
-// indonesia
-// Menampilkan data Usage Record untuk di edit berdasarkan id commuting trip ,store number dan employee number
-
-// english
-// Show Data Usage Record to edit by id commuting trip, store number dan employee number
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.FormatShowUsageRecordForEdit, err error) {
-	var inter_CommutingTrip interface{}
-	var shCommutingTrip enter_the_information.ShowCommutingTrip
-	//var Arr_shCommutingTrip []enter_the_information.ShowCommutingTrip
-	var Arr_shCommutingTripDetail []enter_the_information.ShowUsageRecord
-	QueryShowCommutingTrip, errShowCommutingTrip := model.DB.Query(`select ct.id_commuting_trip, ct.route_profile_name,
- 										ct.date, ct.attendance_code from commuting_trip ct where ct.id_commuting_trip = ?`, id_commuting_trip)
-
-	if errShowCommutingTrip != nil {
-		log.Println(errShowCommutingTrip)
-	}
-
-	QueryShowCommutingTrip.Next()
-	errShowCommutingTripScan := QueryShowCommutingTrip.Scan(&shCommutingTrip.IdCommutingTrip, &shCommutingTrip.RouteProfileName, &shCommutingTrip.Date, &shCommutingTrip.AttendanceCode)
-
-	if errShowCommutingTripScan != nil {
-		inter_CommutingTrip = nil
-	} else {
-		inter_CommutingTrip = shCommutingTrip
-	}
-
-	rows, err := model.DB.Query(`select b.id_detail_commuting_trip, b.id_commuting_trip, trans.name_transportation_japanese, b.purpose, b.detail_from, b.detail_to,
-										b.distance, b.cost, b.point_trip, b.transit_point, b.commute_distance, b.go_out_distance
-										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi,
-										master_transportation trans
-										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information 
-										and b.type_of_transport =  trans.code_transportation
-										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information 
-										and si.code_store =? and bi.employee_code=? and b.id_commuting_trip = ?
-										`, store_number, employee_number, id_commuting_trip)
-
-	var init_container enter_the_information.ShowUsageRecord
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	for rows.Next() {
-		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
-		if err != nil {
-			return nil, nil
-		}
-
-		Arr_shCommutingTripDetail = append(Arr_shCommutingTripDetail, init_container)
-
-	}
-
-	FinnalyData := enter_the_information.FormatShowUsageRecordForEdit{
-		DataTrip:       inter_CommutingTrip,
-		DetailDataTrip: Arr_shCommutingTripDetail,
-	}
-	sh = append(sh, FinnalyData)
-
-	return sh, nil
-}
-
-// indonesia
-// Menampilkan Semua route favorit berdasarkan store number dan employee number
-
-// english
-// get all data route favorite by store number and employee number
-
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []enter_the_information.ShowUseMyRoute, err error) {
-
-	rows, err := model.DB.Query(`select MIN(detcomtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), MIN(comtrip.route_profile_name),  MIN(comtrip.attendance_code),
-MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detcomtrip.commute_distance),0), COALESCE(SUM(detcomtrip.cost),0)  from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
-where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
-geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
-group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number, employee_number)
-
-	var init_container enter_the_information.ShowUseMyRoute
-	if err != nil {
-		log.Println(err.Error())
-	}
-
-	for rows.Next() {
-		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost)
-
-		if err != nil {
-			panic(err.Error())
-		}
-
-		DatatypeOfTransportation, DataRoute, _ :=	utils_enter_the_information.GetAdditionalUsageRecord(store_number,employee_number,init_container.IdCommutingTrip,"usageRecordUseRoute")
-		FinallyData := enter_the_information.ShowUseMyRoute{
-			IdCommutingTrip:       init_container.IdCommutingTrip,
-			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
-			RouteProfileName:      init_container.RouteProfileName,
-			TypeOfTransport:       DatatypeOfTransportation,
-			AttendanceCode:        init_container.AttendanceCode,
-			Purpose:               init_container.Purpose,
-			Route:                 DataRoute,
-			Distance:              init_container.Distance,
-			CommuteDistance:       init_container.CommuteDistance,
-			Cost:                  init_container.Cost,
-		}
-		sh = append(sh, FinallyData)
-		//sh = append(sh, init_container)
-
-	}
-
-	return sh, nil
 }
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_number string,
