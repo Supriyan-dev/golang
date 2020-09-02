@@ -29,8 +29,9 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
  									   gi.id_basic_information = bi.id_basic_information and 
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   bi.employee_code=?`, store_number, employee_number)
-	rows, err := model.DB.Query(`select  b.id_commuting_trip,COALESCE(SUM(b.distance),0)
- 										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , ct.draft,b.purpose
+	rows, err := model.DB.Query(`select  ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
+ 										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , 
+ 										MIN(ct.draft),MIN(b.purpose)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
@@ -102,7 +103,7 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 		StatusCarInsurance = `はい`
 	}
 	for rows.Next() {
-		err := rows.Scan(&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
+		err := rows.Scan(&init_ur.Date,&init_ur.RouteProfileName,&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
 		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
 		if err != nil {
 			log.Println(err.Error())
@@ -118,14 +119,16 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 			DatatypeOfTransportation, DataPurpose, DataRoute := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_ur.IdCommutingTrip, `usageRecord-CheckData`)
 
 			dataCommutingTrip := enter_the_information.ShowUsageRecord2{
-				IdCommutingTrip: init_ur.IdCommutingTrip,
-				TypeOfTransport: DatatypeOfTransportation,
-				Purpose:         DataPurpose,
-				Route:           DataRoute,
-				Distance:        init_ur.Distance,
-				CommuteDistance: init_ur.CommuteDistance,
-				Cost:            init_ur.Cost,
-				StatusTemporary: StatusTemporari,
+				IdCommutingTrip:  init_ur.IdCommutingTrip,
+				RouteProfileName: init_ur.RouteProfileName,
+				Date:             init_ur.Date,
+				TypeOfTransport:  DatatypeOfTransportation,
+				Purpose:          DataPurpose,
+				Route:            DataRoute,
+				Distance:         init_ur.Distance,
+				CommuteDistance:  init_ur.CommuteDistance,
+				Cost:             init_ur.Cost,
+				StatusTemporary:  StatusTemporari,
 			}
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}

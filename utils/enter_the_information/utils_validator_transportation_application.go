@@ -134,7 +134,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 	if Condition == "usageRecord-CheckData" {
 
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select trans.name_transportation_japanese, 
+			GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select trans.name_transportation_japanese, 
  										b.detail_from, b.detail_to, b.purpose, b.transit_point
 										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans

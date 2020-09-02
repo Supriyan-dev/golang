@@ -91,14 +91,16 @@ type ShowUsageRecord struct {
 
 type ShowUsageRecord2 struct {
 	//IdDetailCommutingTrip int       `json:"id_detail_commuting_trip"`
-	IdCommutingTrip int               `json:"id_commuting_trip"`
-	TypeOfTransport string            `json:"type_of_transport"`
-	Purpose         string            `json:"purpose"`
-	Route           string            `json:"route"`
-	Distance        models3.NullFloat `json:"distance"`
-	CommuteDistance models3.NullFloat `json:"commute_distance"`
-	Cost            models3.NullInt   `json:"cost"`
-	StatusTemporary string            `json:"status_temporary"`
+	IdCommutingTrip  int                `json:"id_commuting_trip"`
+	RouteProfileName models3.NullString `json:"route_profile_name"`
+	Date             models3.NullString `json:"date"`
+	TypeOfTransport  string             `json:"type_of_transport"`
+	Purpose          string             `json:"purpose"`
+	Route            string             `json:"route"`
+	Distance         models3.NullFloat  `json:"distance"`
+	CommuteDistance  models3.NullFloat  `json:"commute_distance"`
+	Cost             models3.NullInt    `json:"cost"`
+	StatusTemporary  string             `json:"status_temporary"`
 	//PointTrip             models3.NullFloat `json:"point_trip"`
 	//TransitPoint          models3.NullString  `json:"transit_point"`
 	//GoOutDistance         models3.NullFloat `json:"go_out_distance"`
@@ -125,6 +127,7 @@ type ShowUseMyRoute struct {
 }
 
 type InsertBasicInformation struct {
+	IdCommutingBasicInformation string `json:"id_commuting_basic_information"`
 	InsuranceCompany               string `json:"insurance_company"`
 	DriverLicenseExpiryDate        string `json:"driver_license_expiry_date"`
 	PersonalInjury                 string `json:"personal_injury"`
@@ -185,14 +188,14 @@ type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 }
 
 type FormatHistory struct {
-	DataCount interface{} `json:"data_count"`
+	DataCount   interface{} `json:"data_count"`
 	Datahistory interface{} `json:"datahistory"`
 }
 
 type ShowAdditionalHistory struct {
-	CountDataSubmit int `json:"count_data_submit"`
-	CountDataDraft int `json:"count_data_draft"`
-	CountDataPartial int `json:"count_data_partial"`
+	CountDataSubmit      int `json:"count_data_submit"`
+	CountDataDraft       int `json:"count_data_draft"`
+	CountDataPartial     int `json:"count_data_partial"`
 	CountDataNotApproved int `json:"count_data_not_approved"`
 }
 

@@ -69,7 +69,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			AddPhoneNumber:     init_BasicInformation.AddPhoneNumber,
 		}
 		Arr_BasicInformation = append(Arr_BasicInformation, showData)
-	}else{
+	} else {
 		Arr_BasicInformation = nil
 	}
 
@@ -99,11 +99,10 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			CarInsuranceDocumentExpiryDate: init_CommutingBasicInformation.CarInsuranceDocumentExpiryDate,
 		}
 		Arr_init_CommutingBasicInformation = append(Arr_init_CommutingBasicInformation, showData3)
-	}else {
+	} else {
 		Arr_DataApprove = nil
 		Arr_init_CommutingBasicInformation = nil
 	}
-
 
 	FinallyData := enter_the_information.FormatShowBasicInformation{
 		//DataBasicInformation: Arr_BasicInformation,
@@ -113,7 +112,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 		DataApprove:          init_DataApprove,
 		DataApply:            init_DataApprove,
 	}
-	sh = append(sh,FinallyData)
+	sh = append(sh, FinallyData)
 
 	return sh, nil
 }
@@ -135,12 +134,12 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 	if checkdata > 1 {
 		rows, err := model.DB.Prepare(`update commuting_basic_information set insurance_company = ?, driver_license_expiry_date =?,
  									personal_injury = ?, property_damage = ?, car_insurance_document_expiry_date = ?
- 									where id_general_information = ?  `)
+ 									where id_commuting_basic_information = ?  `)
 
 		if err != nil {
 			log.Println(err.Error())
 		}
-		execute, err1 := rows.Exec(insertD.InsuranceCompany, insertD.DriverLicenseExpiryDate, insertD.PersonalInjury, insertD.PropertyDamage, insertD.CarInsuranceDocumentExpiryDate, insertD.IdGeneralInformation)
+		execute, err1 := rows.Exec(insertD.InsuranceCompany, insertD.DriverLicenseExpiryDate, insertD.PersonalInjury, insertD.PropertyDamage, insertD.CarInsuranceDocumentExpiryDate, insertD.IdCommutingBasicInformation)
 
 		if err1 != nil && execute == nil {
 			log.Println(err1)
@@ -148,6 +147,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 		}
 
 		datainsert := enter_the_information.InsertBasicInformation{
+			IdCommutingBasicInformation:    insertD.IdCommutingBasicInformation,
 			InsuranceCompany:               insertD.InsuranceCompany,
 			DriverLicenseExpiryDate:        insertD.DriverLicenseExpiryDate,
 			PersonalInjury:                 insertD.PersonalInjury,
@@ -186,6 +186,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 		}
 
 		datainsert := enter_the_information.InsertBasicInformation{
+			IdCommutingBasicInformation:    "Auto",
 			InsuranceCompany:               insertD.InsuranceCompany,
 			DriverLicenseExpiryDate:        insertD.DriverLicenseExpiryDate,
 			PersonalInjury:                 insertD.PersonalInjury,
