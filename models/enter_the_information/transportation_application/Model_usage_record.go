@@ -4,6 +4,7 @@ import (
 	"../../../initialize/enter_the_information"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"errors"
 	"log"
 	"math/rand"
 	"strconv"
@@ -152,10 +153,20 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	var init_ur enter_the_information.ShowUsageRecord2
 	var Arr_ur []enter_the_information.ShowUsageRecord2
 	if err != nil && errGetBasicInformation != nil {
+		return nil, errors.New("error Get basic information ")
 		log.Println(err.Error())
 		log.Println(errGetBasicInformation.Error())
 	}
-	GetBasicInformation.Next()
+	NextBI := GetBasicInformation.Next()
+
+	if NextBI == true{
+		return nil, errors.New("error NextBasicInformation ")
+
+	}else {
+		return nil, errors.New("error NextBasicInformation ")
+
+	}
+
 	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
 	var KodeBasicInformation models.NullInt
 	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
@@ -169,6 +180,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	basic_information.id_basic_information = general_information.id_basic_information WHERE basic_information.id_basic_information = ?`, init_bi.IdBasicInformation).Scan(&KodeBasicInformation)
 
 	if GetKodeBasicInformation != nil {
+		return nil, errors.New("error Get Kode basic information ")
 		log.Println(GetKodeBasicInformation)
 	}
 
