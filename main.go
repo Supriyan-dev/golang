@@ -18,14 +18,10 @@ func main() {
 	// start login user
 	router.HandleFunc("/generate-hash/{password}", login.GenerateHashPassword).Methods("GET")
 	// router.HandleFunc("/login", login.CheckLogin).Methods("POST")
-	// amw := authenticationMiddleware{make(map[string]string)}
-	// amw.Populate()
-	// router.Use(amw.Middleware)
 	//end login user
 
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
-	// router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDriveUpdate).Methods("PUT")
 	router.HandleFunc("/permission_to_drive/{page}/{perPage}", controllerPermissionToDrive.PermissionToDrivePagination).Methods("GET")
 	// end permission to drive
