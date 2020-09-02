@@ -192,11 +192,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	StatusTemporari := ""
 
 	for rows.Next() {
-		err := rows.Scan(&init_ur.Date,&init_ur.RouteProfileName,&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
+		errScan := rows.Scan(&init_ur.Date,&init_ur.RouteProfileName,&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
 		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
-		if err != nil {
+		if errScan != nil {
 			return nil, errors.New("error scan init_ur")
-			log.Println(err.Error())
+			log.Println(errScan.Error())
 			Arr_ur = nil
 		} else {
 			if StatusTemporari == "Y" {
