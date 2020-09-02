@@ -1,2 +1,3 @@
 2020/09/02 13:51:18 sql: Rows are closed
 2020/09/02 13:51:18 sql: no rows in result set
+2020/09/02 14:15:33 dial tcp: lookup mysql_lara: no such host
