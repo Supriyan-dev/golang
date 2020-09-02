@@ -18,7 +18,6 @@ func (model1 ModelUser_init) ReturnAllDataUser() (data string, err error) {
 	if err != nil {
 		log.Print(err)
 	}
-
 	rows.Next()
 	errScan := rows.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name)
 
