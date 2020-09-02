@@ -3,7 +3,6 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -11,40 +10,39 @@ import (
 
 	"../../db"
 	"../../initialize"
+	model1 "../../model1/data_master_model"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllFullTimeSalary(w http.ResponseWriter, r *http.Request) {
-	var salary initialize.FullTimeSalary
-	var arrFullTimeSalary []initialize.FullTimeSalary
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
-
-	rows, err := db.Query("SELECT * FROM full_time_salary")
-
+	_con := model1.ModelFull_init{DB: db}
+	ExcuteData, err := _con.ReturnAllFulltime()
 	if err != nil {
-		log.Print(err)
+		panic(err.Error())
 	}
-	defer db.Close()
 
-	for rows.Next() {
-		if err := rows.Scan(&salary.Id_full_time_salary, &salary.Id_code_store, &salary.Salary, &salary.Fish_section_salary); err != nil {
-
-			log.Fatal(err.Error())
-
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrFullTimeSalary = append(arrFullTimeSalary, salary)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrFullTimeSalary
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
@@ -102,139 +100,121 @@ func ReturnAllFullTimeSalaryPagination(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetFullTimeSalary(w http.ResponseWriter, r *http.Request) {
-	var fullTimeSalary initialize.FullTimeSalary
-	var arrFullTimeSalary []initialize.FullTimeSalary
-	var response initialize.Response
-
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_full_time_salary"])
 
-	result, err := db.Query("SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE id_full_time_salary = ?", code["id_full_time_salary"])
+	_id := r.URL.Query().Get("id_full_time_salary")
+
+	_con := model1.ModelFull_init{DB: db}
+	ExcuteData, err := _con.GetDataFullTime(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&fullTimeSalary.Id_full_time_salary, &fullTimeSalary.Id_code_store, &fullTimeSalary.Salary, &fullTimeSalary.Fish_section_salary)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrFullTimeSalary = append(arrFullTimeSalary, fullTimeSalary)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrFullTimeSalary
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func CreateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var response initialize.Response
-
+	var init_insert initialize.FullTimeSalary
+	var _response initialize.Response
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO full_time_salary (id_code_store, salary, fish_section_salary) VALUES(?,?,?)")
-	if err != nil {
-		panic(err.Error())
+
+	_con := model1.ModelFull_init{DB: db}
+	ExcuteData, _ := _con.InsertDataFullTime(&init_insert)
+
+	if r.Method == "POST" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = init_insert
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	defer db.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	IdCodeStore := keyVal["id_code_store"]
-	Salary := keyVal["salary"]
-	FirstSectionSalary := keyVal["fish_section_salary"]
-
-	result, err := stmt.Exec(IdCodeStore, Salary, FirstSectionSalary)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data baru telah dibuat": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
 func UpdateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var init_insert initialize.FullTimeSalary
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE full_time_salary SET id_code_store = ?, salary = ?, fish_section_salary = ? WHERE id_full_time_salary = ?")
-	if err != nil {
-		panic(err.Error())
+	_con := model1.ModelFull_init{DB: db}
+	ExcuteData, _ := _con.UpdateDataFullTime(&init_insert)
+
+	if r.Method == "PUT" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idFullTimeSalary := keyVal["id_full_time_salary"]
-	newIdCodeStore := keyVal["id_code_store"]
-	newSalary := keyVal["salary"]
-	NewFirstSectionSalary := keyVal["fish_section_salary"]
-
-	id, err := strconv.Atoi(idFullTimeSalary)
-
-	result, err := stmt.Exec(newIdCodeStore, newSalary, NewFirstSectionSalary, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func DeleteFullTimeSalary(w http.ResponseWriter, r *http.Request) {
-
+	var _response initialize.Response
+	var test initialize.FullTimeSalary
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM full_time_salary WHERE id_full_time_salary = ?")
+	_con := model1.ModelFull_init{DB: db}
+	ExcuteData, err := _con.DeleteDataFullTime(&test)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	_, err = stmt.Exec(params["id_full_time_salary"])
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "DELETE" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Data has been Deleted with ID"
+			_response.Data = test.Id_full_time_salary
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(params["id_full_time_salary"])
-
 }

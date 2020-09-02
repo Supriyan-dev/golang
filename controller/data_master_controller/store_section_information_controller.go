@@ -3,7 +3,6 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -11,41 +10,39 @@ import (
 
 	"../../db"
 	"../../initialize"
+	model1 "../../model1/data_master_model"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllStroreSectionInformation(w http.ResponseWriter, r *http.Request) {
-	var store initialize.StoreSectionInformation
-	var arrStoreSectionInformation []initialize.StoreSectionInformation
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
-
-	rows, err := db.Query("SELECT * FROM store_section_information")
-
+	_con := model1.ModelSection_init{DB: db}
+	ExcuteData, err := _con.ReturnAllStoreSectionInformation()
 	if err != nil {
-		log.Print(err)
+		panic(err.Error())
 	}
-	defer db.Close()
 
-	for rows.Next() {
-		// if err := rows.Scan(&prefect.Id_prefecture, &prefect.ISO, &prefect.Prefecture_name); err != nil {
-		if err := rows.Scan(&store.Id_store_section, &store.Store_section_code, &store.Store_section_name); err != nil {
-
-			log.Fatal(err.Error())
-
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrStoreSectionInformation = append(arrStoreSectionInformation, store)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrStoreSectionInformation
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
@@ -101,137 +98,121 @@ func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.
 }
 
 func GetStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
-	var storeSectionInformation initialize.StoreSectionInformation
-	var response initialize.Response
-	var arrStoreSectionInformation []initialize.StoreSectionInformation
-
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_store_section"])
 
-	result, err := db.Query("SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE id_store_section = ?", code["id_store_section"])
+	_id := r.URL.Query().Get("id_store_section")
+
+	_con := model1.ModelSection_init{DB: db}
+	ExcuteData, err := _con.GetDataStoreSectionInformation(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&storeSectionInformation.Id_store_section, &storeSectionInformation.Store_section_code, &storeSectionInformation.Store_section_name)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrStoreSectionInformation = append(arrStoreSectionInformation, storeSectionInformation)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrStoreSectionInformation
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func CreateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
-
-	var response initialize.Response
-
+	var init_insert initialize.StoreSectionInformation
+	var _response initialize.Response
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO store_section_information (store_section_code,store_section_name) VALUES (?,?)")
-	if err != nil {
-		panic(err.Error())
+
+	_con := model1.ModelSection_init{DB: db}
+	ExcuteData, _ := _con.InsertDataStoreSectionInformation(&init_insert)
+
+	if r.Method == "POST" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = init_insert
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	defer db.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	CodeStore := keyVal["store_section_code"]
-	StoreName := keyVal["store_section_name"]
-
-	result, err := stmt.Exec(CodeStore, StoreName)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Tambahkan": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
 }
 
 func UpdateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var test initialize.StoreSectionInformation
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE store_section_information SET store_section_code = ?, store_section_name = ? WHERE id_store_section = ?")
-	if err != nil {
-		panic(err.Error())
+	_con := model1.ModelSection_init{DB: db}
+	ExcuteData, _ := _con.UpdateDataStoreSectionInformation(&test)
+
+	if r.Method == "PUT" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idCodeStore := keyVal["id_store_section"]
-	newCodeSection := keyVal["store_section_code"]
-	newNameSection := keyVal["store_section_name"]
-
-	id, err := strconv.Atoi(idCodeStore)
-
-	result, err := stmt.Exec(newCodeSection, newNameSection, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
-
+	var _response initialize.Response
+	var test initialize.StoreSectionInformation
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM store_section_information WHERE id_store_section = ?")
+
+	_con := model1.ModelSection_init{DB: db}
+	ExcuteData, err := _con.DeleteDataStoreSectionInformation(&test)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	_, err = stmt.Exec(params["id_store_section"])
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "DELETE" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Data has been Deleted with ID"
+			_response.Data = test.Id_store_section
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(params["id_store_section"])
-
 }

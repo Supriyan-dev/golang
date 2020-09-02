@@ -3,7 +3,6 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -11,40 +10,39 @@ import (
 
 	"../../db"
 	"../../initialize"
+	model1 "../../model1/data_master_model"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
-	var bank initialize.Bank
-	var arrBank []initialize.Bank
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
-
-	rows, err := db.Query("SELECT * FROM bank")
-
+	_con := model1.ModelBank_init{DB: db}
+	ExcuteData, err := _con.ReturnAllDatabank()
 	if err != nil {
-		log.Print(err)
+		panic(err.Error())
 	}
-	defer db.Close()
 
-	for rows.Next() {
-		if err := rows.Scan(&bank.Id_bank, &bank.Bank_code, &bank.Bank_name, &bank.Branch_code, &bank.Branch_name, &bank.Special); err != nil {
-
-			log.Fatal(err.Error())
-
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrBank = append(arrBank, bank)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrBank
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
@@ -99,143 +97,121 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBank(w http.ResponseWriter, r *http.Request) {
-	var bank initialize.Bank
-	var arrBank []initialize.Bank
-	var response initialize.Response
-
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
-	fmt.Fprintf(w, "Category: %v\n", code["id_bank"])
 
-	result, err := db.Query("SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE id_bank = ?", code["id_bank"])
+	_id := r.URL.Query().Get("id_bank")
+
+	_con := model1.ModelBank_init{DB: db}
+	ExcuteData, err := _con.GetDataBank(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&bank.Id_bank, &bank.Bank_code, &bank.Bank_name, &bank.Branch_code, &bank.Branch_name, &bank.Special)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrBank = append(arrBank, bank)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrBank
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func CreateBank(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var response initialize.Response
-
+	var init_insert initialize.Bank
+	var _response initialize.Response
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO bank (bank_code, bank_name, branch_code,branch_name,special) VALUES(?,?,?,?,?)")
-	if err != nil {
-		panic(err.Error())
+
+	_con := model1.ModelBank_init{DB: db}
+	ExcuteData, _ := _con.InsertDataBank(&init_insert)
+
+	if r.Method == "POST" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = init_insert
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	defer db.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	BankCode := keyVal["bank_code"]
-	BankName := keyVal["bank_name"]
-	BranchCode := keyVal["branch_code"]
-	BranchName := keyVal["branch_name"]
-	Sprecial := keyVal["special"]
-
-	result, err := stmt.Exec(BankCode, BankName, BranchCode, BranchName, Sprecial)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data baru telah dibuat": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
 func UpdateBank(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var init_insert initialize.Bank
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE bank SET bank_code = ?, bank_name = ?, branch_code = ?, branch_name = ? , special = ? WHERE id_bank = ?")
-	if err != nil {
-		panic(err.Error())
+	_con := model1.ModelBank_init{DB: db}
+	ExcuteData, _ := _con.UdpateDatabank(&init_insert)
+
+	if r.Method == "PUT" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idBank := keyVal["id_bank"]
-	NewBankCode := keyVal["bank_code"]
-	NewBankName := keyVal["bank_name"]
-	NewsBranchCode := keyVal["branch_code"]
-	NewsBranchName := keyVal["branch_name"]
-	NewSpecial := keyVal["special"]
-
-	id, err := strconv.Atoi(idBank)
-
-	result, err := stmt.Exec(NewBankCode, NewBankName, NewsBranchCode, NewsBranchName, NewSpecial, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func DeleteBank(w http.ResponseWriter, r *http.Request) {
-
+	var _response initialize.Response
+	var test initialize.Bank
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM bank WHERE id_bank = ?")
+	_con := model1.ModelBank_init{DB: db}
+	ExcuteData, err := _con.DeleteDataBank(&test)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	_, err = stmt.Exec(params["id_bank"])
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "DELETE" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Data has been Deleted with ID"
+			_response.Data = test.Id_bank
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(params["id_bank"])
-
 }
