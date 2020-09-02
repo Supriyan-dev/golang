@@ -11,31 +11,32 @@ import (
 
 type ModelUser_init models.DB_init
 
-func (model1 ModelUser_init) ReturnAllDataUser() (data string, err error) {
+func (model1 ModelUser_init) ReturnAllDataUser() (decrypted string, err error) {
 	var all initialize.UsersEncrypt
 	var allNull initialize.NullString
-	rows, err := model1.DB.Query(`SELECT * FROM user`)
+	rows, err := model1.DB.Query(`id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE id_user = ?`)
 	if err != nil {
 		log.Print(err)
 	}
-	rows.Next()
-	errScan := rows.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name)
+	for rows.Next() {
+		errScan := rows.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name)
+		if errScan != nil {
+			log.Println(errScan)
+		} else {
+			tampung := all.Id_user + all.First_name + all.Last_name + all.Employee_number + all.Id_code_store + all.Password + all.Id_role + all.Email + all.Recovery_pin + all.Photo_url + all.Photo_name
 
-	if errScan != nil {
-		log.Println(errScan)
+			key := "P@ssw0rdL0g1n"
+
+			encrypted := aes256.Encrypt(tampung, key)
+
+			decrypted = aes256.Decrypt(encrypted, key)
+
+			log.Println(decrypted)
+
+		}
 	}
-	tampung := all.Id_user + all.First_name + all.Last_name + all.Employee_number + all.Id_code_store + all.Password + all.Id_role + allNull.Email + allNull.Recovery_pin + allNull.Photo_url + allNull.Photo_name
 
-	key := "P@ssw0rdL0g1n"
-
-	encrypted := aes256.Encrypt(tampung, key)
-
-	decrypted := aes256.Decrypt(encrypted, key)
-
-	log.Println(encrypted)
-	log.Println(decrypted)
-
-	return tampungData, nil
+	return decrypted, nil
 }
 
 func (model1 ModelUser_init) GetDataUser(Id_user string) (arrGet []initialize.Users, err error) {

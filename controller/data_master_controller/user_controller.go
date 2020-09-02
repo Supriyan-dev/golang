@@ -13,7 +13,6 @@ import (
 	model1 "../../model1/data_master_model"
 	"../../response"
 	"github.com/gorilla/mux"
-	"github.com/mervick/aes-everywhere/go/aes256"
 )
 
 func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +23,6 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err.Error())
 	}
-	key := "P@ssw0rdL0g1n"
 
 	if r.Method == "GET" {
 		// if ExcuteData == err {
@@ -35,7 +33,9 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 		// } else {
 		_response.Status = http.StatusOK
 		_response.Message = "Success"
-		_response.Data = aes256.Encrypt(ExcuteData, key)
+		_response.Data = ExcuteData
+
+		log.Println(_response.Data)
 		response.ResponseJson(w, _response.Status, _response)
 		// }
 	} else {
