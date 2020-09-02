@@ -1,0 +1,58 @@
+2020/09/02 12:14:50 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:14:50 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:14:50 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:14:50 http: panic serving [::1]:39032: runtime error: invalid memory address or nil pointer dereference
+goroutine 20 [running]:
+net/http.(*conn).serve.func1(0xc0001d0780)
+	/usr/local/go/src/net/http/server.go:1772 +0x139
+panic(0x75b260, 0xa77a80)
+	/usr/local/go/src/runtime/panic.go:975 +0x3e3
+database/sql.(*Rows).Next(0x0, 0x1)
+	/usr/local/go/src/database/sql/sql.go:2744 +0x30
+_/home/sleeph5/Documents/golangCode/Go_DX_Services/models/enter_the_information/transportation_application.Models_init_input_confirmation.GetDataInputConfimation(0xc00020a000, 0xc00001c118, 0x4, 0xc00001c138, 0x6, 0x792420, 0xc0001d0101, 0xc00006e120, 0xc0000459b8, 0x40e228)
+	/home/sleeph5/Documents/golangCode/Go_DX_Services/models/enter_the_information/transportation_application/Model_input_confirmation.go:52 +0x3f5
+_/home/sleeph5/Documents/golangCode/Go_DX_Services/controller/Enter_the_information/transportation_application.ReturnGetByCommutingInputConfirmation(0x8496c0, 0xc000072000, 0xc00007a100)
+	/home/sleeph5/Documents/golangCode/Go_DX_Services/controller/Enter_the_information/transportation_application/apis_input_confirmation.go:21 +0xee
+net/http.HandlerFunc.ServeHTTP(0x7de618, 0x8496c0, 0xc000072000, 0xc00007a100)
+	/usr/local/go/src/net/http/server.go:2012 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0000f6000, 0x8496c0, 0xc000072000, 0xc00013a200)
+	/home/sleeph5/go/src/github.com/gorilla/mux/mux.go:210 +0xe2
+github.com/rs/cors.(*Cors).Handler.func1(0x8496c0, 0xc000072000, 0xc00013a200)
+	/home/sleeph5/go/src/github.com/rs/cors/cors.go:219 +0x1b8
+net/http.HandlerFunc.ServeHTTP(0xc0001d4180, 0x8496c0, 0xc000072000, 0xc00013a200)
+	/usr/local/go/src/net/http/server.go:2012 +0x44
+net/http.serverHandler.ServeHTTP(0xc00015e540, 0x8496c0, 0xc000072000, 0xc00013a200)
+	/usr/local/go/src/net/http/server.go:2807 +0xa3
+net/http.(*conn).serve(0xc0001d0780, 0x84a6c0, 0xc0000d0ac0)
+	/usr/local/go/src/net/http/server.go:1895 +0x86c
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2933 +0x35c
+2020/09/02 12:15:16 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:15:16 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:15:16 dial tcp: lookup mysql_lara: no such host
+2020/09/02 12:15:16 http: panic serving [::1]:39242: runtime error: invalid memory address or nil pointer dereference
+goroutine 35 [running]:
+net/http.(*conn).serve.func1(0xc0002880a0)
+	/usr/local/go/src/net/http/server.go:1772 +0x139
+panic(0x75b260, 0xa77a80)
+	/usr/local/go/src/runtime/panic.go:975 +0x3e3
+database/sql.(*Rows).Next(0x0, 0x1)
+	/usr/local/go/src/database/sql/sql.go:2744 +0x30
+_/home/sleeph5/Documents/golangCode/Go_DX_Services/models/enter_the_information/transportation_application.Models_init_input_confirmation.GetDataInputConfimation(0xc00020a0c0, 0xc00001c3d8, 0x4, 0xc00001c3f8, 0x6, 0x792420, 0xc0001d0101, 0xc00006ea20, 0xc0002919b8, 0x40e228)
+	/home/sleeph5/Documents/golangCode/Go_DX_Services/models/enter_the_information/transportation_application/Model_input_confirmation.go:52 +0x3f5
+_/home/sleeph5/Documents/golangCode/Go_DX_Services/controller/Enter_the_information/transportation_application.ReturnGetByCommutingInputConfirmation(0x8496c0, 0xc0000721c0, 0xc00007a300)
+	/home/sleeph5/Documents/golangCode/Go_DX_Services/controller/Enter_the_information/transportation_application/apis_input_confirmation.go:21 +0xee
+net/http.HandlerFunc.ServeHTTP(0x7de618, 0x8496c0, 0xc0000721c0, 0xc00007a300)
+	/usr/local/go/src/net/http/server.go:2012 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0000f6000, 0x8496c0, 0xc0000721c0, 0xc00029a100)
+	/home/sleeph5/go/src/github.com/gorilla/mux/mux.go:210 +0xe2
+github.com/rs/cors.(*Cors).Handler.func1(0x8496c0, 0xc0000721c0, 0xc00029a100)
+	/home/sleeph5/go/src/github.com/rs/cors/cors.go:219 +0x1b8
+net/http.HandlerFunc.ServeHTTP(0xc0001d4180, 0x8496c0, 0xc0000721c0, 0xc00029a100)
+	/usr/local/go/src/net/http/server.go:2012 +0x44
+net/http.serverHandler.ServeHTTP(0xc00015e540, 0x8496c0, 0xc0000721c0, 0xc00029a100)
+	/usr/local/go/src/net/http/server.go:2807 +0xa3
+net/http.(*conn).serve(0xc0002880a0, 0x84a6c0, 0xc000296080)
+	/usr/local/go/src/net/http/server.go:1895 +0x86c
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2933 +0x35c
