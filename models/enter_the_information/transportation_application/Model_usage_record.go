@@ -159,10 +159,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	}
 	NextBI := GetBasicInformation.Next()
 
-	if NextBI == true{
-		return nil, errors.New("error NextBasicInformation true ")
-
-	}else {
+	if NextBI == false{
 		return nil, errors.New("error NextBasicInformation false ")
 
 	}
