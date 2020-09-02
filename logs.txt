@@ -1,0 +1,2 @@
+2020/09/02 13:51:18 sql: Rows are closed
+2020/09/02 13:51:18 sql: no rows in result set

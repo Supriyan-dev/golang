@@ -138,7 +138,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   	bi.employee_code=?`, store_number, employee_number)
 
-	rows, err := model.DB.Query(`select   ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
+	rows, err := model.DB.Query(`select ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
  										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft),MIN(b.purpose)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
@@ -182,8 +182,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	}
 
 	if errScanBasicInformation != nil {
+		return nil, errors.New("scan basic information != nil ")
 		init_biC = nil
 	} else {
+		return nil, errors.New("done")
+
 		init_biC = init_bi
 	}
 	StatusTemporari := ""
@@ -192,6 +195,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 		err := rows.Scan(&init_ur.Date,&init_ur.RouteProfileName,&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
 		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
 		if err != nil {
+			return nil, errors.New("error scan init_ur")
 			log.Println(err.Error())
 			Arr_ur = nil
 		} else {
@@ -228,6 +232,9 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 		}
 		sh = append(sh, FinallyData)
 		return sh, nil
+	}else{
+		return nil, errors.New("init bic dan arr_ur")
+
 	}
 	return nil, nil
 }
