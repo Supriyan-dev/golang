@@ -20,10 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee3c5578-5f36-4498-899b-08d59aae3b61" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/controller/Enter_the_information/Model_Transportation_Application.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/Enter_the_information/apis_transportation_application.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
