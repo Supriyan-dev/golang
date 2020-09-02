@@ -6,10 +6,7 @@ import (
 	controllerPermissionToDrive "./controller/list_input_information"
 	"fmt"
 	"github.com/rs/cors"
-	"log"
 	"net/http"
-	"os"
-
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
@@ -155,12 +152,12 @@ func main() {
 	// end Commuting Transportation Application
 
 	fmt.Println("Connected to port 9000")
-	file, errfile := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if errfile != nil {
-		log.Fatal(errfile)
-	}
-
-	log.SetOutput(file)
+	//file, errfile := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	//if errfile != nil {
+	//	log.Fatal(errfile)
+	//}
+	//
+	//log.SetOutput(file)
 
 	handler := cors.AllowAll().Handler(router)
 	http.ListenAndServe(":9000", handler)
