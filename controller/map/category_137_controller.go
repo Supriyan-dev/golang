@@ -1,17 +1,17 @@
 package controller
 
 import (
+	initialize2 "Go_DX_Services/initialize/map"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/jeffri/golang-test/db"
-	"github.com/jeffri/golang-test/initialize"
+	"Go_DX_Services/db"
+	"Go_DX_Services/initialize"
 )
 
 func ReturnAllCategory_137(w http.ResponseWriter, r *http.Request) {
-	var cat137 initialize.Category_137
-	var arrCategory_137 []initialize.Category_137
+	var cat137 initialize2.Category_137
+	var arrCategory_137 []initialize2.Category_137
 	var response initialize.Response
 
 	db := db.Connect()

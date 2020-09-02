@@ -3,7 +3,6 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -11,40 +10,39 @@ import (
 
 	"../../db"
 	"../../initialize"
+	model1 "../../model1/data_master_model"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
-	var unit initialize.UnitInformation
-	var arrUnitInformation []initialize.UnitInformation
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
-
-	rows, err := db.Query("SELECT * FROM unit_information")
-
+	_con := model1.ModelUnit_init{DB: db}
+	ExcuteData, err := _con.ReturnAllDataUnitInformation()
 	if err != nil {
-		log.Print(err)
+		panic(err.Error())
 	}
-	defer db.Close()
 
-	for rows.Next() {
-		if err := rows.Scan(&unit.Id_unit, &unit.Unit_code, &unit.Unit_name); err != nil {
-
-			log.Fatal(err.Error())
-
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrUnitInformation = append(arrUnitInformation, unit)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrUnitInformation
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
@@ -101,135 +99,122 @@ func ReturnAllUnitInformationPagination(w http.ResponseWriter, r *http.Request) 
 }
 
 func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
-	var unit initialize.UnitInformation
-	var arrUnitInformation []initialize.UnitInformation
-	var response initialize.Response
-
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
 
-	result, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information WHERE id_unit = ?", code["id_unit"])
+	_id := r.URL.Query().Get("id_unit")
+
+	_con := model1.ModelUnit_init{DB: db}
+	ExcuteData, err := _con.GetDataUnitInformation(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&unit.Id_unit, &unit.Unit_code, &unit.Unit_name)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrUnitInformation = append(arrUnitInformation, unit)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrUnitInformation
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func CreateUnitInformation(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var init_insert initialize.UnitInformation
+	var _response initialize.Response
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO unit_information (unit_code,unit_name) VALUES (?,?)")
-	if err != nil {
-		panic(err.Error())
+
+	_con := model1.ModelUnit_init{DB: db}
+	ExcuteData, _ := _con.InsertDataUnitInformation(&init_insert)
+
+	if r.Method == "POST" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = init_insert
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	defer db.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	UnitCode := keyVal["unit_code"]
-	UnitName := keyVal["unit_name"]
-
-	result, err := stmt.Exec(UnitCode, UnitName)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Tambahkan": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
 }
 
 func UpdateUnitInformation(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var init_insert initialize.UnitInformation
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE unit_information SET unit_code = ?, unit_name = ? WHERE id_unit = ?")
-	if err != nil {
-		panic(err.Error())
+	_con := model1.ModelUnit_init{DB: db}
+	ExcuteData, _ := _con.UpdateDataUnitInformation(&init_insert)
+
+	if r.Method == "PUT" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idUnit := keyVal["id_unit"]
-	newUnitCode := keyVal["unit_code"]
-	newUnitName := keyVal["unit_name"]
-
-	id, err := strconv.Atoi(idUnit)
-
-	result, err := stmt.Exec(newUnitCode, newUnitName, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
-
+	var _response initialize.Response
+	var test initialize.UnitInformation
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM unit_information WHERE id_unit = ?")
+	_con := model1.ModelUnit_init{DB: db}
+	ExcuteData, err := _con.DeleteDataUnitInformation(&test)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	_, err = stmt.Exec(params["id_unit"])
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "DELETE" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Data has been Deleted with ID"
+			_response.Data = test.Id_unit
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(params["id_unit"])
 
 }

@@ -7,6 +7,7 @@ COPY . .
 RUN go get github.com/gorilla/mux
 RUN go get github.com/go-sql-driver/mysql
 RUN go get github.com/gorilla/handlers
+RUN go get github.com/rs/cors
 RUN go build -o main .
 
 ENTRYPOINT [ "./main" ]

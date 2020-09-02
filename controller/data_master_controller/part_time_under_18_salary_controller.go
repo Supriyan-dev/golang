@@ -3,7 +3,6 @@ package data_master_controller
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -11,40 +10,39 @@ import (
 
 	"../../db"
 	"../../initialize"
+	model1 "../../model1/data_master_model"
+	"../../response"
 	"github.com/gorilla/mux"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/db"
-	// "github.com/jeffri/golang-test/GO_DX_SERVICES/initialize"
 )
 
 func ReturnAllPartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
-	var partTimeUnderSalary initialize.PartTimeUnder18Salary
-	var arrPartTimeUnder18Salary []initialize.PartTimeUnder18Salary
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
-
-	rows, err := db.Query("SELECT * FROM part_time_under_18_salary")
-
+	_con := model1.ModelUnder_init{DB: db}
+	ExcuteData, err := _con.ReturnAllDataUnder18()
 	if err != nil {
-		log.Print(err)
+		panic(err.Error())
 	}
-	defer db.Close()
 
-	for rows.Next() {
-		if err := rows.Scan(&partTimeUnderSalary.Id_part_time_under_18_salary, &partTimeUnderSalary.Id_code_store, &partTimeUnderSalary.Salary); err != nil {
-
-			log.Fatal(err.Error())
-
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrPartTimeUnder18Salary = append(arrPartTimeUnder18Salary, partTimeUnderSalary)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrPartTimeUnder18Salary
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
@@ -102,136 +100,121 @@ func ReturnAllPartTimeUnder18SalaryPagination(w http.ResponseWriter, r *http.Req
 }
 
 func GetPartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
-	var partTimeUnder18Salary initialize.PartTimeUnder18Salary
-	var arrPartTimeUnder18Salary []initialize.PartTimeUnder18Salary
-	var response initialize.Response
-
+	var _response initialize.Response
 	db := db.Connect()
-	code := mux.Vars(r)
 
-	result, err := db.Query("SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary WHERE id_part_time_under_18_salary = ?", code["id_part_time_under_18_salary"])
+	_id := r.URL.Query().Get("id_part_time_under_18_salary")
+
+	_con := model1.ModelUnder_init{DB: db}
+	ExcuteData, err := _con.GetAllDataPartTimeUnder(_id)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer result.Close()
-	for result.Next() {
-
-		err := result.Scan(&partTimeUnder18Salary.Id_part_time_under_18_salary, &partTimeUnder18Salary.Id_code_store, &partTimeUnder18Salary.Salary)
-		if err != nil {
-			panic(err.Error())
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
-			arrPartTimeUnder18Salary = append(arrPartTimeUnder18Salary, partTimeUnder18Salary)
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
 		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrPartTimeUnder18Salary
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func CreatePartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var response initialize.Response
-
+	var init_insert initialize.PartTimeUnder18Salary
+	var _response initialize.Response
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO part_time_under_18_salary (id_code_store, salary) VALUES(?,?)")
-	if err != nil {
-		panic(err.Error())
+
+	_con := model1.ModelUnder_init{DB: db}
+	ExcuteData, _ := _con.InsertDataPartTimeUnder(&init_insert)
+
+	if r.Method == "POST" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = init_insert
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	defer db.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	IdCodeStore := keyVal["id_code_store"]
-	Salary := keyVal["salary"]
-
-	result, err := stmt.Exec(IdCodeStore, Salary)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data baru telah dibuat": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 
 }
 
 func UpdatePartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var init_insert initialize.PartTimeUnder18Salary
+	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
 
-	stmt, err := db.Prepare("UPDATE part_time_under_18_salary SET id_code_store = ?, salary = ? WHERE id_part_time_under_18_salary = ?")
-	if err != nil {
-		panic(err.Error())
+	_con := model1.ModelUnder_init{DB: db}
+	ExcuteData, _ := _con.UpdateDataPartTimeUnder(&init_insert)
+
+	if r.Method == "PUT" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idPartAboveSalary := keyVal["id_part_time_under_18_salary"]
-	newIdCodeStore := keyVal["id_code_store"]
-	newSalary := keyVal["salary"]
-
-	id, err := strconv.Atoi(idPartAboveSalary)
-
-	result, err := stmt.Exec(newIdCodeStore, newSalary, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
 
 func DeletePartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
-
+	var _response initialize.Response
+	var test initialize.PartTimeUnder18Salary
+	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	params := mux.Vars(r)
-	stmt, err := db.Prepare("DELETE FROM part_time_under_18_salary WHERE id_part_time_under_18_salary = ?")
+	_con := model1.ModelUnder_init{DB: db}
+	ExcuteData, err := _con.DeleteDataPartTimeUnder(&test)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	_, err = stmt.Exec(params["id_part_time_under_18_salary"])
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "DELETE" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Data has been Deleted with ID"
+			_response.Data = test.Id_part_time_under_18_salary
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
 	}
-	fmt.Fprintf(w, "Data Sudah Terhapus Dengan ID = ")
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(params["id_part_time_under_18_salary"])
-
 }

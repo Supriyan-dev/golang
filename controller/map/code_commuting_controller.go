@@ -1,17 +1,17 @@
 package controller
 
 import (
+	initialize2 "Go_DX_Services/initialize/map"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/jeffri/golang-test/db"
-	"github.com/jeffri/golang-test/initialize"
+	"Go_DX_Services/db"
+	"Go_DX_Services/initialize"
 )
 
 func ReturnAllCodeCommuting(w http.ResponseWriter, r *http.Request) {
-	var codeCommunting initialize.CodeCommuting
-	var arrCodeCommuting []initialize.CodeCommuting
+	var codeCommunting initialize2.CodeCommuting
+	var arrCodeCommuting []initialize2.CodeCommuting
 	var response initialize.Response
 
 	db := db.Connect()

@@ -1,17 +1,17 @@
 package controller
 
 import (
+	"Go_DX_Services/db"
+	"Go_DX_Services/initialize"
+	initialize2 "Go_DX_Services/initialize/map"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/jeffri/golang-test/db"
-	"github.com/jeffri/golang-test/initialize"
 )
 
 func ReturnAllCommutingBasicInformation(w http.ResponseWriter, r *http.Request) {
-	var CommuntingBasic initialize.CommutingBasicInformation
-	var arrCommutingBasicInformation []initialize.CommutingBasicInformation
+	var CommuntingBasic initialize2.CommutingBasicInformation
+	var arrCommutingBasicInformation []initialize2.CommutingBasicInformation
 	var response initialize.Response
 
 	db := db.Connect()
@@ -38,3 +38,4 @@ func ReturnAllCommutingBasicInformation(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(response)
 
 }
+
