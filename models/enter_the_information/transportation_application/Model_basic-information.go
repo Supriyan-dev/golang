@@ -4,6 +4,7 @@ import (
 	"../../../initialize/enter_the_information"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"errors"
 	"log"
 )
 
@@ -45,7 +46,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	var init_CommutingBasicInformation enter_the_information.ShowBasicInformation3
 	var Arr_init_CommutingBasicInformation []enter_the_information.ShowBasicInformation3
 	if errGetBasicInformation != nil && errGetCommutingBasicInformation != nil {
-
+		return nil, errors.New("error basic information and commuting basic information")
 		log.Println(errGetBasicInformation.Error())
 		log.Println(errGetCommutingBasicInformation.Error())
 	}
@@ -54,6 +55,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	ScanGetBasicInformation := GetBasicInformation.Scan(&init_DataApprove.IdGeneralBasicInformation, &init_BasicInformation.IdBasicInformation, &init_BasicInformation.FirstName, &init_BasicInformation.LastName, &init_BasicInformation.Address, &init_BasicInformation.AddressKana, &init_BasicInformation.AddressDetail, &init_BasicInformation.AddressDetailKana, &init_BasicInformation.AddPhoneNumber)
 
 	if ScanGetBasicInformation != nil {
+		return nil, errors.New("error Scan basic information ")
 		log.Println(ScanGetBasicInformation)
 	}
 
@@ -70,6 +72,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 		}
 		Arr_BasicInformation = append(Arr_BasicInformation, showData)
 	} else {
+		return nil, errors.New("error Arr Basic information")
 		Arr_BasicInformation = nil
 	}
 
@@ -77,6 +80,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	ScanCommutingBasicInformation := GetCommutingBasicInformation.Scan(&init_CommutingBasicInformation.IdCommutingBasicInformation, &init_CommutingBasicInformation.IdGeneralInformation, &init_CommutingBasicInformation.InsuranceCompany, &init_CommutingBasicInformation.DriverLicenseExpiryDate, &init_CommutingBasicInformation.PersonalInjury, &init_CommutingBasicInformation.PropertyDamage, &init_CommutingBasicInformation.CarInsuranceDocumentExpiryDate, &init_DataApprove.StatusApproved, &init_DataApprove.DateApprove, &init_DataApprove.TimeApprove, &init_DataApprove.DateSubmit)
 
 	if ScanCommutingBasicInformation != nil {
+		return nil, errors.New("error Scan Basic Information")
 		log.Println(ScanCommutingBasicInformation)
 	}
 
@@ -100,6 +104,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 		}
 		Arr_init_CommutingBasicInformation = append(Arr_init_CommutingBasicInformation, showData3)
 	} else {
+		return nil, errors.New("error Arr Data Approve and commuting basic information")
 		Arr_DataApprove = nil
 		Arr_init_CommutingBasicInformation = nil
 	}
