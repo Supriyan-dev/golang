@@ -1,14 +1,15 @@
 package main
 
 import (
+	entertheinformation "./controller/Commuting/transportation_application"
+	controllerDataMaster "./controller/data_master_controller"
+	controllerPermissionToDrive "./controller/list_input_information"
+
 	"fmt"
 	"net/http"
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
-	entertheinformation "./controller/Enter_the_information"
-	controllerDataMaster "./controller/data_master_controller"
-	controllerPermissionToDrive "./controller/list_input_information"
 	login "./login_controller"
 
 	"github.com/gorilla/mux"
