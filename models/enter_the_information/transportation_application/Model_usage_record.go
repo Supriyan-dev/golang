@@ -138,7 +138,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   	bi.employee_code=?`, store_number, employee_number)
 
-	rows, err := model.DB.Query(`select MIN(ct.date),MIN(ct.route_profile_name),MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
+	rows, errRows := model.DB.Query(`select MIN(ct.date),MIN(ct.route_profile_name),MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
  										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft),MIN(b.purpose)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
@@ -147,6 +147,9 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information and si.code_store =? and bi.employee_code=?
 										and ct.submit ='N' and ct.save_trip ='N'
 										group by b.id_commuting_trip`, store_number, employee_number)
+	if errRows != nil {
+		log.Println(errRows)
+	}
 	var init_biC interface{}
 	var init_bi enter_the_information.ShowBasicInformation1
 	//var Arr_bi []enter_the_information.ShowBasicInformation1
