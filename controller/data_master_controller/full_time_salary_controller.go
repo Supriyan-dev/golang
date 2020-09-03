@@ -191,16 +191,20 @@ func UpdateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 
 func DeleteFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.FullTimeSalary
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelFull_init{DB: db}
-	ExcuteData, err := _con.DeleteDataFullTime(&test)
+	params := mux.Vars(r)
+	delete := params["id_full_time_salary"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_full_time_salary = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -208,7 +212,7 @@ func DeleteFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_full_time_salary
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

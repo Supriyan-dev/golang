@@ -25,19 +25,19 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		// if ExcuteData == err {
-		// 	_response.Status = http.StatusBadRequest
-		// 	_response.Message = "Sorry Your Input Missing Body Bad Request"
-		// 	_response.Data = "Null"
-		// 	response.ResponseJson(w, _response.Status, _response)
-		// } else {
-		_response.Status = http.StatusOK
-		_response.Message = "Success"
-		_response.Data = ExcuteData
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
 
-		log.Println(_response.Data)
-		response.ResponseJson(w, _response.Status, _response)
-		// }
+			log.Println(_response.Data)
+			response.ResponseJson(w, _response.Status, _response)
+		}
 	} else {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
@@ -189,18 +189,21 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-
 	var _response initialize.Response
-	var test initialize.Users
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelUser_init{DB: db}
-	ExcuteData, err := _con.DeleteDataUser(&test)
+	params := mux.Vars(r)
+	delete := params["id_user"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_user = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -208,7 +211,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_user
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -217,5 +220,4 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }

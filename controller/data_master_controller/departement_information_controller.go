@@ -189,16 +189,20 @@ func UpdateDepartementInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var delete initialize.DepartementInformation
-	json.NewDecoder(r.Body).Decode(&delete)
 	db := db.Connect()
-	_con := model1.ModelDept_init{DB: db}
-	ExcuteData, err := _con.DeleteDataDepartmentInformation(&delete)
+	params := mux.Vars(r)
+	delete := params["id_department"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_department = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -206,7 +210,7 @@ func DeleteDepartementInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = delete.Id_department
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

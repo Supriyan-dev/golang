@@ -188,17 +188,20 @@ func UpdateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.StoreSectionInformation
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
+	params := mux.Vars(r)
+	delete := params["id_store_section"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_store_section = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	_con := model1.ModelSection_init{DB: db}
-	ExcuteData, err := _con.DeleteDataStoreSectionInformation(&test)
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -206,7 +209,7 @@ func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_store_section
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

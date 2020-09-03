@@ -190,16 +190,20 @@ func UpdateUnitInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.UnitInformation
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelUnit_init{DB: db}
-	ExcuteData, err := _con.DeleteDataUnitInformation(&test)
+	params := mux.Vars(r)
+	delete := params["id_unit"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_unit = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -207,7 +211,7 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_unit
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -216,5 +220,4 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }

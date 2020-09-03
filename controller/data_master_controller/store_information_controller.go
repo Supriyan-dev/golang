@@ -205,16 +205,20 @@ func UpdateStoreInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.StoreInformation
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.Models_init{DB: db}
-	ExcuteData, err := _con.DeleteDataStoreInformation(&test)
+	params := mux.Vars(r)
+	delete := params["id_code_store"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_code_store = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -222,7 +226,7 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_code_store
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -231,5 +235,4 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }

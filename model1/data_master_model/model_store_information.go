@@ -95,14 +95,15 @@ func (model1 Models_init) UpdateStoreInformation(Update *initialize.StoreInforma
 
 }
 
-func (model1 Models_init) DeleteDataStoreInformation(delete *initialize.StoreInformation) (arrDelete []initialize.StoreInformation, err error) {
+func (model1 Models_init) DeleteDataStoreInformation(Id_code_store string) (arrDelete []initialize.StoreInformation, err error) {
+	var delete initialize.StoreInformation
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM store_information WHERE id_code_store = ?")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	_, err = stmt.Exec(delete.Id_code_store)
+	stmt.Exec(Id_code_store)
 	if err != nil {
 		panic(err.Error())
 	}

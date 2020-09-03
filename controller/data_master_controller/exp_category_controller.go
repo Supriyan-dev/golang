@@ -191,16 +191,20 @@ func UpdateExpCategory(w http.ResponseWriter, r *http.Request) {
 
 func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.ExpCategory
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelExp_init{DB: db}
-	ExcuteData, err := _con.DeleteDataExp(&test)
+	params := mux.Vars(r)
+	delete := params["id_exp"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_exp = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -208,7 +212,7 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_exp
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -217,5 +221,4 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }

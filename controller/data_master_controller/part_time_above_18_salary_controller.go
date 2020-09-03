@@ -191,16 +191,20 @@ func UpdatePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 
 func DeletePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.PartTimeAbove18Salary
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelAbove_init{DB: db}
-	ExcuteData, err := _con.DeleteDataPartTimeAbove(&test)
+	params := mux.Vars(r)
+	delete := params["id_part_time_above_18_salary"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_part_time_above_18_salary = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -208,7 +212,7 @@ func DeletePartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_part_time_above_18_salary
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
