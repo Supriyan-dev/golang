@@ -46,11 +46,13 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	if err != nil && errGetBasicInformation != nil {
 		log.Println(err.Error())
 		log.Println(errGetBasicInformation.Error())
+		defer rows.Close()
+		defer GetBasicInformation.Close()
 	}
 	GetBasicInformation.Next()
 	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
 	var KodeBasicInformation models.NullInt
-		GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
+	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
 	LPAD(RIGHT(department_information.department_code, 2), 2 , '0'),
 	LPAD(RIGHT(store_section_information.store_section_code, 2), 2 , '0'),
 	LPAD(RIGHT(unit_information.unit_code, 2), 2 , '0')) AS 'division_code'
@@ -62,6 +64,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 
 	if GetKodeBasicInformation != nil {
 		log.Println(GetKodeBasicInformation)
+		defer GetBasicInformation.Close()
 	}
 
 	if errScanBasicInformation != nil {
@@ -72,7 +75,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	StatusTemporari := ""
 
 	for rows.Next() {
-		err := rows.Scan(&init_ur.Date,&init_ur.RouteProfileName,&init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
+		err := rows.Scan(&init_ur.Date, &init_ur.RouteProfileName, &init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
 		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
 		if err != nil {
 			log.Println(err.Error())
@@ -102,6 +105,8 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
 	}
+	defer rows.Close()
+	defer GetBasicInformation.Close()
 	if init_biC != nil && Arr_ur != nil {
 		FinallyData := Commuting.FormatShowUsageRecord{
 			CountHistory:         CountHistory,
@@ -201,7 +206,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number
 			panic(err.Error())
 		}
 
-		DatatypeOfTransportation, DataRoute, _ :=	utils_enter_the_information.GetAdditionalUsageRecord(store_number,employee_number,init_container.IdCommutingTrip,"usageRecordUseRoute")
+		DatatypeOfTransportation, DataRoute, _ := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_container.IdCommutingTrip, "usageRecordUseRoute")
 		FinallyData := Commuting.ShowUseMyRoute{
 			IdCommutingTrip:       init_container.IdCommutingTrip,
 			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
@@ -271,15 +276,17 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 
 	var init_container Commuting.ShowHistory
 	if err != nil {
+	defer rows.Close()
 		log.Println(err.Error())
 	}
 
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
 		if err != nil {
+			defer rows.Close()
 			panic(err.Error())
 		}
-		DatatypeOfTransportation, DataRoute,_ := utils_enter_the_information.GetAdditionalUsageRecord(store_number,employee_number,init_container.IdCommutingTrip,"usageRecordHistory")
+		DatatypeOfTransportation, DataRoute, _ := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_container.IdCommutingTrip, "usageRecordHistory")
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
 		//GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := model.DB.Query(`
 		//select MIN(detcomtrip.id_commuting_trip) as id, MIN(comtrip.route_profile_name), MIN(detcomtrip.type_of_transport),
@@ -317,9 +324,9 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		//	if DataPurpose != "" {
 		//		DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
 		//	}
-			//log.Println(DatatypeOfTransportation)
-			//log.Println(DataRoute)
-			//log.Println(DataPurpose)
+		//log.Println(DatatypeOfTransportation)
+		//log.Println(DataRoute)
+		//log.Println(DataPurpose)
 		//}
 		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 		FinnalyData := Commuting.ShowHistory{

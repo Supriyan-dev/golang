@@ -24,7 +24,7 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
 		resultData, err := _model.Model_InsertBasicInformation(&init_insert)
-
+		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -54,7 +54,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
 		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber)
-
+		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
 			_response.Message = err.Error()

@@ -40,7 +40,9 @@ func CheckDataByStoreAndEmployee(sql string, store string,employee string) (Coun
 	err := db.QueryRow(sql,store,employee).Scan(&CountData)
 	if err != nil {
 		log.Println(err.Error())
+		defer db.Close()
 	}
+	defer db.Close()
 	return CountData
 }
 
@@ -134,8 +136,8 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 	if Condition == "usageRecord-CheckData" {
 
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-			GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select trans.name_transportation_japanese, 
- 										b.detail_from, b.detail_to, b.purpose, b.transit_point
+			GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
+ 										COALESCE(b.detail_from,''), COALESCE(b.detail_to,''), COALESCE(b.purpose,''), COALESCE(b.transit_point,'')
 										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
@@ -146,12 +148,14 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, store_number, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
+			log.Println(errGetDataTypeOfTransportationAndRoute)
 			return "", "", ""
 		} else {
 			for GetDataTypeOfTransportationAndRoute.Next() {
 				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose, &TransitPoint)
 
 				if errGetDataT != nil {
+					defer GetDataTypeOfTransportationAndRoute.Close()
 					log.Println(errGetDataT.Error())
 				}
 				DatatypeOfTransportation += typeOfTransportation + ` - `
@@ -172,12 +176,13 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			//log.Println(DataRoute)
 			//log.Println(DataPurpose)
 		}
+		defer GetDataTypeOfTransportationAndRoute.Close()
 	}
 
 	if Condition == "usageRecordUseRoute"{
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select trans.name_transportation_japanese, 
- 										b.detail_from, b.detail_to, b.purpose
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
+ 										COALESCE(b.detail_from,''), COALESCE(b.detail_to,''), COALESCE(b.purpose,'')
 										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
@@ -188,7 +193,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, store_number, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			log.Println(0)
+			defer GetDataTypeOfTransportationAndRoute.Close()
 			typeOfTransportation = ""
 			DetailTo = ""
 			DetailFrom = ""
@@ -219,13 +224,13 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			//log.Println(DataPurpose)
 		}
 		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
-
+		defer GetDataTypeOfTransportationAndRoute.Close()
 	}
 
 	if Condition == "usageRecordHistory"{
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select trans.name_transportation_japanese, 
- 										b.detail_from, b.detail_to
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
+ 										COALESCE(b.detail_from,''), COALESCE(b.detail_to,'')
 										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
@@ -236,7 +241,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, store_number, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			log.Println(0)
+			defer GetDataTypeOfTransportationAndRoute.Close()
 			typeOfTransportation = ""
 			DetailTo = ""
 			DetailFrom = ""
@@ -267,7 +272,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			//log.Println(DataPurpose)
 		}
 		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
-
+		defer GetDataTypeOfTransportationAndRoute.Close()
 	}
 
 	if Condition == "DetailCommutingByEmployeeCode"{
@@ -284,7 +289,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			log.Println(0)
+			defer GetDataTypeOfTransportationAndRoute.Close()
 			typeOfTransportation = ""
 			DetailTo = ""
 			DetailFrom = ""
@@ -315,7 +320,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			//log.Println(DataPurpose)
 		}
 		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
-
+		defer GetDataTypeOfTransportationAndRoute.Close()
 	}
 
 	return DatatypeOfTransportation, DataRoute, DataPurpose

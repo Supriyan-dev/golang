@@ -25,17 +25,7 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 		showDataint, _ = strconv.Atoi(showData)
 	}
 	db := db.Connect()
-	_model := model_Approve.Init_DB_CommutingApprove{DB: db}
-	ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching,condition)
-
-	if err != nil {
-		_response.Status = http.StatusInternalServerError
-		_response.Message = err.Error()
-		_response.CurrentPage = 0
-		_response.TotalPage = 0
-		_response.Data = nil
-		_Response.ResponseJson(w, _response.Status, _response)
-	} else if r.Method != "POST" {
+	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.CurrentPage = 0
 		_response.TotalPage = 0
@@ -43,14 +33,26 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 		_response.Data = nil
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
-		_response.Status = http.StatusOK
-		_response.Message = "Success Response"
-		_response.CountData = CountData
-		_response.CurrentPage = Mpage
-		_response.TotalPage = (CountData / showDataint) + 1
-		_response.Data = ResultData
-		_Response.ResponseJson(w, _response.Status, _response)
+		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
+		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition)
+		defer db.Close()
+		if err != nil {
+			_response.Status = http.StatusInternalServerError
+			_response.Message = err.Error()
+			_response.CurrentPage = 0
+			_response.TotalPage = 0
+			_response.Data = nil
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success Response"
+			_response.CountData = CountData
+			_response.CurrentPage = Mpage
+			_response.TotalPage = (CountData / showDataint) + 1
+			_response.Data = ResultData
+			_Response.ResponseJson(w, _response.Status, _response)
 
+		}
 	}
 }
 
@@ -63,17 +65,7 @@ func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.
 	searching := r.FormValue("searching")
 	Mpage, _ := strconv.Atoi(page)
 	db := db.Connect()
-	_model := model_Approve.Init_DB_CommutingApprove{DB: db}
-	ResultData, err := _model.GetDataApproveByCommutingEmployeeCode(page, showData, searching, employee_number)
-
-	if err != nil {
-		_response.Status = http.StatusInternalServerError
-		_response.Message = err.Error()
-		_response.CurrentPage = 0
-		_response.TotalPage = 0
-		_response.Data = nil
-		_Response.ResponseJson(w, _response.Status, _response)
-	} else if r.Method != "POST" {
+	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.CurrentPage = 0
 		_response.TotalPage = 0
@@ -81,20 +73,32 @@ func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.
 		_response.Data = nil
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
-		//CountData := models3.CheckDataByStoreAndEmployee(`select count(*) from (select COUNT(*)
-		//								from commuting_trip comtrip, code_commuting cc,
-		//								detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
-		//								where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
-		//								geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
-		//								and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y'
-		//								group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`, storeNumber, employeeNumber)
-		_response.Status = http.StatusOK
-		_response.Message = "Success Response"
-		_response.CurrentPage = Mpage
-		_response.TotalPage = 0
-		_response.Data = ResultData
-		_Response.ResponseJson(w, _response.Status, _response)
+		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
+		ResultData, err := _model.GetDataApproveByCommutingEmployeeCode(page, showData, searching, employee_number)
+		defer db.Close()
+		if err != nil {
+			_response.Status = http.StatusInternalServerError
+			_response.Message = err.Error()
+			_response.CurrentPage = 0
+			_response.TotalPage = 0
+			_response.Data = nil
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else {
+			//CountData := models3.CheckDataByStoreAndEmployee(`select count(*) from (select COUNT(*)
+			//								from commuting_trip comtrip, code_commuting cc,
+			//								detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+			//								where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+			//								geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
+			//								and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y'
+			//								group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`, storeNumber, employeeNumber)
+			_response.Status = http.StatusOK
+			_response.Message = "Success Response"
+			_response.CurrentPage = Mpage
+			_response.TotalPage = 0
+			_response.Data = ResultData
+			_Response.ResponseJson(w, _response.Status, _response)
 
+		}
 	}
 }
 
@@ -117,7 +121,7 @@ func ReturnDetailCommutingByEmployeeCode(w http.ResponseWriter, r *http.Request)
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
 		//change morning
 		resultData, err := _model.DetailCommutingByEmployeeCode(employee_number, id_basic_information, code_commuting)
-
+		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -149,7 +153,7 @@ func ReturnCommutingApproveOrReject(w http.ResponseWriter, r *http.Request) {
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
 		//change morning
 		resultData, err := _model.CommutingApproveOrReject(initializeData)
-
+		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
