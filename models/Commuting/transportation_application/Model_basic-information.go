@@ -1,7 +1,7 @@
 package transportation_application
 
 import (
-	"../../../initialize/enter_the_information"
+	"../../../initialize/Commuting"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
 	"errors"
@@ -20,7 +20,7 @@ type Models_init_basic_information models.DB_init
 // - using table commuting_basic_information, basic_information, store_inormation and general_information
 // - looped data from the above search
 
-func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string) (sh []enter_the_information.FormatShowBasicInformation, err error) {
+func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string) (sh []Commuting.FormatShowBasicInformation, err error) {
 
 	GetBasicInformation, errGetBasicInformation := model.DB.Query(`select gi.id_general_information
 										,bi.id_basic_information,bi.first_name, bi.last_name, bi.adress, bi.adress_kana,
@@ -39,12 +39,12 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
  									   gi.id_basic_information = bi.id_basic_information and 
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   bi.employee_code=?`, store_number, employee_number)
-	var init_BasicInformation enter_the_information.ShowBasicInformation1
-	var Arr_BasicInformation []enter_the_information.ShowBasicInformation1
-	var init_DataApprove enter_the_information.ShowBasicInformation2
-	var Arr_DataApprove []enter_the_information.ShowBasicInformation2
-	var init_CommutingBasicInformation enter_the_information.ShowBasicInformation3
-	var Arr_init_CommutingBasicInformation []enter_the_information.ShowBasicInformation3
+	var init_BasicInformation Commuting.ShowBasicInformation1
+	var Arr_BasicInformation []Commuting.ShowBasicInformation1
+	var init_DataApprove Commuting.ShowBasicInformation2
+	var Arr_DataApprove []Commuting.ShowBasicInformation2
+	var init_CommutingBasicInformation Commuting.ShowBasicInformation3
+	var Arr_init_CommutingBasicInformation []Commuting.ShowBasicInformation3
 	if errGetBasicInformation != nil && errGetCommutingBasicInformation != nil {
 		return nil, errors.New("error basic information and commuting basic information")
 		log.Println(errGetBasicInformation.Error())
@@ -60,7 +60,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	}
 
 	if GetData1 == true {
-		showData := enter_the_information.ShowBasicInformation1{
+		showData := Commuting.ShowBasicInformation1{
 			IdBasicInformation: init_BasicInformation.IdBasicInformation,
 			FirstName:          init_BasicInformation.FirstName,
 			LastName:           init_BasicInformation.LastName,
@@ -85,7 +85,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	}
 
 	if GetData2 == true {
-		showData2 := enter_the_information.ShowBasicInformation2{
+		showData2 := Commuting.ShowBasicInformation2{
 			IdGeneralBasicInformation: init_DataApprove.IdGeneralBasicInformation,
 			StatusApproved:            init_DataApprove.StatusApproved,
 			DateApprove:               init_DataApprove.DateApprove,
@@ -93,7 +93,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			DateSubmit:                init_DataApprove.DateSubmit,
 		}
 		Arr_DataApprove = append(Arr_DataApprove, showData2)
-		showData3 := enter_the_information.ShowBasicInformation3{
+		showData3 := Commuting.ShowBasicInformation3{
 			IdCommutingBasicInformation:    init_CommutingBasicInformation.IdCommutingBasicInformation,
 			IdGeneralInformation:           init_CommutingBasicInformation.IdGeneralInformation,
 			InsuranceCompany:               init_CommutingBasicInformation.InsuranceCompany,
@@ -109,7 +109,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 		Arr_init_CommutingBasicInformation = nil
 	}
 
-	FinallyData := enter_the_information.FormatShowBasicInformation{
+	FinallyData := Commuting.FormatShowBasicInformation{
 		//DataBasicInformation: Arr_BasicInformation,
 		//DataApprove:          Arr_DataApprove,
 		//DataApply:            Arr_init_CommutingBasicInformation,
@@ -132,7 +132,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 // if there is an update to the commuting_basic_information table by id_general_information
 // if not present will insert into the commuting_basic_information table
 
-func (model Models_init_basic_information) Model_InsertBasicInformation(insertD *enter_the_information.InsertBasicInformation) (it []enter_the_information.InsertBasicInformation, condition string) {
+func (model Models_init_basic_information) Model_InsertBasicInformation(insertD *Commuting.InsertBasicInformation) (it []Commuting.InsertBasicInformation, condition string) {
 
 	checkdata := utils_enter_the_information.CheckDataById(`select count(*) from commuting_basic_information where id_general_information = ? `, insertD.IdGeneralInformation)
 	log.Println(checkdata)
@@ -151,7 +151,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			return nil, "Missing required field in body request"
 		}
 
-		datainsert := enter_the_information.InsertBasicInformation{
+		datainsert := Commuting.InsertBasicInformation{
 			IdCommutingBasicInformation:    insertD.IdCommutingBasicInformation,
 			InsuranceCompany:               insertD.InsuranceCompany,
 			DriverLicenseExpiryDate:        insertD.DriverLicenseExpiryDate,
@@ -190,7 +190,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			return nil, "Missing required field in body request"
 		}
 
-		datainsert := enter_the_information.InsertBasicInformation{
+		datainsert := Commuting.InsertBasicInformation{
 			IdCommutingBasicInformation:    "Auto",
 			InsuranceCompany:               insertD.InsuranceCompany,
 			DriverLicenseExpiryDate:        insertD.DriverLicenseExpiryDate,

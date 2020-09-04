@@ -1,7 +1,7 @@
 package transportation_application
 
 import (
-	"../../../initialize/enter_the_information"
+	"../../../initialize/Commuting"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
 	"log"
@@ -9,9 +9,9 @@ import (
 
 type Models_init_input_confirmation models.DB_init
 
-func (model Models_init_input_confirmation) GetDataInputConfimation(store_number string, employee_number string) (sh []enter_the_information.IC_Format, err error) {
+func (model Models_init_input_confirmation) GetDataInputConfimation(store_number string, employee_number string) (sh []Commuting.IC_Format, err error) {
 
-	var init_CommutingBasicInformation enter_the_information.ShowBasicInformation3
+	var init_CommutingBasicInformation Commuting.ShowBasicInformation3
 
 	GetBasicInformation, errGetBasicInformation := model.DB.Query(`select bi.id_basic_information,bi.first_name, bi.last_name, bi.adress, bi.adress_kana,
 										bi.adress_detail,bi.adress_detail_kana, bi.add_phone_number
@@ -40,10 +40,10 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 										and ct.submit ='N' and ct.save_trip ='N'
 										group by b.id_commuting_trip`, store_number, employee_number)
 	var init_biC interface{}
-	var init_bi enter_the_information.ShowBasicInformation1
-	//var Arr_bi []enter_the_information.ShowBasicInformation1
-	var init_ur enter_the_information.ShowUsageRecord2
-	var Arr_ur []enter_the_information.ShowUsageRecord2
+	var init_bi Commuting.ShowBasicInformation1
+	//var Arr_bi []Commuting.ShowBasicInformation1
+	var init_ur Commuting.ShowUsageRecord2
+	var Arr_ur []Commuting.ShowUsageRecord2
 	if err != nil && errGetBasicInformation != nil && errGetCommutingBasicInformation != nil {
 		log.Println(err.Error())
 		log.Println(errGetBasicInformation.Error())
@@ -118,7 +118,7 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 			}
 			DatatypeOfTransportation, DataPurpose, DataRoute := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_ur.IdCommutingTrip, `usageRecord-CheckData`)
 
-			dataCommutingTrip := enter_the_information.ShowUsageRecord2{
+			dataCommutingTrip := Commuting.ShowUsageRecord2{
 				IdCommutingTrip:  init_ur.IdCommutingTrip,
 				RouteProfileName: init_ur.RouteProfileName,
 				Date:             init_ur.Date,
@@ -134,7 +134,7 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 		}
 	}
 	if init_biC != nil && Arr_ur != nil {
-		FinallyData := enter_the_information.IC_Format{
+		FinallyData := Commuting.IC_Format{
 			StatusDriversLicense: StatusDriversLicense,
 			StatusCarInsurance:   StatusCarInsurance,
 			KodeBasicInformation: KodeBasicInformation,

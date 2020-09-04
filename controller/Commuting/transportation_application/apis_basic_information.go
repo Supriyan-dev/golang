@@ -3,8 +3,8 @@ package transportation_application
 import (
 	"../../../db"
 	"../../../initialize"
-	"../../../initialize/enter_the_information"
-	models_enter_the_information "../../../models/enter_the_information/transportation_application"
+	"../../../initialize/Commuting"
+	models_enter_the_information "../../../models/Commuting/transportation_application"
 	_Response "../../../response"
 	"encoding/json"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Request) {
 
-	var init_insert enter_the_information.InsertBasicInformation
+	var init_insert Commuting.InsertBasicInformation
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
@@ -24,7 +24,7 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
 		resultData, err := _model.Model_InsertBasicInformation(&init_insert)
-
+		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -54,7 +54,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
 		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber)
-
+		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
 			_response.Message = err.Error()
