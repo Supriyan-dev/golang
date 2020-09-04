@@ -3,8 +3,8 @@ package transportation_application
 import (
 	"../../../db"
 	"../../../initialize"
-	"../../../initialize/enter_the_information"
-	models_enter_the_information "../../../models/enter_the_information/transportation_application"
+	"../../../initialize/Commuting"
+	models_enter_the_information "../../../models/Commuting/transportation_application"
 	_Response "../../../response"
 	models3 "../../../utils/enter_the_information"
 	"encoding/json"
@@ -154,7 +154,7 @@ func ReturnGetByCommutingUsageRecordHistory(w http.ResponseWriter, r *http.Reque
 
 func ReturnInsertUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *http.Request) {
 
-	var initializeData enter_the_information.InsertUsageRecordApplyForTravelExpenses
+	var initializeData Commuting.InsertUsageRecordApplyForTravelExpenses
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&initializeData)
 	param := mux.Vars(r)
@@ -188,7 +188,7 @@ func ReturnInsertUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 
 func ReturnUpdateUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *http.Request) {
 
-	var initializeData enter_the_information.UpdateUsageRecordApplyForTravelExpenses
+	var initializeData Commuting.UpdateUsageRecordApplyForTravelExpenses
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&initializeData)
 	db := db.Connect()

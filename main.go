@@ -2,6 +2,7 @@ package main
 
 import (
 	entertheinformation "./controller/Commuting/transportation_application"
+	Approve "./controller/Commuting/Approve"
 	controllerDataMaster "./controller/data_master_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 	"fmt"
@@ -151,6 +152,13 @@ func main() {
 	router.HandleFunc("/commuting-InputConfirmation-ShowDataById", entertheinformation.ReturnGetByCommutingInputConfirmation)
 	router.HandleFunc("/commuting-InputConfirmation-Submit/{id_commuting_trip}", entertheinformation.ReturnSubmitInputConfirmation)
 	// end Commuting Transportation Application
+
+	// start Commuting Approve
+	router.HandleFunc("/commuting-ApproveShowData", Approve.ReturnGetDataApproveCommutingSumByAllEmployeeCode)
+	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCode", Approve.ReturnGetDataApproveByCommutingEmployeeCode)
+	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCodeDetail", Approve.ReturnDetailCommutingByEmployeeCode)
+	router.HandleFunc("/commuting-Approve", Approve.ReturnCommutingApproveOrReject)
+	// end Commuting Approve
 
 	fmt.Println("Connected to port 9000")
 	handler := cors.AllowAll().Handler(router)

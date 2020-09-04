@@ -3,7 +3,7 @@ package transportation_application
 import (
 	"../../../db"
 	"../../../initialize"
-	models_enter_the_information "../../../models/enter_the_information/transportation_application"
+	models_enter_the_information "../../../models/Commuting/transportation_application"
 	_Response "../../../response"
 	"github.com/gorilla/mux"
 	"net/http"

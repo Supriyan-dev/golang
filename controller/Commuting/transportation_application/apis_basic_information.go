@@ -3,8 +3,8 @@ package transportation_application
 import (
 	"../../../db"
 	"../../../initialize"
-	"../../../initialize/enter_the_information"
-	models_enter_the_information "../../../models/enter_the_information/transportation_application"
+	"../../../initialize/Commuting"
+	models_enter_the_information "../../../models/Commuting/transportation_application"
 	_Response "../../../response"
 	"encoding/json"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Request) {
 
-	var init_insert enter_the_information.InsertBasicInformation
+	var init_insert Commuting.InsertBasicInformation
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()

@@ -5,7 +5,16 @@ import (
 	"log"
 )
 
-func CheckCountDataById(sql string, id interface{} ) (CountData int) {
+func GetDataByIdInt(sql string, id int ) (CountData int64) {
+	db := db2.Connect()
+	err := db.QueryRow(sql,id).Scan(&CountData)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return CountData
+}
+
+func GetDataByIdFloat(sql string, id int ) (CountData float64) {
 	db := db2.Connect()
 	err := db.QueryRow(sql,id).Scan(&CountData)
 	if err != nil {

@@ -1,7 +1,7 @@
 package transportation_application
 
 import (
-	"../../../initialize/enter_the_information"
+	"../../../initialize/Commuting"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
 	"log"
@@ -18,7 +18,7 @@ type Models_init_Usage_Record models.DB_init
 // english
 // Show all detail_commuting_trip based on code_store and employee_store in group by based on id_commuting_trip
 // data is looped
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []enter_the_information.FormatShowUsageRecord, err error) {
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number string, employee_number string) (sh []Commuting.FormatShowUsageRecord, err error) {
 
 	CountHistory := utils_enter_the_information.CheckDataByStoreAndEmployee(`SELECT COUNT(*) FROM (SELECT COUNT(detcomtrip.id_commuting_trip) FROM commuting_trip ct INNER JOIN detail_commuting_trip detcomtrip ON ct.id_commuting_trip = detcomtrip.id_commuting_trip inner join general_information gi on gi.id_general_information = ct.id_general_information INNER JOIN basic_information bi ON bi.id_basic_information = gi.id_basic_information inner join store_information si on si.id_code_store = gi.id_store_code where ct.save_trip ='N' and ct.submit ='Y' and si.code_store =? and bi.employee_code =? group by detcomtrip.id_commuting_trip) t`, store_number, employee_number)
 
@@ -39,10 +39,10 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 										and ct.submit ='N' and ct.save_trip ='N'
 										group by b.id_commuting_trip`, store_number, employee_number)
 	var init_biC interface{}
-	var init_bi enter_the_information.ShowBasicInformation1
-	//var Arr_bi []enter_the_information.ShowBasicInformation1
-	var init_ur enter_the_information.ShowUsageRecord2
-	var Arr_ur []enter_the_information.ShowUsageRecord2
+	var init_bi Commuting.ShowBasicInformation1
+	//var Arr_bi []Commuting.ShowBasicInformation1
+	var init_ur Commuting.ShowUsageRecord2
+	var Arr_ur []Commuting.ShowUsageRecord2
 	if err != nil && errGetBasicInformation != nil {
 		log.Println(err.Error())
 		log.Println(errGetBasicInformation.Error())
@@ -50,7 +50,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	GetBasicInformation.Next()
 	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
 	var KodeBasicInformation models.NullInt
-	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
+		GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
 	LPAD(RIGHT(department_information.department_code, 2), 2 , '0'),
 	LPAD(RIGHT(store_section_information.store_section_code, 2), 2 , '0'),
 	LPAD(RIGHT(unit_information.unit_code, 2), 2 , '0')) AS 'division_code'
@@ -87,7 +87,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 			}
 			DatatypeOfTransportation, DataPurpose, DataRoute := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_ur.IdCommutingTrip, `usageRecord-CheckData`)
 
-			dataCommutingTrip := enter_the_information.ShowUsageRecord2{
+			dataCommutingTrip := Commuting.ShowUsageRecord2{
 				IdCommutingTrip:  init_ur.IdCommutingTrip,
 				RouteProfileName: init_ur.RouteProfileName,
 				Date:             init_ur.Date,
@@ -103,7 +103,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 		}
 	}
 	if init_biC != nil && Arr_ur != nil {
-		FinallyData := enter_the_information.FormatShowUsageRecord{
+		FinallyData := Commuting.FormatShowUsageRecord{
 			CountHistory:         CountHistory,
 			KodeBasicInformation: KodeBasicInformation,
 			DataBasicInformation: init_biC,
@@ -120,11 +120,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 
 // english
 // Show Data Usage Record to edit by id commuting trip, store number dan employee number
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []enter_the_information.FormatShowUsageRecordForEdit, err error) {
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_number string, employee_number string, id_commuting_trip string) (sh []Commuting.FormatShowUsageRecordForEdit, err error) {
 	var inter_CommutingTrip interface{}
-	var shCommutingTrip enter_the_information.ShowCommutingTrip
-	//var Arr_shCommutingTrip []enter_the_information.ShowCommutingTrip
-	var Arr_shCommutingTripDetail []enter_the_information.ShowUsageRecord
+	var shCommutingTrip Commuting.ShowCommutingTrip
+	//var Arr_shCommutingTrip []Commuting.ShowCommutingTrip
+	var Arr_shCommutingTripDetail []Commuting.ShowUsageRecord
 	QueryShowCommutingTrip, errShowCommutingTrip := model.DB.Query(`select ct.id_commuting_trip, ct.route_profile_name,
  										ct.date, ct.attendance_code from commuting_trip ct where ct.id_commuting_trip = ?`, id_commuting_trip)
 
@@ -151,7 +151,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 										and si.code_store =? and bi.employee_code=? and b.id_commuting_trip = ?
 										`, store_number, employee_number, id_commuting_trip)
 
-	var init_container enter_the_information.ShowUsageRecord
+	var init_container Commuting.ShowUsageRecord
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -166,7 +166,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 
 	}
 
-	FinnalyData := enter_the_information.FormatShowUsageRecordForEdit{
+	FinnalyData := Commuting.FormatShowUsageRecordForEdit{
 		DataTrip:       inter_CommutingTrip,
 		DetailDataTrip: Arr_shCommutingTripDetail,
 	}
@@ -181,7 +181,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 // english
 // get all data route favorite by store number and employee number
 
-func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []enter_the_information.ShowUseMyRoute, err error) {
+func (model Models_init_Usage_Record) Model_GetByIdUsageRecordUseMyRoute(store_number string, employee_number string) (sh []Commuting.ShowUseMyRoute, err error) {
 
 	rows, err := model.DB.Query(`select MIN(detcomtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), MIN(comtrip.route_profile_name),  MIN(comtrip.attendance_code),
 MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detcomtrip.commute_distance),0), COALESCE(SUM(detcomtrip.cost),0)  from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
@@ -189,7 +189,7 @@ where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_ge
 geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
 group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number, employee_number)
 
-	var init_container enter_the_information.ShowUseMyRoute
+	var init_container Commuting.ShowUseMyRoute
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -202,7 +202,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number
 		}
 
 		DatatypeOfTransportation, DataRoute, _ :=	utils_enter_the_information.GetAdditionalUsageRecord(store_number,employee_number,init_container.IdCommutingTrip,"usageRecordUseRoute")
-		FinallyData := enter_the_information.ShowUseMyRoute{
+		FinallyData := Commuting.ShowUseMyRoute{
 			IdCommutingTrip:       init_container.IdCommutingTrip,
 			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
 			RouteProfileName:      init_container.RouteProfileName,
@@ -223,9 +223,9 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number
 }
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_number string,
-	employee_number string, page string, filter string, showData string, searching string) (sh []enter_the_information.FormatHistory, err error) {
+	employee_number string, page string, filter string, showData string, searching string) (sh []Commuting.FormatHistory, err error) {
 
-	var Arr_History []enter_the_information.ShowHistory
+	var Arr_History []Commuting.ShowHistory
 	var pageInt int
 	var showDataInt int
 	var limitPage string
@@ -269,7 +269,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 										and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y' `+filterMonth+searchingAction+`
 										group by detcomtrip.id_commuting_trip order by comtrip.date asc `+limitPage, store_number, employee_number)
 
-	var init_container enter_the_information.ShowHistory
+	var init_container Commuting.ShowHistory
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -322,7 +322,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 			//log.Println(DataPurpose)
 		//}
 		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
-		FinnalyData := enter_the_information.ShowHistory{
+		FinnalyData := Commuting.ShowHistory{
 			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
 			IdCommutingTrip:       init_container.IdCommutingTrip,
 			RouteProfileName:      init_container.RouteProfileName,
@@ -369,14 +369,14 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
 										and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y' and cc.status_commuting ='not_approved'
 										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`, store_number, employee_number)
-	DataCountStatusHistory := enter_the_information.ShowAdditionalHistory{
+	DataCountStatusHistory := Commuting.ShowAdditionalHistory{
 		CountDataSubmit:      DataSubmit,
 		CountDataDraft:       DataDraft,
 		CountDataPartial:     DataPartial,
 		CountDataNotApproved: DataNotApproved,
 	}
 
-	FinallyData := enter_the_information.FormatHistory{
+	FinallyData := Commuting.FormatHistory{
 		DataCount:   DataCountStatusHistory,
 		Datahistory: Arr_History,
 	}
@@ -393,7 +393,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 // insert commuting_trip and detail_commuting_trip
 // body row -> json
 
-func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpenses(con string, store_id string, employee_id string, initializeData *enter_the_information.InsertUsageRecordApplyForTravelExpenses) (it []enter_the_information.InsertUsageRecordApplyForTravelExpenses, condition string) {
+func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpenses(con string, store_id string, employee_id string, initializeData *Commuting.InsertUsageRecordApplyForTravelExpenses) (it []Commuting.InsertUsageRecordApplyForTravelExpenses, condition string) {
 	Status_Draft := "N"
 	RandomInte := rand.Intn(999999)
 	var RandomInt int
@@ -425,7 +425,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 		return nil, "You cannot register up to more than 3 routes"
 	}
 	vals := []interface{}{}
-	//var Arr_DetailDataInsert [] enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses
+	//var Arr_DetailDataInsert [] Commuting.InsertDetailUsageRecordApplyForTravelExpenses
 
 	insertCommutingTrip, errInsertCommutingTrip := model.DB.Prepare(`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
  		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`)
@@ -435,7 +435,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 									type_of_Transport ,purpose ,detail_from ,detail_to,distance,
 									cost,point_trip,transit_point,commute_distance,go_out_distance)
 									VALUES`
-	//var initializeDataD enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses
+	//var initializeDataD Commuting.InsertDetailUsageRecordApplyForTravelExpenses
 	for _, initializeDataD := range initializeData.DataDetail {
 		sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?),"
 		//Distance := initializeDataD.CommuteDistance + initializeDataD.GoOutDistance
@@ -474,7 +474,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 		log.Println(err1)
 		return nil, "Missing required field in body request"
 	}
-	//DetailDataInsert := enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses{
+	//DetailDataInsert := Commuting.InsertDetailUsageRecordApplyForTravelExpenses{
 	//	IdCommutingTrip: initializeDataD.IdCommutingTrip,
 	//	TypeOfTransport: initializeDataD.TypeOfTransport,
 	//	Purpose:         initializeDataD.Purpose,
@@ -489,7 +489,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	//}
 	//Arr_DetailDataInsert = append(Arr_DetailDataInsert,DetailDataInsert)
 
-	datainsert := enter_the_information.InsertUsageRecordApplyForTravelExpenses{
+	datainsert := Commuting.InsertUsageRecordApplyForTravelExpenses{
 		RouteProfileName:     initializeData.RouteProfileName,
 		Date:                 initializeData.Date,
 		Attendance:           initializeData.Attendance,
@@ -511,7 +511,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 // english
 // update commuting_trip by id_commuting_trip and detail_commuting_trip by id_commuting_trip_detail
 // body row -> json
-func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpenses(initializeData *enter_the_information.UpdateUsageRecordApplyForTravelExpenses) (it []enter_the_information.UpdateUsageRecordApplyForTravelExpenses, condition string) {
+func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpenses(initializeData *Commuting.UpdateUsageRecordApplyForTravelExpenses) (it []Commuting.UpdateUsageRecordApplyForTravelExpenses, condition string) {
 	vals := []interface{}{}
 
 	rows, err := model.DB.Prepare(`update commuting_trip set id_general_information = ?,
@@ -568,7 +568,7 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 		return nil, "Missing required field in body request"
 	}
 
-	dataShow := enter_the_information.UpdateUsageRecordApplyForTravelExpenses{
+	dataShow := Commuting.UpdateUsageRecordApplyForTravelExpenses{
 		IdCommutingTrip:      initializeData.IdCommutingTrip,
 		RouteProfileName:     initializeData.RouteProfileName,
 		Date:                 initializeData.Date,

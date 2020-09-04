@@ -2,7 +2,7 @@ package enter_the_information
 
 import (
 	"log"
-	"../../initialize/enter_the_information"
+	"../../initialize/Commuting"
 	db2 "../../db"
 	"strings"
 	models3 "../../models"
@@ -44,7 +44,7 @@ func CheckDataByStoreAndEmployee(sql string, store string,employee string) (Coun
 	return CountData
 }
 
-func ValidatorInsertBasicInformation(Request *enter_the_information.InsertBasicInformation) (valid bool, message string) {
+func ValidatorInsertBasicInformation(Request *Commuting.InsertBasicInformation) (valid bool, message string) {
 
 	if Request.CarInsuranceDocumentExpiryDate == "" {
 		return false, "Missing required field in body request → CarInsuranceDocumentExpiryDate = <empty string>"
@@ -80,7 +80,7 @@ func ValidatorInsertBasicInformation(Request *enter_the_information.InsertBasicI
 	return true, "done"
 }
 
-func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertUsageRecordApplyForTravelExpenses) (valid bool, message string) {
+func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *Commuting.InsertUsageRecordApplyForTravelExpenses) (valid bool, message string) {
 
 	if Request.RouteProfileName == "" {
 		return false, "Missing required field in body request → RouteProfileName  = <empty string>"
@@ -97,7 +97,7 @@ func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *enter_the_informa
 	return true, "done"
 }
 
-func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *enter_the_information.InsertDetailUsageRecordApplyForTravelExpenses) (valid bool, message string) {
+func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *Commuting.InsertDetailUsageRecordApplyForTravelExpenses) (valid bool, message string) {
 
 	if Request.IdCommutingTrip == 0 {
 		return false, "Missing required field in body request → TypeOfTransport = 0"
@@ -234,6 +234,54 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										and si.code_store =? and bi.employee_code=?
 										and ct.submit ='Y' and ct.save_trip ='N' and b.id_commuting_trip = ?
 										`, store_number, employee_number, id_commuting_trip)
+
+		if errGetDataTypeOfTransportationAndRoute != nil {
+			log.Println(0)
+			typeOfTransportation = ""
+			DetailTo = ""
+			DetailFrom = ""
+			Purpose = ""
+		} else {
+			for GetDataTypeOfTransportationAndRoute.Next() {
+				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
+
+				if errGetDataT != nil {
+					log.Println(errGetDataT.Error())
+				}
+				DatatypeOfTransportation += typeOfTransportation + ` - `
+				DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
+				DataPurpose += Purpose + ` - `
+
+			}
+			if typeOfTransportation != "" {
+				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+			}
+			if DataRoute != "" {
+				DataRoute = DataRoute[0 : len(DataRoute)-3]
+			}
+			if DataPurpose != "" {
+				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+			}
+			//log.Println(DatatypeOfTransportation)
+			//log.Println(DataRoute)
+			//log.Println(DataPurpose)
+		}
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
+
+	}
+
+	if Condition == "DetailCommutingByEmployeeCode"{
+		// Get Data Transportation, detail from, detail to and purpose (horizontal)
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
+ 										COALESCE(b.detail_from,''), COALESCE(b.detail_to,'')
+										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
+										master_transportation trans
+										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
+										and b.type_of_transport =  trans.code_transportation
+										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information
+										and bi.employee_code=?
+										and ct.submit ='Y' and ct.save_trip ='N' and b.id_commuting_trip = ?
+										`, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
 			log.Println(0)
