@@ -20,22 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee3c5578-5f36-4498-899b-08d59aae3b61" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/controller/Commuting/Approve/apis_approve.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/initialize/Commuting/init_approve.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/Commuting/Approve/Model_Approve.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_basic_information.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_basic_information.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_input_confirmation.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_input_confirmation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_usage_record.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/initialize/enter_the_information/init_input_confirmation.go" beforeDir="false" afterPath="$PROJECT_DIR$/initialize/Commuting/init_input_confirmation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/initialize/enter_the_information/init_transportation_application.go" beforeDir="false" afterPath="$PROJECT_DIR$/initialize/Commuting/init_transportation_application.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/initialize/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/initialize/response.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/enter_the_information/transportation_application/Model_basic-information.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_basic-information.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/enter_the_information/transportation_application/Model_input_confirmation.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_input_confirmation.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/enter_the_information/transportation_application/Model_usage_record.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/Utils_Global_showData.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/Utils_Global_showData.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/enter_the_information/utils_validator_transportation_application.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/enter_the_information/utils_validator_transportation_application.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +52,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/models/enter_the_information/transportation_application" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
