@@ -5,6 +5,7 @@ import (
 	"../../../models"
 	utils_Global "../../../utils"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"context"
 	"log"
 	"strconv"
 )
@@ -597,12 +598,19 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 	//sqlUpdate := `update commuting_trip set status_approval = ?,date_time_approve =? where id_commuting_trip = ? `
 	//sqlUpdate := ""
 	//var dataapprover approve.Init_InputDataApprove
-
+	ctx := context.Background()
+	tx, errTx:= model.DB.BeginTx(ctx,nil)
+	if errTx != nil{
+		log.Fatal(errTx.Error())
+	}
 	for _, dataapprover := range dataApprove {
+
 		//sqlUpdate += "(?,?,CONVERT_TZ(NOW(),'+00:00','+09:00')),"
-		res, _ := model.DB.Exec(`update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),'+07:00','+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
+		_, res := model.DB.ExecContext(ctx,`update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
 		if res != nil {
-			log.Println(res.RowsAffected())
+			log.Println(res.Error())
+			tx.Rollback()
+			return
 		}
 		dataapprove = append(dataapprove, dataapprover)
 
@@ -612,6 +620,11 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 		//sqlUpdate += `update commuting_trip set status_approval = ?,date_time_approve =? where id_commuting_trip = ? `
 		//vals = append(vals,  dataapprover.StatusDataApprove,dataapprover.IdCommuting)
 	}
+	CommitErr := tx.Commit()
+	if CommitErr != nil {
+		log.Println(CommitErr.Error())
+	}
+
 	//log.Println(sqlUpdate)
 	//log.Println(dataapprover)
 	//sqlUpdate += `;`

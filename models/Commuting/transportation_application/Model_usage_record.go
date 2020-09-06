@@ -4,6 +4,7 @@ import (
 	"../../../initialize/Commuting"
 	"../../../models"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"context"
 	"log"
 	"math/rand"
 	"strconv"
@@ -276,7 +277,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 
 	var init_container Commuting.ShowHistory
 	if err != nil {
-	defer rows.Close()
+		defer rows.Close()
 		log.Println(err.Error())
 	}
 
@@ -433,54 +434,114 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	}
 	vals := []interface{}{}
 	//var Arr_DetailDataInsert [] Commuting.InsertDetailUsageRecordApplyForTravelExpenses
+	ctx := context.Background()
+	tx, errTx := model.DB.BeginTx(ctx, nil)
+	if errTx != nil {
+		log.Fatal(errTx)
+	}
+	//insertCommutingTrip, errInsertCommutingTrip := model.DB.PrepareContext(ctx,`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
+	//	VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`)
+	//insertCodeCommuting, errInsertCodeCommuting := model.DB.PrepareContext(ctx,`insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
+	//	VALUES(?,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`)
+	//
+	//sqlDetail := `insert into detail_commuting_trip(id_commuting_trip,
+	//								type_of_Transport ,purpose ,detail_from ,detail_to,distance,
+	//								cost,point_trip,transit_point,commute_distance,go_out_distance)
+	//								VALUES`
 
-	insertCommutingTrip, errInsertCommutingTrip := model.DB.Prepare(`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
- 		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`)
-	insertCodeCommuting, errInsertCodeCommuting := model.DB.Prepare(`insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
-	VALUES(?,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`)
-	sqlDetail := `insert into detail_commuting_trip(id_commuting_trip,
+	queryInsertCommutingTrip := `insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
+ 		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`
+
+	queryinsertCodeCommuting := `insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
+		VALUES(?,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`
+
+	querySqlinsertCommutingTripDetail := `insert into detail_commuting_trip(id_commuting_trip,
 									type_of_Transport ,purpose ,detail_from ,detail_to,distance,
 									cost,point_trip,transit_point,commute_distance,go_out_distance)
 									VALUES`
+
 	//var initializeDataD Commuting.InsertDetailUsageRecordApplyForTravelExpenses
 	for _, initializeDataD := range initializeData.DataDetail {
-		sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?),"
+		//sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?),"
+		querySqlinsertCommutingTripDetail += "(?,?,?,?,?,?,?,?,?,?,?),"
+
 		//Distance := initializeDataD.CommuteDistance + initializeDataD.GoOutDistance
 		//initializeDataD.Distance = Distance
 		//log.Println(initializeDataD.Distance)
 		vals = append(vals, initializeDataD.IdCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
-	sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
-	stmtDetail, _ := model.DB.Prepare(sqlDetail)
+	//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
+	querySqlinsertCommutingTripDetail = querySqlinsertCommutingTripDetail[0 : len(querySqlinsertCommutingTripDetail)-1]
+	//stmtDetail, errStmtDetail := model.DB.PrepareContext(ctx,sqlDetail)
 
-	if errInsertCommutingTrip != nil {
-		log.Println(errInsertCommutingTrip.Error())
-	}
+	//if errInsertCommutingTrip != nil {
+	//	log.Println(errInsertCommutingTrip.Error())
+	//	tx.Rollback()
+	//	return
+	//
+	//}
+	//
+	//if errInsertCodeCommuting != nil {
+	//	log.Println(errInsertCodeCommuting.Error())
+	//	tx.Rollback()
+	//	return
+	//
+	//}
+	//if errStmtDetail != nil {
+	//	log.Println(errStmtDetail.Error())
+	//	tx.Rollback()
+	//	return
+	//
+	//}
 
-	if errInsertCodeCommuting != nil {
-		log.Println(errInsertCodeCommuting.Error())
-	}
-
-	defer model.DB.Close()
+	//defer model.DB.Close()
 
 	valid, message := utils_enter_the_information.ValidatorInsertUsageRecordApplyForTravelExpenses(initializeData)
 	if valid == false {
 		return nil, message
 	}
+	_, errExecuteDetailCommutingTrip := model.DB.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
+	log.Println(errExecuteDetailCommutingTrip)
+	if errExecuteDetailCommutingTrip != nil {
+		//log.Fatal(errExecuteDetailCommutingTrip)
+		tx.Rollback()
+		return nil, "please check your data"
+	}
+	_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
+	log.Println(errExecuteCodeCommuting)
+	if errExecuteCodeCommuting != nil {
+		tx.Rollback()
+		return nil, "please check your data"
+	}
+	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 
-	executeCodeCommuting, _ := insertCodeCommuting.Exec(RandomInt)
-	execute, err1 := insertCommutingTrip.Exec(initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
-	executeDetailCommutingTrip, _ := stmtDetail.Exec(vals...)
-	if executeDetailCommutingTrip == nil {
-		log.Println("gagal insert Detail Commuting Trip")
+	log.Println(errExecuteCommutingTrip)
+	if errExecuteCommutingTrip != nil {
+		tx.Rollback()
+		return nil, "please check your data"
 	}
-	if executeCodeCommuting == nil {
-		log.Println("gagal insert Code Commuting")
+
+	//log.Println(errExecuteCodeCommuting)
+	//log.Println(errExecuteCommutingTrip)
+	//log.Println(errExecuteDetailCommutingTrip)
+
+	CommitErr := tx.Commit()
+	log.Println(CommitErr)
+	if CommitErr != nil {
+		//log.Fatal(CommitErr)
+		return nil, "please check your data"
 	}
-	if err1 != nil && execute == nil {
-		log.Println(err1)
-		return nil, "Missing required field in body request"
-	}
+
+	//if executeDetailCommutingTrip == nil {
+	//	log.Println("gagal insert Detail Commuting Trip")
+	//}
+	//if executeCodeCommuting == nil {
+	//	log.Println("gagal insert Code Commuting")
+	//}
+	//if err1 != nil && execute == nil {
+	//	log.Println(err1)
+	//	return nil, "Missing required field in body request"
+	//}
 	//DetailDataInsert := Commuting.InsertDetailUsageRecordApplyForTravelExpenses{
 	//	IdCommutingTrip: initializeDataD.IdCommutingTrip,
 	//	TypeOfTransport: initializeDataD.TypeOfTransport,
@@ -519,60 +580,51 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 // update commuting_trip by id_commuting_trip and detail_commuting_trip by id_commuting_trip_detail
 // body row -> json
 func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpenses(initializeData *Commuting.UpdateUsageRecordApplyForTravelExpenses) (it []Commuting.UpdateUsageRecordApplyForTravelExpenses, condition string) {
-	vals := []interface{}{}
 
-	rows, err := model.DB.Prepare(`update commuting_trip set id_general_information = ?,
-	route_profile_name = ?,date =?,attendance_code = ? where id_commuting_trip = ?`)
+	ctx := context.Background()
+	tx, errTx := model.DB.BeginTx(ctx, nil)
 
-	sqlDeleteDataDetail := `DELETE FROM detail_commuting_trip where id_commuting_trip =` + initializeData.IdCommutingTrip
-	log.Println(sqlDeleteDataDetail)
-	stmtDeleteDataDetail, errstmtDeteleDataDetail := model.DB.Query(sqlDeleteDataDetail)
-	if errstmtDeteleDataDetail != nil {
-		log.Print("delete?")
-		log.Println(errstmtDeteleDataDetail)
+	if errTx != nil {
+		return nil, "Please Check Your Data"
 	}
-	defer stmtDeleteDataDetail.Close()
+	valid, message := utils_enter_the_information.ValidatorUpdateUsageRecordApplyForTravelExpenses(initializeData)
+	if valid == false {
+		return nil, message
+	}
+	queryUpdateCommutingTrip := `update commuting_trip set id_general_information = ?,
+	route_profile_name = ?,date =?,attendance_code = ? where id_commuting_trip = ?`
 
-	sqlDetail := `insert into detail_commuting_trip(id_detail_commuting_trip,id_commuting_trip,
-									type_of_Transport ,purpose ,detail_from ,detail_to,distance,
-									cost,point_trip,transit_point,commute_distance,go_out_distance)
-									VALUES`
-	DataIdCommutingTripDetail := ""
-	DataCheckIdCommutingTripDetail := ""
+	queryUpdateCommutingDetail := `update detail_commuting_trip set 
+									type_of_Transport =? ,purpose =? ,detail_from =? ,detail_to = ?,distance =?,
+									cost =?,point_trip =?,transit_point =?,commute_distance =?,go_out_distance =?
+									where id_detail_commuting_trip =?`
 	for _, initializeDataD := range initializeData.DataDetail {
-		sqlDetail += "(?,?,?,?,?,?,?,?,?,?,?,?),"
-		DataCheckIdCommutingTripDetail = strconv.Itoa(initializeDataD.IdCommutingTripDetail)
-		DataIdCommutingTripDetail += strconv.Itoa(initializeDataD.IdCommutingTripDetail) + `,`
-		vals = append(vals, initializeDataD.IdCommutingTripDetail, initializeDataD.IdCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
-	}
-	if DataCheckIdCommutingTripDetail != "" {
-		DataIdCommutingTripDetail = DataIdCommutingTripDetail[0 : len(DataIdCommutingTripDetail)-1]
-	} else {
-		DataIdCommutingTripDetail = ""
-	}
-	sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
-	sqlDetail += `ON DUPLICATE KEY UPDATE id_detail_commuting_trip=VALUES(id_detail_commuting_trip),id_commuting_trip=VALUES(id_commuting_trip),type_of_transport=VALUES(type_of_transport), purpose=VALUES(purpose), detail_from=VALUES(detail_from), detail_to=VALUES(detail_to),distance=VALUES(distance),cost=VALUES(cost),point_trip=VALUES(point_trip),transit_point=VALUES(transit_point),commute_distance=VALUES(commute_distance),go_out_distance=VALUES(go_out_distance)`
-	stmtDetail, _ := model.DB.Prepare(sqlDetail)
-
-	if err != nil {
-		panic(err.Error())
+		_, errExecuteCommutingTripDetail := model.DB.ExecContext(ctx, queryUpdateCommutingDetail, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance, initializeDataD.IdCommutingTripDetail)
+		if errExecuteCommutingTripDetail != nil {
+			log.Println(errExecuteCommutingTripDetail)
+			log.Println("commuting trip detail")
+			tx.Rollback()
+			return nil, errExecuteCommutingTripDetail.Error()
+		}
 	}
 
-	defer model.DB.Close()
+	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx,queryUpdateCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, initializeData.IdCommutingTrip)
+	if errExecuteCommutingTrip != nil {
+		log.Println(errExecuteCommutingTrip)
+		log.Println("commuting trip")
+		tx.Rollback()
+		return nil, errExecuteCommutingTrip.Error()
+	}
 
-	//valid, message := utils_enter_the_information.ValidatorInsertUsageRecordApplyForTravelExpenses(initializeData)
-	//if valid == false {
-	//	return nil, message
+	//errClose := model.DB.Close()
+	//if errClose != nil {
+	//	return nil, errClose.Error()
 	//}
 
-	execute, err1 := rows.Exec(initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, initializeData.IdCommutingTrip)
-	res, _ := stmtDetail.Exec(vals...)
-	if res == nil {
-		log.Println("gagal")
-	}
-	if err1 != nil && execute == nil {
-		log.Println(err1)
-		return nil, "Missing required field in body request"
+	CommitTx := tx.Commit()
+	if CommitTx != nil {
+		log.Println("hai")
+		return nil, CommitTx.Error()
 	}
 
 	dataShow := Commuting.UpdateUsageRecordApplyForTravelExpenses{
@@ -633,14 +685,14 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (r
 	return 1, "Success Response"
 }
 
-func (model Models_init_Usage_Record) Model_UseUsageRecord(id string) (response int, condition string) {
+func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date string) (response int, condition string) {
 
 	sqlUseCommutingTrip := `insert into commuting_trip (id_general_information,
 	route_profile_name, date, attendance_code, created_date,created_time) 
-	select a.id_general_information, a.route_profile_name, a.date, a.attendance_code, 
+	select a.id_general_information, a.route_profile_name, '` + date + `', a.attendance_code, 
 	DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),
 	TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s')
-	from commuting_trip a where a.id_commuting_trip IN(` + id + `)`
+	from commuting_trip a where a.id_commuting_trip =` + id
 
 	sqlUseDetailCommutingTrip := `INSERT INTO detail_commuting_trip( id_commuting_trip, type_of_transport, 
 	purpose, detail_from,detail_to, distance, cost, point_trip, transit_point, commute_distance,
@@ -648,7 +700,7 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string) (response 
 	select detcomtrip.id_commuting_trip,detcomtrip.type_of_transport,detcomtrip.purpose,
 	detcomtrip.detail_from, detcomtrip.detail_to, detcomtrip.distance, detcomtrip.cost, 
 	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
-	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip IN(` + id + `)`
+	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip =` + id
 
 	stmtUseCommutingTrip, errstmtCommutingTrip := model.DB.Query(sqlUseCommutingTrip)
 	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := model.DB.Query(sqlUseDetailCommutingTrip)

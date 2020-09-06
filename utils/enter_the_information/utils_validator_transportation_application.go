@@ -124,6 +124,34 @@ func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *Commuting.I
 
 }
 
+func ValidatorUpdateUsageRecordApplyForTravelExpenses(Request *Commuting.UpdateUsageRecordApplyForTravelExpenses) (valid bool, message string) {
+
+	if Request.RouteProfileName == "" {
+		return false, "Missing required field in body request → RouteProfileName  = <empty string>"
+	}
+	if Request.Date == "" {
+		return false, "Missing required field in body request → Date  = <empty string>"
+	}
+	if Request.Attendance == "" {
+		return false, "Missing required field in body request → Attendance  = <empty string>"
+	}
+	if Request.IdGeneralInformation == "" {
+		return false, "Missing required field in body request → IdGeneralInformation  = <empty string>"
+	}
+	if Request.IdCommutingTrip == ""   {
+		return false, "Missing required field in body request → IdCommutingTrip  =" +Request.IdCommutingTrip
+
+	}
+	CountDataCommutingTrip := CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =? `,Request.IdCommutingTrip)
+
+	if CountDataCommutingTrip == 0{
+		return false, "ID Commuting Not Found"
+	}
+
+
+	return true, "done"
+}
+
 func GetAdditionalUsageRecord(store_number string, employee_number string, id_commuting_trip int,Condition string)( DatatypeOfTransportation string, DataRoute string,DataPurpose string){
 
 	var typeOfTransportation string

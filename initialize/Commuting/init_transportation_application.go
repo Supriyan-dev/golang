@@ -174,7 +174,6 @@ type UpdateUsageRecordApplyForTravelExpenses struct {
 }
 type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	IdCommutingTripDetail int     `json:"id_commuting_trip_detail"`
-	IdCommutingTrip       int     `json:"id_commuting_trip"`
 	TypeOfTransport       string  `json:"type_of_transport"`
 	Purpose               string  `json:"purpose"`
 	DetailFrom            string  `json:"detail_from"`
