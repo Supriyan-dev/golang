@@ -14,6 +14,17 @@ func CheckDataById(sql string, id string) (CountData int) {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	defer db.Close()
+	return CountData
+}
+
+func CheckDataByQuery(sql string) (CountData int) {
+	db := db2.Connect()
+	err := db.QueryRow(sql).Scan(&CountData)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	defer db.Close()
 	return CountData
 }
 
@@ -23,6 +34,7 @@ func CheckDataByIdNullString(sql string, id models3.NullString) (CountData int) 
 	if err != nil {
 		log.Println(err.Error())
 	}
+	defer db.Close()
 	return CountData
 }
 
@@ -32,6 +44,7 @@ func CheckDataByIdInt(sql string, id int) (CountData int) {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	defer db.Close()
 	return CountData
 }
 
@@ -101,9 +114,6 @@ func ValidatorInsertUsageRecordApplyForTravelExpenses(Request *Commuting.InsertU
 
 func ValidatorDetailInsertUsageRecordApplyForTravelExpenses(Request *Commuting.InsertDetailUsageRecordApplyForTravelExpenses) (valid bool, message string) {
 
-	if Request.IdCommutingTrip == 0 {
-		return false, "Missing required field in body request → TypeOfTransport = 0"
-	}
 	if Request.TypeOfTransport == "" {
 		return false, "Missing required field in body request → TypeOfTransport = <empty string>"
 	}

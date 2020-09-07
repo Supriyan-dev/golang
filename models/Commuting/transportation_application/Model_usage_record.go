@@ -428,7 +428,10 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	//	Status_Draft = "Y"
 	//}
 	checkCountData := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'`, store_id, employee_id)
+	checkDataCommutingTrip := utils_enter_the_information.CheckDataByQuery(`select id_commuting_trip from commuting_trip order by id_commuting_trip desc limit 1`)
 
+	checkDataCommutingTrip = checkDataCommutingTrip + 1
+	log.Println(checkDataCommutingTrip)
 	if con == "Y" && checkCountData >= 3 {
 		return nil, "You cannot register up to more than 3 routes"
 	}
@@ -468,7 +471,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 		//Distance := initializeDataD.CommuteDistance + initializeDataD.GoOutDistance
 		//initializeDataD.Distance = Distance
 		//log.Println(initializeDataD.Distance)
-		vals = append(vals, initializeDataD.IdCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
+		vals = append(vals, checkDataCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
 	//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
 	querySqlinsertCommutingTripDetail = querySqlinsertCommutingTripDetail[0 : len(querySqlinsertCommutingTripDetail)-1]
@@ -500,19 +503,14 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	if valid == false {
 		return nil, message
 	}
-	_, errExecuteDetailCommutingTrip := model.DB.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
-	log.Println(errExecuteDetailCommutingTrip)
-	if errExecuteDetailCommutingTrip != nil {
-		//log.Fatal(errExecuteDetailCommutingTrip)
-		tx.Rollback()
-		return nil, "please check your data"
-	}
+
 	_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
 	log.Println(errExecuteCodeCommuting)
 	if errExecuteCodeCommuting != nil {
 		tx.Rollback()
 		return nil, "please check your data"
 	}
+
 	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 
 	log.Println(errExecuteCommutingTrip)
@@ -520,6 +518,26 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 		tx.Rollback()
 		return nil, "please check your data"
 	}
+	_, errExecuteDetailCommutingTrip := model.DB.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
+	log.Println(errExecuteDetailCommutingTrip)
+	if errExecuteDetailCommutingTrip != nil {
+		//log.Fatal(errExecuteDetailCommutingTrip)
+		tx.Rollback()
+		return nil, "please check your data"
+	}
+	//_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
+	//log.Println(errExecuteCodeCommuting)
+	//if errExecuteCodeCommuting != nil {
+	//	tx.Rollback()
+	//	return nil, "please check your data"
+	//}
+	//_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
+	//
+	//log.Println(errExecuteCommutingTrip)
+	//if errExecuteCommutingTrip != nil {
+	//	tx.Rollback()
+	//	return nil, "please check your data"
+	//}
 
 	//log.Println(errExecuteCodeCommuting)
 	//log.Println(errExecuteCommutingTrip)
@@ -608,7 +626,7 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpen
 		}
 	}
 
-	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx,queryUpdateCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, initializeData.IdCommutingTrip)
+	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryUpdateCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, initializeData.IdCommutingTrip)
 	if errExecuteCommutingTrip != nil {
 		log.Println(errExecuteCommutingTrip)
 		log.Println("commuting trip")

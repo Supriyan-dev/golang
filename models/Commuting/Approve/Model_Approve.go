@@ -13,13 +13,23 @@ import (
 type Init_DB_CommutingApprove models.DB_init
 
 // View data Commuting Agregat (SUM) By All Employee Code
-func (model Init_DB_CommutingApprove) GetDataApproveCommutingSumByAllEmployeeCode(page string, filter string, showData string, searching string, condition string) (sh []approve.Init_CommutingApprove, err error, CountData int) {
+func (model Init_DB_CommutingApprove) GetDataApproveCommutingSumByAllEmployeeCode(page string,
+	filter string, showData string, searching string, condition string, store_code string, department_code string) (sh []approve.Init_CommutingApprove, err error, CountData int) {
 
 	var Da approve.Init_CommutingApprove
 
 	var pageInt int
 	var showDataInt int
 	var limitPage string
+
+	queryManagerApprove := ""
+
+	if store_code == "" || department_code == "" {
+		queryManagerApprove = ""
+	} else {
+		queryManagerApprove = ` and store_information.code_store = ` + store_code + ` AND department_information.department_code = ` + department_code
+	}
+
 	ConditionString := ""
 	if page != "" {
 		parsePage, _ := strconv.Atoi(page)
@@ -153,7 +163,7 @@ FROM
     LEFT OUTER JOIN department_information ON department_information.id_department = general_information.id_department
     LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
     WHERE
-        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + ` AND commuting_trip.save_trip = 'N'
+        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + queryManagerApprove + ` AND commuting_trip.save_trip = 'N'
 GROUP BY
         basic_information.employee_code
 ) t
@@ -265,7 +275,7 @@ FROM
     LEFT OUTER JOIN department_information ON department_information.id_department = general_information.id_department
     LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
     WHERE
-        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + ` AND commuting_trip.save_trip = 'N'
+        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + queryManagerApprove + ` AND commuting_trip.save_trip = 'N'
 ` + filterMonth + searchingAction +
 			`    
 GROUP BY
@@ -599,14 +609,14 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 	//sqlUpdate := ""
 	//var dataapprover approve.Init_InputDataApprove
 	ctx := context.Background()
-	tx, errTx:= model.DB.BeginTx(ctx,nil)
-	if errTx != nil{
+	tx, errTx := model.DB.BeginTx(ctx, nil)
+	if errTx != nil {
 		log.Fatal(errTx.Error())
 	}
 	for _, dataapprover := range dataApprove {
 
 		//sqlUpdate += "(?,?,CONVERT_TZ(NOW(),'+00:00','+09:00')),"
-		_, res := model.DB.ExecContext(ctx,`update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
+		_, res := model.DB.ExecContext(ctx, `update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
 		if res != nil {
 			log.Println(res.Error())
 			tx.Rollback()

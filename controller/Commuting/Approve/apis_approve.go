@@ -19,6 +19,8 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 	showData := r.FormValue("show_data")
 	searching := r.FormValue("searching")
 	condition := r.FormValue("condition")
+	store_code := r.FormValue("store_code")
+	department_code := r.FormValue("department_code")
 	Mpage, _ := strconv.Atoi(page)
 	var showDataint int
 	if showData != "" {
@@ -34,7 +36,7 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
-		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition)
+		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition, store_code,department_code)
 		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
