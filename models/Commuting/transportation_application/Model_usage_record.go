@@ -31,7 +31,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   	bi.employee_code=?`, store_number, employee_number)
 
-	rows, err := model.DB.Query(`select   ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
+	rows, err := model.DB.Query(`select  ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
  										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft),MIN(b.purpose)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans

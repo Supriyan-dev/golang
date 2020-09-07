@@ -183,6 +183,10 @@ func main() {
 	router.HandleFunc("/commuting-Approve", Approve.ReturnCommutingApproveOrReject)
 	// end Commuting Approve
 
+	// start master Data Transportation
+	router.HandleFunc("/Get-MasterDataTransportation", entertheinformation.ReturnGetDataMasterTransportation)
+	// end master Data Transportation
+
 	fmt.Println("Connected to port 9000")
 
 

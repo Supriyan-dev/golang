@@ -55,6 +55,8 @@ type Init_DataCommutingByEmployeeCodeApprove struct {
 	CarInsuranceExpiryDate        models.NullString `json:"car_insurance_expiry_date"`
 	StatusDriverLicenseExpiryDate string            `json:"status_driver_license_expiry_date"`
 	StatusCarInsuranceExpiryDate  string            `json:"status_car_insurance_expiry_date"`
+	SumCost                       int               `json:"sum_cost"`
+	SumDistance                   float64           `json:"sum_distance"`
 }
 
 type FormatDataDetailCommutingByEmployeeCode struct {
