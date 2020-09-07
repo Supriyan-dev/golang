@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/rs/cors"
 	"net/http"
-
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 
@@ -159,6 +158,10 @@ func main() {
 	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCodeDetail", Approve.ReturnDetailCommutingByEmployeeCode)
 	router.HandleFunc("/commuting-Approve", Approve.ReturnCommutingApproveOrReject)
 	// end Commuting Approve
+
+	// start master Data Transportation
+	router.HandleFunc("/Get-MasterDataTransportation", entertheinformation.ReturnGetDataMasterTransportation)
+	// end master Data Transportation
 
 	fmt.Println("Connected to port 9000")
 	handler := cors.AllowAll().Handler(router)
