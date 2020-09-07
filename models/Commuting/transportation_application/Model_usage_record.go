@@ -229,7 +229,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number
 }
 
 func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_number string,
-	employee_number string, page string, filter string, showData string, searching string) (sh []Commuting.FormatHistory, err error) {
+	employee_number string, page string, filter string, showData string, searching string) (sh []Commuting.FormatHistory, err error, CountData int) {
 
 	var Arr_History []Commuting.ShowHistory
 	var pageInt int
@@ -265,6 +265,19 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 	} else {
 		searchingAction = ` and (comtrip.date LIKE '% ` + searching + `%' OR comtrip.route_profile_name LIKE '%` + searching + `%' OR detcomtrip.purpose LIKE '%` + searching + `%'OR comtrip.attendance_code LIKE '%` + searching + `%')`
 	}
+
+	CheckCountData := model.DB.QueryRow(`select count(*) from (select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
+										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
+										from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y' `+filterMonth+searchingAction+`
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t `, store_number, employee_number).Scan(&CountData)
+	if CheckCountData != nil {
+		log.Println(CheckCountData)
+	}
+
 
 	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
@@ -389,7 +402,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		Datahistory: Arr_History,
 	}
 	sh = append(sh, FinallyData)
-	return sh, nil
+	return sh, nil, CountData
 }
 
 // indonesia
