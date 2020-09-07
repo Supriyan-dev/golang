@@ -145,7 +145,6 @@ type InsertUsageRecordApplyForTravelExpenses struct {
 	DataDetail           []InsertDetailUsageRecordApplyForTravelExpenses `json:"data_detail"`
 }
 type InsertDetailUsageRecordApplyForTravelExpenses struct {
-	IdCommutingTrip int     `json:"id_commuting_trip"`
 	TypeOfTransport string  `json:"type_of_transport"`
 	Purpose         string  `json:"purpose"`
 	DetailFrom      string  `json:"detail_from"`
@@ -174,7 +173,6 @@ type UpdateUsageRecordApplyForTravelExpenses struct {
 }
 type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	IdCommutingTripDetail int     `json:"id_commuting_trip_detail"`
-	IdCommutingTrip       int     `json:"id_commuting_trip"`
 	TypeOfTransport       string  `json:"type_of_transport"`
 	Purpose               string  `json:"purpose"`
 	DetailFrom            string  `json:"detail_from"`

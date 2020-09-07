@@ -19,6 +19,8 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 	showData := r.FormValue("show_data")
 	searching := r.FormValue("searching")
 	condition := r.FormValue("condition")
+	store_code := r.FormValue("store_code")
+	department_code := r.FormValue("department_code")
 	Mpage, _ := strconv.Atoi(page)
 	var showDataint int
 	if showData != "" {
@@ -34,8 +36,8 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
-		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition)
-		defer db.Close()
+		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition, store_code,department_code)
+		defer _model.DB.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
 			_response.Message = err.Error()
@@ -57,13 +59,17 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 }
 
 func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.Request) {
-	var _response initialize.Response
+	var _response initialize.ResponseWithPagination
 
 	page := r.FormValue("page")
 	employee_number := r.FormValue("employee_number")
 	showData := r.FormValue("show_data")
 	searching := r.FormValue("searching")
 	Mpage, _ := strconv.Atoi(page)
+	var showDataint int
+	if showData != "" {
+		showDataint, _ = strconv.Atoi(showData)
+	}
 	db := db.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
@@ -74,7 +80,7 @@ func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
-		ResultData, err := _model.GetDataApproveByCommutingEmployeeCode(page, showData, searching, employee_number)
+		ResultData, err,CountData := _model.GetDataApproveByCommutingEmployeeCode(page, showData, searching, employee_number)
 		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
@@ -94,7 +100,8 @@ func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.
 			_response.Status = http.StatusOK
 			_response.Message = "Success Response"
 			_response.CurrentPage = Mpage
-			_response.TotalPage = 0
+			_response.CountData = CountData
+			_response.TotalPage = (CountData/ showDataint) +1
 			_response.Data = ResultData
 			_Response.ResponseJson(w, _response.Status, _response)
 

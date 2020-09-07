@@ -5,6 +5,7 @@ import (
 	"../../../models"
 	utils_Global "../../../utils"
 	utils_enter_the_information "../../../utils/enter_the_information"
+	"context"
 	"log"
 	"strconv"
 )
@@ -12,13 +13,23 @@ import (
 type Init_DB_CommutingApprove models.DB_init
 
 // View data Commuting Agregat (SUM) By All Employee Code
-func (model Init_DB_CommutingApprove) GetDataApproveCommutingSumByAllEmployeeCode(page string, filter string, showData string, searching string, condition string) (sh []approve.Init_CommutingApprove, err error, CountData int) {
+func (model Init_DB_CommutingApprove) GetDataApproveCommutingSumByAllEmployeeCode(page string,
+	filter string, showData string, searching string, condition string, store_code string, department_code string) (sh []approve.Init_CommutingApprove, err error, CountData int) {
 
 	var Da approve.Init_CommutingApprove
 
 	var pageInt int
 	var showDataInt int
 	var limitPage string
+
+	queryManagerApprove := ""
+
+	if store_code == "" || department_code == "" {
+		queryManagerApprove = ""
+	} else {
+		queryManagerApprove = ` and store_information.code_store = ` + store_code + ` AND department_information.department_code = ` + department_code
+	}
+
 	ConditionString := ""
 	if page != "" {
 		parsePage, _ := strconv.Atoi(page)
@@ -152,7 +163,8 @@ FROM
     LEFT OUTER JOIN department_information ON department_information.id_department = general_information.id_department
     LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
     WHERE
-        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + ` AND commuting_trip.save_trip = 'N'
+  commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + queryManagerApprove + ` AND commuting_trip.save_trip = 'N'
+` + filterMonth + searchingAction +`   
 GROUP BY
         basic_information.employee_code
 ) t
@@ -264,7 +276,7 @@ FROM
     LEFT OUTER JOIN department_information ON department_information.id_department = general_information.id_department
     LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
     WHERE
-        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + ` AND commuting_trip.save_trip = 'N'
+        commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + queryManagerApprove + ` AND commuting_trip.save_trip = 'N'
 ` + filterMonth + searchingAction +
 			`    
 GROUP BY
@@ -318,7 +330,7 @@ DESC` + limitPage)
 }
 
 // View data Commuting Agregat (SUM) By All Employee Code
-func (model Init_DB_CommutingApprove) GetDataApproveByCommutingEmployeeCode(page string, showData string, searching string, employee_number string) (sh []approve.Init_CommutingApprove, err error) {
+func (model Init_DB_CommutingApprove) GetDataApproveByCommutingEmployeeCode(page string, showData string, searching string, employee_number string) (sh []approve.Init_CommutingApprove, err error, CountData int) {
 
 	var Da approve.Init_CommutingApprove
 
@@ -349,6 +361,92 @@ func (model Init_DB_CommutingApprove) GetDataApproveByCommutingEmployeeCode(page
 		searchingAction = ``
 	} else {
 		searchingAction = ` and (store_information.code_store LIKE '% ` + searching + `%' OR department_information.department_name LIKE '%` + searching + `%' OR store_section_information.store_section_name LIKE '%` + searching + `%' OR basic_information.first_name LIKE '%` + searching + `%' OR basic_information.last_name LIKE '%` + searching + `%' OR basic_information.adress LIKE '%` + searching + `%' OR basic_information.adress_kana LIKE '%` + searching + `%' OR basic_information.adress_detail LIKE '%` + searching + `%' OR basic_information.adress_detail_kana LIKE '%` + searching + `%' OR basic_information.add_phone_number LIKE '%` + searching + `%')`
+	}
+
+	RowCountData := model.DB.QueryRow(` select count(*) from (SELECT      MIN(
+            commuting_trip.id_commuting_trip
+        ) id_commuting_trip,
+        MIN(store_information.code_store) AS code_store,
+        MIN(
+            department_information.department_name
+        ),
+        CONCAT(
+            MIN(
+                store_section_information.store_section_name
+            ),
+            ' ',
+            MIN(
+                store_section_information.store_section_code
+            )
+        ) AS store_section,
+        MIN(unit_information.unit_code),
+        CONCAT(
+            MIN(basic_information.first_name),
+            ' ',
+            MIN(basic_information.last_name),' ',
+        CONCAT(
+            RIGHT(
+                MIN(store_information.code_store),
+                4
+            ),
+            LPAD(
+                RIGHT(
+                    MIN(
+                        department_information.department_code
+                    ),
+                    2
+                ),
+                2,
+                '0'
+            ),
+            LPAD(
+                RIGHT(
+                    MIN(
+                        store_section_information.store_section_code
+                    ),
+                    2
+                ),
+                2,
+                '0'
+            ),
+            LPAD(
+                RIGHT(
+                    MIN(unit_information.unit_code),
+                    2
+                ),
+                2,
+                '0'
+            )
+        )
+        ),
+        CONCAT(
+        MIN(basic_information.adress),', ',
+        MIN(basic_information.adress_kana),', ',
+        MIN(
+            basic_information.adress_detail
+        ), ', ', MIN(
+            basic_information.adress_detail_kana
+        ),' ',  MIN(
+            basic_information.add_phone_number
+        ) 
+        ),
+        MIN(commuting_trip.date) date_trip,
+        MIN(
+            basic_information.employee_code
+        ) employee_code,
+        MIN(
+            code_commuting.status_commuting
+        ),
+        SUM(detail_commuting_trip.cost) as sum_cost,
+        SUM(detail_commuting_trip.distance) as sum_distance,
+        MIN(basic_information.id_basic_information),
+        MIN(code_commuting.code_random)
+        FROM code_commuting LEFT OUTER JOIN commuting_trip ON code_commuting.code_random = commuting_trip.code_commuting LEFT OUTER JOIN general_information ON commuting_trip.id_general_information = general_information.id_general_information LEFT OUTER JOIN store_information ON store_information.id_code_store = general_information.id_store_code LEFT OUTER JOIN basic_information ON general_information.id_basic_information = basic_information.id_basic_information LEFT OUTER JOIN department_information ON general_information.id_department =department_information.id_department LEFT OUTER JOIN store_section_information ON general_information.id_store_section = store_section_information.id_store_section LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
+        LEFT OUTER JOIN detail_commuting_trip ON detail_commuting_trip.id_commuting_trip = commuting_trip.id_commuting_trip
+        WHERE commuting_trip.submit = 'Y' AND basic_information.employee_code = ? `+searchingAction+`	GROUP BY code_commuting.id_code ORDER BY code_commuting.id_code DESC) t`, employee_number).Scan(&CountData)
+
+	if RowCountData != nil {
+		log.Println(RowCountData)
 	}
 
 	showDataApprove, errShowDataApprove := model.DB.Query(
@@ -468,7 +566,7 @@ func (model Init_DB_CommutingApprove) GetDataApproveByCommutingEmployeeCode(page
 
 	}
 
-	return sh, nil
+	return sh, nil, CountData
 }
 
 func (model Init_DB_CommutingApprove) DetailCommutingByEmployeeCode(employee_number string, id_basic_information string, CodeCommuting string) (sh []approve.FormatDataDetailCommutingByEmployeeCode, condition string) {
@@ -597,12 +695,19 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 	//sqlUpdate := `update commuting_trip set status_approval = ?,date_time_approve =? where id_commuting_trip = ? `
 	//sqlUpdate := ""
 	//var dataapprover approve.Init_InputDataApprove
-
+	ctx := context.Background()
+	tx, errTx := model.DB.BeginTx(ctx, nil)
+	if errTx != nil {
+		log.Fatal(errTx.Error())
+	}
 	for _, dataapprover := range dataApprove {
+
 		//sqlUpdate += "(?,?,CONVERT_TZ(NOW(),'+00:00','+09:00')),"
-		res, _ := model.DB.Exec(`update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),'+07:00','+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
+		_, res := model.DB.ExecContext(ctx, `update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
 		if res != nil {
-			log.Println(res.RowsAffected())
+			log.Println(res.Error())
+			tx.Rollback()
+			return
 		}
 		dataapprove = append(dataapprove, dataapprover)
 
@@ -612,6 +717,11 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 		//sqlUpdate += `update commuting_trip set status_approval = ?,date_time_approve =? where id_commuting_trip = ? `
 		//vals = append(vals,  dataapprover.StatusDataApprove,dataapprover.IdCommuting)
 	}
+	CommitErr := tx.Commit()
+	if CommitErr != nil {
+		log.Println(CommitErr.Error())
+	}
+
 	//log.Println(sqlUpdate)
 	//log.Println(dataapprover)
 	//sqlUpdate += `;`

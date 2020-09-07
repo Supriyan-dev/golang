@@ -171,7 +171,7 @@ func main() {
 	router.HandleFunc("/commuting-UsageRecord-ShowUseMyRoute", entertheinformation.ReturnGetByCommutingUsageRecordUseMyRoute)
 	router.HandleFunc("/commuting-UsageRecord-ShowHistory", entertheinformation.ReturnGetByCommutingUsageRecordHistory)
 	router.HandleFunc("/commuting-UsageRecord-Draft/{id_commuting_trip}", entertheinformation.ReturnUpdateUsageRecordDraft)
-	router.HandleFunc("/commuting-UseUsageRecord/{id_commuting_trip}", entertheinformation.ReturnUseUsageRecord)
+	router.HandleFunc("/commuting-UseUsageRecord/{id_commuting_trip}/{date}", entertheinformation.ReturnUseUsageRecord)
 	router.HandleFunc("/commuting-InputConfirmation-ShowDataById", entertheinformation.ReturnGetByCommutingInputConfirmation)
 	router.HandleFunc("/commuting-InputConfirmation-Submit/{id_commuting_trip}", entertheinformation.ReturnSubmitInputConfirmation)
 	// end Commuting Transportation Application
