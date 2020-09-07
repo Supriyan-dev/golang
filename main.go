@@ -34,9 +34,9 @@ func main() {
 	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
 
 	// Start permission to drive
-	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
-	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDriveUpdate).Methods("PUT")
-	router.HandleFunc("/permission_to_drive/{page}/{perPage}", controllerPermissionToDrive.PermissionToDrivePagination).Methods("GET")
+	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive)
+	router.HandleFunc("/permission_to_drive/update", controllerPermissionToDrive.PermissionToDriveUpdate)
+	router.HandleFunc("/permission_to_drive/{page}/{perPage}", controllerPermissionToDrive.PermissionToDrivePagination)
 	// end permission to drive
 
 	// start data master

@@ -173,12 +173,11 @@ func UpdateBank(w http.ResponseWriter, r *http.Request) {
 	var init_insert initialize.Bank
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-
 	_con := model1.ModelBank_init{DB: db}
 	ExcuteData, _ := _con.UdpateDatabank(&init_insert)
 
 	if r.Method == "PUT" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
