@@ -49,7 +49,7 @@ func ReturnAllDepartementInformation(w http.ResponseWriter, r *http.Request) {
 func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Request) {
 	var DeptInfo initialize.DepartementInformation
 	var arrDepartementInformation []initialize.DepartementInformation
-	var response initialize.Response
+	var _response initialize.Response
 	db := db.Connect()
 	defer db.Close()
 	code := mux.Vars(r)
@@ -62,9 +62,6 @@ func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Re
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -86,15 +83,30 @@ func ReturnAllDepartementInformationPagination(w http.ResponseWriter, r *http.Re
 			arrDepartementInformation = append(arrDepartementInformation, DeptInfo)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrDepartementInformation
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
+	if r.Method == "GET" {
+		if arrDepartementInformation != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrDepartementInformation
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetDepartementInformation(w http.ResponseWriter, r *http.Request) {

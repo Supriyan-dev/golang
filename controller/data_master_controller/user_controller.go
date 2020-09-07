@@ -50,7 +50,7 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 func ReturnAllUserPagination(w http.ResponseWriter, r *http.Request) {
 	var user initialize.Users
 	var arrUsers []initialize.Users
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -64,9 +64,6 @@ func ReturnAllUserPagination(w http.ResponseWriter, r *http.Request) {
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -88,15 +85,30 @@ func ReturnAllUserPagination(w http.ResponseWriter, r *http.Request) {
 			arrUsers = append(arrUsers, user)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrUsers
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
+	if r.Method == "GET" {
+		if arrUsers != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrUsers
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {

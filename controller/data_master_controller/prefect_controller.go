@@ -51,7 +51,7 @@ func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
 func ReturnAllPrefectPagination(w http.ResponseWriter, r *http.Request) {
 	var prefect initialize.Prefect
 	var arrPrefect []initialize.Prefect
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -65,9 +65,6 @@ func ReturnAllPrefectPagination(w http.ResponseWriter, r *http.Request) {
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -89,14 +86,30 @@ func ReturnAllPrefectPagination(w http.ResponseWriter, r *http.Request) {
 			arrPrefect = append(arrPrefect, prefect)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrPrefect
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	if r.Method == "GET" {
+		if arrPrefect != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrPrefect
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 
 }
 

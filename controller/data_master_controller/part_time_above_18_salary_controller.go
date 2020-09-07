@@ -49,7 +49,7 @@ func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 func ReturnAllPartTimeAbove18SalaryPagination(w http.ResponseWriter, r *http.Request) {
 	var partTimeSalary initialize.PartTimeAbove18Salary
 	var arrPartTimeAbove18Salary []initialize.PartTimeAbove18Salary
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -62,10 +62,6 @@ func ReturnAllPartTimeAbove18SalaryPagination(w http.ResponseWriter, r *http.Req
 	err := db.QueryRow("SELECT COUNT(*) FROM part_time_above_18_salary").Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
-
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -88,15 +84,30 @@ func ReturnAllPartTimeAbove18SalaryPagination(w http.ResponseWriter, r *http.Req
 			arrPartTimeAbove18Salary = append(arrPartTimeAbove18Salary, partTimeSalary)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrPartTimeAbove18Salary
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
+	if r.Method == "GET" {
+		if arrPartTimeAbove18Salary != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrPartTimeAbove18Salary
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {

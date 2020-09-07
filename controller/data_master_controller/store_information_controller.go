@@ -63,9 +63,6 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -87,19 +84,19 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 		}
 	}
 	if r.Method == "GET" {
-		if arrStoreInformation == nil {
-			_response.Status = http.StatusBadRequest
-			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.TotalPage = totalPage
-			_response.CurrentPage = page
-			_response.Data = "Null"
-			response.ResponseJson(w, _response.Status, _response)
-		} else {
+		if arrStoreInformation != nil {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
 			_response.TotalPage = totalPage
 			_response.CurrentPage = page
 			_response.Data = arrStoreInformation
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
