@@ -575,6 +575,20 @@ func (model Init_DB_CommutingApprove) DetailCommutingByEmployeeCode(employee_num
 	var DaD approve.Init_DetailCommutingByEmployeeCodeApprove
 	var ArrDaD []approve.Init_DetailCommutingByEmployeeCodeApprove
 
+	SumAllCost := 0
+	SumAllDistance := 0.00
+
+	GetSumData := model.DB.QueryRow(`select COALESCE(SUM(cost),0) as SUM_COST, COALESCE(SUM(distance),0.00) as SUM_DISTANCE from (select COALESCE(SUM(detcomtrip.cost),0)	as cost, COALESCE(SUM(detcomtrip.distance),0.00) as distance						from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store   and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit = 'Y' and comtrip.status_approval = 'Y'
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`,employee_number,id_basic_information,CodeCommuting).Scan(&SumAllCost,&SumAllDistance)
+
+	if GetSumData != nil {
+		log.Println(GetSumData)
+	}
+
 	GetData, errData := model.DB.Query(`select basic_information.first_name, basic_information.last_name, store_information.code_store, store_information.store_name,
 basic_information.employee_code, commuting_basic_information.driver_license_expiry_date,commuting_basic_information.car_insurance_document_expiry_date,
 (select COUNT(*) from basic_information a, commuting_basic_information b, store_information c, general_information d
@@ -603,16 +617,24 @@ where commuting_basic_information.id_general_information = general_information.i
 		log.Println("ERR SCAN ?")
 		log.Println(errScanData)
 	}
+	QueryCheckDriverLicenseExpiryDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where driver_license_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and driver_license_expiry_date = ?`,Da.DriverLicenseExpiryDate).Scan(&StatusDriverLicenseExpiryDate)
 
+	if QueryCheckDriverLicenseExpiryDate != nil {
+		log.Println(QueryCheckDriverLicenseExpiryDate)
+	}
+	QueryCheckCarInsuranceDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where car_insurance_document_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and car_insurance_document_expiry_date = ?`,Da.CarInsuranceExpiryDate).Scan(&StatusCarInsuranceExpiryDate)
+	if QueryCheckCarInsuranceDate != nil {
+		log.Println(QueryCheckCarInsuranceDate)
+	}
 	if StatusDriverLicenseExpiryDate == 0 {
-		StringDriverLicenseDate = "no"
-	} else {
 		StringDriverLicenseDate = "yes"
+	} else {
+		StringDriverLicenseDate = "no"
 	}
 	if StatusCarInsuranceExpiryDate == 0 {
-		StringCarInsuranceDate = "no"
-	} else {
 		StringCarInsuranceDate = "yes"
+	} else {
+		StringCarInsuranceDate = "no"
 	}
 	var ContainerDataBasicInformation interface{}
 	BasicInformation := approve.Init_DataCommutingByEmployeeCodeApprove{
@@ -620,19 +642,17 @@ where commuting_basic_information.id_general_information = general_information.i
 		LastName:                      Da.LastName,
 		CodeStore:                     Da.CodeStore,
 		StoreName:                     Da.StoreName,
+		EmployeeCode:                  employee_number,
 		DriverLicenseExpiryDate:       Da.DriverLicenseExpiryDate,
 		CarInsuranceExpiryDate:        Da.CarInsuranceExpiryDate,
 		StatusDriverLicenseExpiryDate: StringDriverLicenseDate,
 		StatusCarInsuranceExpiryDate:  StringCarInsuranceDate,
+		SumCost:                       SumAllCost,
+		SumDistance:                   SumAllDistance,
 	}
 
 	ContainerDataBasicInformation = BasicInformation
 
-	// start init : data for Get Data
-
-	// end init : data for Get Data
-
-	// init data detail looping
 
 	GetDataDetail, errDataDetail := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
