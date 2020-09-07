@@ -47,8 +47,9 @@ func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
 
 func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 	var bank initialize.Bank
+	var NullString initialize.NullStringBank
 	var arrBank []initialize.Bank
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -62,9 +63,6 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -72,28 +70,41 @@ func ReturnAllBankPagination(w http.ResponseWriter, r *http.Request) {
 	firstIndex := (totalDataPerPage * page) - totalDataPerPage
 
 	query := fmt.Sprintf("select id_bank,bank_code,bank_name,branch_code,branch_name,special FROM bank limit %d,%d", firstIndex, totalDataPerPage)
-
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Print(err)
 	}
 	for rows.Next() {
-		if err := rows.Scan(&bank.Id_bank, &bank.Bank_code, &bank.Bank_name, &bank.Branch_code, &bank.Branch_name, &bank.Special); err != nil {
-
-			log.Fatal(err.Error())
-
+		if err := rows.Scan(&bank.Id_bank, &bank.Bank_code, &NullString.Bank_name, &bank.Branch_code, &bank.Branch_name, &bank.Special); err != nil {
+			log.Println(err)
 		} else {
 			arrBank = append(arrBank, bank)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrBank
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	if r.Method == "GET" {
+		if arrBank != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrBank
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetBank(w http.ResponseWriter, r *http.Request) {
@@ -188,16 +199,20 @@ func UpdateBank(w http.ResponseWriter, r *http.Request) {
 
 func DeleteBank(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.Bank
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelBank_init{DB: db}
-	ExcuteData, err := _con.DeleteDataBank(&test)
+	params := mux.Vars(r)
+	delete := params["id_bank"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_bank = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -205,7 +220,7 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_bank
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

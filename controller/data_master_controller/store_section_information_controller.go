@@ -49,7 +49,7 @@ func ReturnAllStroreSectionInformation(w http.ResponseWriter, r *http.Request) {
 func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.Request) {
 	var store initialize.StoreSectionInformation
 	var arrStoreSectionInformation []initialize.StoreSectionInformation
-	var response initialize.Response
+	var _response initialize.Response
 	db := db.Connect()
 	defer db.Close()
 	code := mux.Vars(r)
@@ -61,10 +61,6 @@ func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.
 	err := db.QueryRow("SELECT COUNT(*) FROM store_section_information").Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
-
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -86,14 +82,30 @@ func ReturnAllStroreSectionInformationPagination(w http.ResponseWriter, r *http.
 			arrStoreSectionInformation = append(arrStoreSectionInformation, store)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrStoreSectionInformation
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	if r.Method == "GET" {
+		if arrStoreSectionInformation != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrStoreSectionInformation
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 
 }
 
@@ -188,17 +200,20 @@ func UpdateStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.StoreSectionInformation
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
+	params := mux.Vars(r)
+	delete := params["id_store_section"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_store_section = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	_con := model1.ModelSection_init{DB: db}
-	ExcuteData, err := _con.DeleteDataStoreSectionInformation(&test)
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -206,7 +221,7 @@ func DeleteStoreSectionInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_store_section
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

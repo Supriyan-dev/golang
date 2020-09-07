@@ -49,7 +49,7 @@ func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
 func ReturnAllExpCategoryPagination(w http.ResponseWriter, r *http.Request) {
 	var exp initialize.ExpCategory
 	var arrExpCategory []initialize.ExpCategory
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -63,9 +63,6 @@ func ReturnAllExpCategoryPagination(w http.ResponseWriter, r *http.Request) {
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -88,15 +85,30 @@ func ReturnAllExpCategoryPagination(w http.ResponseWriter, r *http.Request) {
 			arrExpCategory = append(arrExpCategory, exp)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrExpCategory
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
+	if r.Method == "GET" {
+		if arrExpCategory != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrExpCategory
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetExpCategory(w http.ResponseWriter, r *http.Request) {
@@ -191,16 +203,20 @@ func UpdateExpCategory(w http.ResponseWriter, r *http.Request) {
 
 func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.ExpCategory
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelExp_init{DB: db}
-	ExcuteData, err := _con.DeleteDataExp(&test)
+	params := mux.Vars(r)
+	delete := params["id_exp"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_exp = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -208,7 +224,7 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_exp
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -217,5 +233,4 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }

@@ -8,6 +8,7 @@ import (
 )
 
 func Connect() *sql.DB {
+
 	var err error
 
 	//db, err := sql.Open("mysql", "root:@/kasumi_development")

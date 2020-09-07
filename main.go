@@ -10,7 +10,7 @@ import (
 	"net/http"
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
-
+	loginController "./controller/login_controller"
 	login "./login_controller"
 
 	"github.com/gorilla/mux"
@@ -21,9 +21,21 @@ func main() {
 
 	router := mux.NewRouter()
 	// start login user
-	router.HandleFunc("/generate-hash/{password}", login.GenerateHashPassword).Methods("GET")
 	// router.HandleFunc("/login", login.CheckLogin).Methods("POST")
-	//end login user
+	// end login user
+
+	// start profile data user encrypt
+	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
+	router.HandleFunc("/generate_hash_data_master/{password}", login.GenerateHashPasswordDataMaster).Methods("GET")
+	router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
+	router.HandleFunc("/read_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
+	// end profile data user encrypt
+
+	// start data status approve general information status approve
+	// router.HandleFunc("/general_recrutment", generalRecrutment.DataGeneralRecrutment).Methods("POST")
+	// end data status approve  general information status approve
+
+	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
 
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive).Methods("GET")
@@ -38,52 +50,52 @@ func main() {
 	router.HandleFunc("/storeinformation/get", controllerDataMaster.GetStoreInformation)
 	router.HandleFunc("/storeinformation/create", controllerDataMaster.CreateStoreInformation)
 	router.HandleFunc("/storeinformation/update", controllerDataMaster.UpdateStoreInformation)
-	router.HandleFunc("/storeinformation/delete", controllerDataMaster.DeleteStoreInformation)
+	router.HandleFunc("/storeinformation/delete/{id_code_store}", controllerDataMaster.DeleteStoreInformation)
 	// // end crud store information
 
 	// start crud departement information
 	router.HandleFunc("/departement-information", controllerDataMaster.ReturnAllDepartementInformation)
-	router.HandleFunc("/departement-information/{page}/{perPage}", controllerDataMaster.ReturnAllDepartementInformationPagination).Methods("GET")
+	router.HandleFunc("/departement-information/{page}/{perPage}", controllerDataMaster.ReturnAllDepartementInformationPagination)
 	router.HandleFunc("/departement-information/get", controllerDataMaster.GetDepartementInformation)
 	router.HandleFunc("/departement-information/create", controllerDataMaster.CreateDepartementInformation)
 	router.HandleFunc("/departement-information/update", controllerDataMaster.UpdateDepartementInformation)
-	router.HandleFunc("/departement-information/delete", controllerDataMaster.DeleteDepartementInformation)
+	router.HandleFunc("/departement-information/delete/{id_department}", controllerDataMaster.DeleteDepartementInformation)
 	// end crud deaprtemen information
 
 	// start crud srtore section information
 	router.HandleFunc("/store-section-information", controllerDataMaster.ReturnAllStroreSectionInformation)
-	router.HandleFunc("/store-section-information/{page}/{perPage}", controllerDataMaster.ReturnAllStroreSectionInformationPagination).Methods("GET")
+	router.HandleFunc("/store-section-information/{page}/{perPage}", controllerDataMaster.ReturnAllStroreSectionInformationPagination)
 	router.HandleFunc("/store-section-information/get", controllerDataMaster.GetStoreSectionInformation)
 	router.HandleFunc("/store-section-information/create", controllerDataMaster.CreateStoreSectionInformation)
 	router.HandleFunc("/store-section-information/update", controllerDataMaster.UpdateStoreSectionInformation)
-	router.HandleFunc("/store-section-information/delete", controllerDataMaster.DeleteStoreSectionInformation)
+	router.HandleFunc("/store-section-information/delete/", controllerDataMaster.DeleteStoreSectionInformation)
 	//end crud store section infomration
 
 	// start crud unit information
 	router.HandleFunc("/unit-information", controllerDataMaster.ReturnAllUnitInformation)
-	router.HandleFunc("/unit-information/{page}/{perPage}", controllerDataMaster.ReturnAllUnitInformationPagination).Methods("GET")
+	router.HandleFunc("/unit-information/{page}/{perPage}", controllerDataMaster.ReturnAllUnitInformationPagination)
 	router.HandleFunc("/unit-information/get", controllerDataMaster.GetUnitInformation)
 	router.HandleFunc("/unit-information/create", controllerDataMaster.CreateUnitInformation)
 	router.HandleFunc("/unit-information/update", controllerDataMaster.UpdateUnitInformation)
-	router.HandleFunc("/unit-information/delete", controllerDataMaster.DeleteUnitInformation)
+	router.HandleFunc("/unit-information/delete/", controllerDataMaster.DeleteUnitInformation)
 	// end crud unit information
 
 	// start crud prefecture
 	router.HandleFunc("/prefecture", controllerDataMaster.ReturnAllPrefect)
-	router.HandleFunc("/prefecture/{page}/{perPage}", controllerDataMaster.ReturnAllPrefectPagination).Methods("GET")
+	router.HandleFunc("/prefecture/{page}/{perPage}", controllerDataMaster.ReturnAllPrefectPagination)
 	router.HandleFunc("/prefecture/get", controllerDataMaster.GetPrefect)
 	router.HandleFunc("/prefecture/create", controllerDataMaster.CreatePrefect)
 	router.HandleFunc("/prefecture/update", controllerDataMaster.UpdatePrefect)
-	router.HandleFunc("/prefecture/delete", controllerDataMaster.DeletePrefect)
+	router.HandleFunc("/prefecture/delete/", controllerDataMaster.DeletePrefect)
 	// end crud prefecture
 
 	// // start crud bank
 	router.HandleFunc("/bank", controllerDataMaster.ReturnAllBank)
-	router.HandleFunc("/bank/{page}/{perPage}", controllerDataMaster.ReturnAllBankPagination).Methods("GET")
+	router.HandleFunc("/bank/{page}/{perPage}", controllerDataMaster.ReturnAllBankPagination)
 	router.HandleFunc("/bank/get", controllerDataMaster.GetBank)
 	router.HandleFunc("/bank/create", controllerDataMaster.CreateBank)
 	router.HandleFunc("/bank/update", controllerDataMaster.UpdateBank)
-	router.HandleFunc("/bank/delete", controllerDataMaster.DeleteBank)
+	router.HandleFunc("/bank/delete/", controllerDataMaster.DeleteBank)
 
 	// start crud exp category
 
@@ -91,48 +103,48 @@ func main() {
 
 	// start crud full time salary
 	router.HandleFunc("/full-time-salary", controllerDataMaster.ReturnAllFullTimeSalary)
-	router.HandleFunc("/full-time-salary/{page}/{perPage}", controllerDataMaster.ReturnAllFullTimeSalaryPagination).Methods("GET")
+	router.HandleFunc("/full-time-salary/{page}/{perPage}", controllerDataMaster.ReturnAllFullTimeSalaryPagination)
 	router.HandleFunc("/full-time-salary/get", controllerDataMaster.GetFullTimeSalary)
 	router.HandleFunc("/full-time-salary/create", controllerDataMaster.CreateFullTimeSalary)
 	router.HandleFunc("/full-time-salary/update", controllerDataMaster.UpdateFullTimeSalary)
-	router.HandleFunc("/full-time-salary/delete", controllerDataMaster.DeleteFullTimeSalary)
+	router.HandleFunc("/full-time-salary/delete/", controllerDataMaster.DeleteFullTimeSalary)
 	// end crud full time salary
 
 	// start crud part time salary
 	router.HandleFunc("/part-time-above-18-salary", controllerDataMaster.ReturnAllPartTimeAbove18Salary)
-	router.HandleFunc("/part-time-above-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeAbove18SalaryPagination).Methods("GET")
+	router.HandleFunc("/part-time-above-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeAbove18SalaryPagination)
 	router.HandleFunc("/part-time-above-18-salary/get", controllerDataMaster.GetPartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/create", controllerDataMaster.CreatePartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/update", controllerDataMaster.UpdatePartTimeAbove18Salary)
-	router.HandleFunc("/part-time-above-18-salary/delete", controllerDataMaster.DeletePartTimeAbove18Salary)
+	router.HandleFunc("/part-time-above-18-salary/delete/", controllerDataMaster.DeletePartTimeAbove18Salary)
 	// end crud part time salary
 
 	// start crud under 18 salary
 	router.HandleFunc("/part-time-under-18-salary", controllerDataMaster.ReturnAllPartTimeUnder18Salary)
-	router.HandleFunc("/part-time-under-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeUnder18SalaryPagination).Methods("GET")
+	router.HandleFunc("/part-time-under-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeUnder18SalaryPagination)
 	router.HandleFunc("/part-time-under-18-salary/get", controllerDataMaster.GetPartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/create", controllerDataMaster.CreatePartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/update", controllerDataMaster.UpdatePartTimeUnder18Salary)
-	router.HandleFunc("/part-time-under-18-salary/delete", controllerDataMaster.DeletePartTimeUnder18Salary)
+	router.HandleFunc("/part-time-under-18-salary/delete/", controllerDataMaster.DeletePartTimeUnder18Salary)
 	// end crud under 18 salary
 
 	// start crud user
-	router.HandleFunc("/user", login.CheckLogin(controllerDataMaster.ReturnAllUser))
-	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination).Methods("GET")
+	// router.HandleFunc("/user", login.CheckLogin(controllerDataMaster.ReturnAllUser))
+	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination)
 	router.HandleFunc("/user/get", controllerDataMaster.GetUser)
 	router.HandleFunc("/user/create", controllerDataMaster.CreateUser)
 	router.HandleFunc("/user/update", controllerDataMaster.UpdateUser)
-	router.HandleFunc("/user/delete", controllerDataMaster.DeleteUser)
+	router.HandleFunc("/user/delete/", controllerDataMaster.DeleteUser)
 	// end crud user
 
 	// // start crud exp category
 
 	router.HandleFunc("/exp-category", controllerDataMaster.ReturnAllExpCategory)
-	router.HandleFunc("/exp-category/{page}/{perPage}", controllerDataMaster.ReturnAllExpCategoryPagination).Methods("GET")
+	router.HandleFunc("/exp-category/{page}/{perPage}", controllerDataMaster.ReturnAllExpCategoryPagination)
 	router.HandleFunc("/exp-category/get", controllerDataMaster.GetExpCategory)
 	router.HandleFunc("/exp-category/create", controllerDataMaster.CreateExpCategory)
 	router.HandleFunc("/exp-category/update", controllerDataMaster.UpdateExpCategory)
-	router.HandleFunc("/exp-category/delete", controllerDataMaster.DeleteExpCategory)
+	router.HandleFunc("/exp-category/delete/", controllerDataMaster.DeleteExpCategory)
 	// // end crud exp category
 	// //end data master
 

@@ -49,7 +49,7 @@ func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
 func ReturnAllUnitInformationPagination(w http.ResponseWriter, r *http.Request) {
 	var unit initialize.UnitInformation
 	var arrUnitInformation []initialize.UnitInformation
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -63,9 +63,6 @@ func ReturnAllUnitInformationPagination(w http.ResponseWriter, r *http.Request) 
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -87,15 +84,30 @@ func ReturnAllUnitInformationPagination(w http.ResponseWriter, r *http.Request) 
 			arrUnitInformation = append(arrUnitInformation, unit)
 		}
 	}
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrUnitInformation
-	response.TotalPage = totalPage
-	response.CurrentPage = page
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-
+	if r.Method == "GET" {
+		if arrUnitInformation != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrUnitInformation
+			response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
@@ -190,16 +202,20 @@ func UpdateUnitInformation(w http.ResponseWriter, r *http.Request) {
 
 func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
-	var test initialize.UnitInformation
-	json.NewDecoder(r.Body).Decode(&test)
 	db := db.Connect()
-	_con := model1.ModelUnit_init{DB: db}
-	ExcuteData, err := _con.DeleteDataUnitInformation(&test)
+	params := mux.Vars(r)
+	delete := params["id_unit"]
+	stmt, err := db.Query("DELETE FROM store_information WHERE id_unit = ?", delete)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	ExcuteData := stmt.Scan(delete)
 	if err != nil {
 		panic(err.Error())
 	}
 	if r.Method == "DELETE" {
-		if ExcuteData == nil {
+		if ExcuteData != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
@@ -207,7 +223,7 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success Data has been Deleted with ID"
-			_response.Data = test.Id_unit
+			_response.Data = delete
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
@@ -216,5 +232,4 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }
