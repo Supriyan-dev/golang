@@ -164,7 +164,7 @@ FROM
     LEFT OUTER JOIN unit_information ON unit_information.id_unit = general_information.id_unit
     WHERE
   commuting_trip.submit = 'Y' AND commuting_trip.date_submit IS NOT NULL ` + ConditionString + queryManagerApprove + ` AND commuting_trip.save_trip = 'N'
-` + filterMonth + searchingAction +`   
+` + filterMonth + searchingAction + `   
 GROUP BY
         basic_information.employee_code
 ) t
@@ -582,8 +582,8 @@ func (model Init_DB_CommutingApprove) DetailCommutingByEmployeeCode(employee_num
 										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
 										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
 										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store   and cc.code_random = comtrip.code_commuting
-										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit = 'Y' and comtrip.status_approval = 'Y'
-										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`,employee_number,id_basic_information,CodeCommuting).Scan(&SumAllCost,&SumAllDistance)
+										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit ='Y' and comtrip.status_approval = 'Y'
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`, employee_number, id_basic_information, CodeCommuting).Scan(&SumAllCost, &SumAllDistance)
 
 	if GetSumData != nil {
 		log.Println(GetSumData)
@@ -601,7 +601,7 @@ where commuting_basic_information.id_general_information = general_information.i
 	if errData != nil {
 		log.Println(errData)
 	}
-
+	defer GetData.Close()
 	NextData := GetData.Next()
 
 	if NextData == false {
@@ -617,12 +617,12 @@ where commuting_basic_information.id_general_information = general_information.i
 		log.Println("ERR SCAN ?")
 		log.Println(errScanData)
 	}
-	QueryCheckDriverLicenseExpiryDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where driver_license_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and driver_license_expiry_date = ?`,Da.DriverLicenseExpiryDate).Scan(&StatusDriverLicenseExpiryDate)
+	QueryCheckDriverLicenseExpiryDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where driver_license_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and driver_license_expiry_date = ?`, Da.DriverLicenseExpiryDate).Scan(&StatusDriverLicenseExpiryDate)
 
 	if QueryCheckDriverLicenseExpiryDate != nil {
 		log.Println(QueryCheckDriverLicenseExpiryDate)
 	}
-	QueryCheckCarInsuranceDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where car_insurance_document_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and car_insurance_document_expiry_date = ?`,Da.CarInsuranceExpiryDate).Scan(&StatusCarInsuranceExpiryDate)
+	QueryCheckCarInsuranceDate := model.DB.QueryRow(`select count(*) from commuting_basic_information where car_insurance_document_expiry_date <= DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d') and car_insurance_document_expiry_date = ?`, Da.CarInsuranceExpiryDate).Scan(&StatusCarInsuranceExpiryDate)
 	if QueryCheckCarInsuranceDate != nil {
 		log.Println(QueryCheckCarInsuranceDate)
 	}
@@ -653,7 +653,6 @@ where commuting_basic_information.id_general_information = general_information.i
 
 	ContainerDataBasicInformation = BasicInformation
 
-
 	GetDataDetail, errDataDetail := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
 										from commuting_trip comtrip, code_commuting cc,
@@ -666,7 +665,7 @@ where commuting_basic_information.id_general_information = general_information.i
 	if errDataDetail != nil {
 		log.Println(errDataDetail)
 	}
-
+	defer GetDataDetail.Close()
 	for GetDataDetail.Next() {
 
 		errScanDataDetail := GetDataDetail.Scan(&DaD.IdCommutingTrip, &DaD.IdDetailCommutingTrip, &DaD.Date, &DaD.RouteProfileName, &DaD.AttendanceCode, &DaD.Purpose, &DaD.Distance, &DaD.CommuteDistance, &DaD.Cost, &DaD.StatusCommuting, &DaD.DateApprove)
@@ -692,9 +691,8 @@ where commuting_basic_information.id_general_information = general_information.i
 		}
 		ArrDaD = append(ArrDaD, DataDetailInit)
 		//append data looping
-
+		defer GetDataDetail.Close()
 	}
-
 	FinallyData := approve.FormatDataDetailCommutingByEmployeeCode{
 		Data:       ContainerDataBasicInformation,
 		DataDetail: ArrDaD,
@@ -704,7 +702,7 @@ where commuting_basic_information.id_general_information = general_information.i
 	return sh, `Success Response`
 }
 
-func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []approve.Init_InputDataApprove) (dataapprove []approve.Init_InputDataApprove, condition string) {
+func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []approve.Init_InputDataApprove,employee_number string, id_basic_information string, CodeCommuting string) (dataapprove []approve.Init_InputDataApprove, condition string) {
 
 	// merah T
 	// hijau Y
@@ -720,6 +718,30 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 	if errTx != nil {
 		log.Fatal(errTx.Error())
 	}
+	CountAllDataApprove :=0
+	CheckCountAllDataApprove := model.DB.QueryRowContext(ctx,`select count(*) from(select MIN(comtrip.id_commuting_trip),MIN(comtrip.status_approval)
+										from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store   and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit = 'Y' 
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`,employee_number,id_basic_information,CodeCommuting).Scan(&CountAllDataApprove)
+	if CheckCountAllDataApprove != nil {
+		log.Println(CheckCountAllDataApprove.Error())
+	}
+	datanonApprove :=0
+	CheckCountDataNonApprove := model.DB.QueryRowContext(ctx,`select count(*) from(select MIN(comtrip.id_commuting_trip),MIN(comtrip.status_approval)
+										from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store   and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit = 'Y'  and comtrip.status_approval IS NOT NULL
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`,employee_number,id_basic_information,CodeCommuting).Scan(&datanonApprove)
+	if CheckCountDataNonApprove != nil {
+		log.Println(CheckCountDataNonApprove.Error())
+	}
+
+
 	for _, dataapprover := range dataApprove {
 
 		//sqlUpdate += "(?,?,CONVERT_TZ(NOW(),'+00:00','+09:00')),"
@@ -737,6 +759,45 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 		//sqlUpdate += `update commuting_trip set status_approval = ?,date_time_approve =? where id_commuting_trip = ? `
 		//vals = append(vals,  dataapprover.StatusDataApprove,dataapprover.IdCommuting)
 	}
+
+	//submit approve execute
+	if CountAllDataApprove == datanonApprove {
+		//	return update submit
+		ShowDataIdCommuting, errShowDataIdCommuting := model.DB.QueryContext(ctx,`select MIN(comtrip.id_commuting_trip)
+										from commuting_trip comtrip, code_commuting cc,
+										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+										geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store   and cc.code_random = comtrip.code_commuting
+										and bainfo.employee_code = ? and bainfo.id_basic_information = ? and comtrip.code_commuting = ? and comtrip.save_trip ='N' and comtrip.submit ='Y' 
+										group by detcomtrip.id_commuting_trip order by comtrip.date asc`,employee_number,id_basic_information,CodeCommuting)
+		if errShowDataIdCommuting != nil {
+			log.Println(errShowDataIdCommuting)
+		}
+		defer ShowDataIdCommuting.Close()
+		var StringDataIdCommutingTrip string
+		var DataIdCommutingTrip string
+		for ShowDataIdCommuting.Next() {
+			ScanDataIdCommuting := ShowDataIdCommuting.Scan(&DataIdCommutingTrip)
+			if ScanDataIdCommuting != nil {
+				log.Println(ScanDataIdCommuting)
+			}
+			StringDataIdCommutingTrip += DataIdCommutingTrip+`,`
+
+		}
+
+		StringDataIdCommutingTrip = StringDataIdCommutingTrip[0:len(StringDataIdCommutingTrip)-1]
+		queryUpdateSubmit := `update commuting_trip set submit ='Y',
+		date_submit = DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'), 
+		time_submit = TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s') 
+		where id_commuting_trip IN ( `+StringDataIdCommutingTrip+`)`
+
+		updateSubmit, errUpdateSubmit := model.DB.QueryContext(ctx,queryUpdateSubmit)
+		if errUpdateSubmit != nil {
+			log.Println(errUpdateSubmit)
+		}
+		defer updateSubmit.Close()
+	}
+
 	CommitErr := tx.Commit()
 	if CommitErr != nil {
 		log.Println(CommitErr.Error())

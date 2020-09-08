@@ -7,6 +7,7 @@ import (
 	model_Approve "../../../models/Commuting/Approve"
 	_Response "../../../response"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 )
@@ -149,7 +150,10 @@ func ReturnCommutingApproveOrReject(w http.ResponseWriter, r *http.Request) {
 	var initializeData []Commuting.Init_InputDataApprove
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&initializeData)
-
+	param := mux.Vars(r)
+	employee_number := param["employee_number"]
+	id_basic_information := param["id_basic_information"]
+	code_commuting := param["code_commuting"]
 	db := db.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
@@ -159,7 +163,7 @@ func ReturnCommutingApproveOrReject(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := model_Approve.Init_DB_CommutingApprove{DB: db}
 		//change morning
-		resultData, err := _model.CommutingApproveOrReject(initializeData)
+		resultData, err := _model.CommutingApproveOrReject(initializeData,employee_number,id_basic_information,code_commuting)
 		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
