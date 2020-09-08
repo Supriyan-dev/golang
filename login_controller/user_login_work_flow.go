@@ -36,7 +36,6 @@ func CheckLogin(handler http.HandlerFunc) http.HandlerFunc {
 				"messages": err.Error(),
 			})
 		}
-
 		if !res {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"

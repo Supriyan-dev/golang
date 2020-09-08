@@ -3,7 +3,6 @@ package login
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	"../../db"
 	"../../helpers"
@@ -24,7 +23,6 @@ func CheckLoginUserWorkFlow(employee_number, password string) (bool, error) {
 		&login.Id_user, &login.Employee_number, &pwd,
 	)
 
-	log.Println(sqlStatement)
 	if err == sql.ErrNoRows {
 		fmt.Println("employee_number not found")
 		return false, err
@@ -40,7 +38,6 @@ func CheckLoginUserWorkFlow(employee_number, password string) (bool, error) {
 		fmt.Println("hash and password doesn't match")
 		return false, err
 	}
-	log.Println(match)
 
 	return true, nil
 }

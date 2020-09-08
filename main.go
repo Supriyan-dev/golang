@@ -4,6 +4,7 @@ import (
 	entertheinformation "./controller/Commuting/transportation_application"
 	Approve "./controller/Commuting/Approve"
 	controllerDataMaster "./controller/data_master_controller"
+	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 
 	"fmt"
@@ -32,7 +33,7 @@ func main() {
 	// end profile data user encrypt
 
 	// start data status approve general information status approve
-	// router.HandleFunc("/general_recrutment", generalRecrutment.DataGeneralRecrutment).Methods("POST")
+	router.HandleFunc("/general_recrutment/create", generalRecrutment.DataGeneralRecrutment)
 	// end data status approve  general information status approve
 
 	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")

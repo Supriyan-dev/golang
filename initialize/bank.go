@@ -1,6 +1,6 @@
 package initialize
 
-import "database/sql"
+import "../models"
 
 type Bank struct {
 	Id_bank     int    `json:"id_bank"`
@@ -12,5 +12,5 @@ type Bank struct {
 }
 
 type NullStringBank struct {
-	Bank_name sql.NullString `json:"bank_name"`
+	Bank_name models.NullString `json:"bank_name"`
 }

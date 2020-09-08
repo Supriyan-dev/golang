@@ -13,7 +13,6 @@ import (
 func DataMasterLogin(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
 	employee_number := r.FormValue("employee_number")
-	// password := r.FormValue("password")
 	db := db.Connect()
 	_con := model1.ModelUser_init{DB: db}
 	ExcuteData, err := _con.ReadDataUserLogin(employee_number)
