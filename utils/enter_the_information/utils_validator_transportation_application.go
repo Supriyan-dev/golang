@@ -169,7 +169,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 	var Purpose string
 	var TransitPoint string
 	db := db2.Connect()
-	db.Close()
+	//db.Close()
 	if Condition == "usageRecord-CheckData" {
 
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
@@ -202,6 +202,8 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
+		db.Close()
+
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
 		}
@@ -291,7 +293,7 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-
+		defer db.Close()
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
 		}
