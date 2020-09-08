@@ -50,7 +50,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	//var Arr_bi []Commuting.ShowBasicInformation1
 	var init_ur Commuting.ShowUsageRecord2
 	var Arr_ur []Commuting.ShowUsageRecord2
-	if err != nil  {
+	if err != nil {
 		log.Println(err.Error())
 		defer rows.Close()
 	}
@@ -286,7 +286,6 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		log.Println(CheckCountData)
 	}
 
-
 	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
 										from commuting_trip comtrip, code_commuting cc,
@@ -301,7 +300,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		defer rows.Close()
 		log.Println(err.Error())
 	}
-
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
 		if err != nil {
@@ -369,6 +368,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		Arr_History = append(Arr_History, FinnalyData)
 
 	}
+	defer rows.Close()
 
 	DataSubmit := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from (select COUNT(*)
 										from commuting_trip comtrip, code_commuting cc,
