@@ -19,6 +19,10 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 										gi.id_basic_information = bi.id_basic_information and 
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   	bi.employee_code=?`, store_number, employee_number)
+	if errGetBasicInformation != nil {
+		log.Println(errGetBasicInformation)
+	}
+	defer GetBasicInformation.Close()
 
 	GetCommutingBasicInformation, errGetCommutingBasicInformation := model.DB.Query(`select cbi.id_commuting_basic_information, cbi.id_general_information,
  									   cbi.insurance_company, cbi.driver_license_expiry_date, cbi.personal_injury,
@@ -29,6 +33,10 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
  									   gi.id_basic_information = bi.id_basic_information and 
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   bi.employee_code=?`, store_number, employee_number)
+	if errGetCommutingBasicInformation != nil {
+		log.Println(errGetCommutingBasicInformation)
+	}
+	defer GetCommutingBasicInformation.Close()
 	rows, err := model.DB.Query(`select  ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
  										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , 
  										MIN(ct.draft),MIN(b.purpose)
@@ -39,16 +47,16 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 										and gi.id_store_code = si.id_code_store and ct.id_general_information = gi.id_general_information and si.code_store =? and bi.employee_code=?
 										and ct.submit ='N' and ct.save_trip ='N'
 										group by b.id_commuting_trip`, store_number, employee_number)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
 	var init_biC interface{}
 	var init_bi Commuting.ShowBasicInformation1
 	//var Arr_bi []Commuting.ShowBasicInformation1
 	var init_ur Commuting.ShowUsageRecord2
 	var Arr_ur []Commuting.ShowUsageRecord2
-	if err != nil && errGetBasicInformation != nil && errGetCommutingBasicInformation != nil {
-		log.Println(err.Error())
-		log.Println(errGetBasicInformation.Error())
-		log.Println(errGetCommutingBasicInformation.Error())
-	}
+
 	GetCommutingBasicInformation.Next()
 
 	ScanCommutingBasicInformation := GetCommutingBasicInformation.Scan(&init_CommutingBasicInformation.IdCommutingBasicInformation, &init_CommutingBasicInformation.IdGeneralInformation, &init_CommutingBasicInformation.InsuranceCompany, &init_CommutingBasicInformation.DriverLicenseExpiryDate, &init_CommutingBasicInformation.PersonalInjury, &init_CommutingBasicInformation.PropertyDamage, &init_CommutingBasicInformation.CarInsuranceDocumentExpiryDate)
@@ -133,6 +141,7 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
 	}
+	defer rows.Close()
 	if init_biC != nil && Arr_ur != nil {
 		FinallyData := Commuting.IC_Format{
 			StatusDriversLicense: StatusDriversLicense,

@@ -32,7 +32,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 
 	if errGetBasicInformation != nil {
 		log.Println(errGetBasicInformation)
-		defer GetBasicInformation.Close()
+		//defer GetBasicInformation.Close()
 	}
 	defer GetBasicInformation.Close()
 
@@ -58,6 +58,8 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 
 	GetBasicInformation.Next()
 	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
+	defer GetBasicInformation.Close()
+
 	var KodeBasicInformation models.NullInt
 	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
 	LPAD(RIGHT(department_information.department_code, 2), 2 , '0'),
@@ -112,7 +114,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
 	}
-
+	defer rows.Close()
 
 	if init_biC != nil && Arr_ur != nil {
 		FinallyData := Commuting.FormatShowUsageRecord{
@@ -167,7 +169,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 	if err != nil {
 		log.Println(err.Error())
 	}
-
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdDetailCommutingTrip, &init_container.IdCommutingTrip, &init_container.TypeOfTransport, &init_container.Purpose, &init_container.DetailFrom, &init_container.DetailTo, &init_container.Distance, &init_container.Cost, &init_container.PointTrip, &init_container.TransitPoint, &init_container.CommuteDistance, &init_container.GoOutDistance)
 		if err != nil {
@@ -205,7 +207,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc`, store_number
 	if err != nil {
 		log.Println(err.Error())
 	}
-
+	defer rows.Close()
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost)
 
@@ -458,6 +460,7 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	//var Arr_DetailDataInsert [] Commuting.InsertDetailUsageRecordApplyForTravelExpenses
 	ctx := context.Background()
 	tx, errTx := model.DB.BeginTx(ctx, nil)
+
 	if errTx != nil {
 		log.Fatal(errTx)
 	}
@@ -617,17 +620,17 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 // update commuting_trip by id_commuting_trip and detail_commuting_trip by id_commuting_trip_detail
 // body row -> json
 func (model Models_init_Usage_Record) Model_UpdateUsageRecordApplyForTravelExpenses(initializeData *Commuting.UpdateUsageRecordApplyForTravelExpenses) (it []Commuting.UpdateUsageRecordApplyForTravelExpenses, condition string) {
-
+	valid, message := utils_enter_the_information.ValidatorUpdateUsageRecordApplyForTravelExpenses(initializeData)
+	if valid == false {
+		return nil, message
+	}
 	ctx := context.Background()
 	tx, errTx := model.DB.BeginTx(ctx, nil)
 
 	if errTx != nil {
 		return nil, "Please Check Your Data"
 	}
-	valid, message := utils_enter_the_information.ValidatorUpdateUsageRecordApplyForTravelExpenses(initializeData)
-	if valid == false {
-		return nil, message
-	}
+
 	queryUpdateCommutingTrip := `update commuting_trip set id_general_information = ?,
 	route_profile_name = ?,date =?,attendance_code = ? where id_commuting_trip = ?`
 
