@@ -19,6 +19,7 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
 	db := db.Connect()
+	defer db.Close()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -27,7 +28,7 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err := _model.Model_GetByIdUsageRecord(storeNumber, employeeNumber)
-		defer db.Close()
+
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
 			_response.Message = err.Error()
@@ -143,7 +144,7 @@ func ReturnGetByCommutingUsageRecordHistory(w http.ResponseWriter, r *http.Reque
 			_response.Message = "Success Response"
 			_response.CountData = CountData
 			_response.CurrentPage = Mpage
-			_response.TotalPage = (CountData/ showDataint) +1
+			_response.TotalPage = (CountData / showDataint) + 1
 			_response.Data = ResultData
 			_Response.ResponseJson(w, _response.Status, _response)
 
@@ -290,7 +291,7 @@ func ReturnUseUsageRecord(w http.ResponseWriter, r *http.Request) {
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
-		resultData, err := _model.Model_UseUsageRecord(_id,_date)
+		resultData, err := _model.Model_UseUsageRecord(_id, _date)
 		defer db.Close()
 		if err == "Success Response" && resultData > 0 {
 			_response.Status = http.StatusOK

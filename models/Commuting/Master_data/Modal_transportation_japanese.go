@@ -2,7 +2,7 @@ package Master_data
 
 import (
 	initMasterData "../../../initialize/Commuting"
-	"Go_DX_Services/models"
+	"../../../models"
 	"log"
 )
 
