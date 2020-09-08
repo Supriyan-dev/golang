@@ -205,20 +205,18 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 	db := db.Connect()
 	params := mux.Vars(r)
 	delete := params["id_code_store"]
-	stmt, err := db.Query("DELETE FROM store_information WHERE id_code_store = ?", delete)
+	stmt, err := db.Exec("DELETE FROM store_information WHERE id_code_store = ?", delete)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	ExcuteData := stmt.Scan(delete)
-	if err != nil {
-		panic(err.Error())
-	}
+	statment, err := stmt.RowsAffected()
+
 	if r.Method == "DELETE" {
-		if ExcuteData != nil {
+		if statment != 1 {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.Data = "Null"
+			_response.Data = nil
 			response.ResponseJson(w, _response.Status, _response)
 		} else {
 			_response.Status = http.StatusOK
@@ -229,7 +227,7 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
-		_response.Data = "Null"
+		_response.Data = nil
 		response.ResponseJson(w, _response.Status, _response)
 	}
 }

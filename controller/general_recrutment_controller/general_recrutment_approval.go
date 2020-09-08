@@ -22,7 +22,7 @@ func DataGeneralRecrutment(w http.ResponseWriter, r *http.Request) {
 	// password := r.FormValue("password")
 
 	{
-		stmt, err := tx.Prepare(`SELECT employee_code FROM basic_information
+		stmt, err := tx.Prepare(`SELECT employee_code FROM basic_information WHERE id_basic_information = ?
 		INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, addres, addres_kana, addres_detail, addres_detail_kana, add_phone_number, marital_status, dormitory_status)
 		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 		INNER JOIN general_information AS employee_code ON basic_information.id_basic_information = general_information.id_basic_information`)
@@ -38,7 +38,7 @@ func DataGeneralRecrutment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	{
-		stmt, err := tx.Prepare(`INSERT INTO general_information (id_basic_information, id_store_code, id_department, id_code_store, id_unit, join_date, id_bank, account_type, account_number, account_name, first_smester_in_other_company, distance_trip, resume_document, written_oath_document, employee_agreement_document, certificate_of_residence_card_document, application_form_of_commuting_method_document, compliance_agreement_document, with_holding_slip_document, dependent_deduction_form_document, pension_book_document, health_check_report_document, office_code)
+		stmt, err := tx.Prepare(`SELECT * FROM general_information WHERE id_general_information = ?
 		SELECT id_basic_information, id_store_code, id_department, id_code_store, id_unit, join_date, id_bank, account_type, account_number, account_name, first_smester_in_other_company, distance_trip, resume_document, written_oath_document, employee_agreement_document, certificate_of_residence_card_document, application_form_of_commuting_method_document, compliance_agreement_document, with_holding_slip_document, dependent_deduction_form_document, pension_book_document, health_check_report_document, office_code FORM general_information INNER JOIN employment_type ON general_information.id_basic_information = employment_type.id_basic_information
 		INSERT INTO employment_type IF(employment_status = 34) SELECT employment_status FROM employment_type INNER JOIN full_time_employee ON employment_type.id_employment_type = full_time_employee.id_employment_type
 		INSERT INTO employment_type IF(employment_status = 41 OR 43) SELECT employment_status FROM employment_type INNER JOIN part_time_above_18_employee ON employment_type.id_employment_type = part_time_above_18_employee.id_employment_type

@@ -173,7 +173,6 @@ func UpdateBank(w http.ResponseWriter, r *http.Request) {
 	var init_insert initialize.Bank
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-
 	_con := model1.ModelBank_init{DB: db}
 	ExcuteData, _ := _con.UdpateDatabank(&init_insert)
 
@@ -201,21 +200,21 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
 	db := db.Connect()
 	params := mux.Vars(r)
-	delete := params["id_bank"]
-	stmt, err := db.Query("DELETE FROM store_information WHERE id_bank = ?", delete)
+	// delete := params["id_bank"]
+	delete, _ := strconv.Atoi(params["id_bank"])
+
+	stmt, err := db.Exec("DELETE FROM bank WHERE id_bank = ?", delete)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	ExcuteData := stmt.Scan(delete)
-	if err != nil {
-		panic(err.Error())
-	}
+	statment, err := stmt.RowsAffected()
+
 	if r.Method == "DELETE" {
-		if ExcuteData != nil {
+		if statment != 1 {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.Data = "Null"
+			_response.Data = nil
 			response.ResponseJson(w, _response.Status, _response)
 		} else {
 			_response.Status = http.StatusOK
@@ -226,7 +225,7 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
-		_response.Data = "Null"
+		_response.Data = nil
 		response.ResponseJson(w, _response.Status, _response)
 	}
 }
