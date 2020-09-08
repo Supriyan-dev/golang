@@ -177,7 +177,7 @@ type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	Purpose               string  `json:"purpose"`
 	DetailFrom            string  `json:"detail_from"`
 	DetailTo              string  `json:"detail_to"`
-	Distance              string  `json:"distance"`
+	Distance              float64  `json:"distance"`
 	Cost                  int     `json:"cost"`
 	PointTrip             float64 `json:"point_trip"`
 	TransitPoint          string  `json:"transit_point"`
