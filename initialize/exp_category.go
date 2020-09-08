@@ -9,5 +9,5 @@ type ExpCategory struct {
 	Created_time  sql.NullString `json:"created_time"`
 	Code_category string         `json:"code_category"`
 	Content       string         `json:"content"`
-	Rule_code     string         `json:"rule_code"`
+	Rule_code     sql.NullString `json:"rule_code"`
 }

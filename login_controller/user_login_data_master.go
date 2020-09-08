@@ -17,7 +17,6 @@ import (
 func GenerateHashPasswordDataMaster(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	hash, _ := helpers.HashPassword(vars["password"])
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(hash)
 
@@ -26,7 +25,6 @@ func GenerateHashPasswordDataMaster(w http.ResponseWriter, r *http.Request) {
 func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var _response initialize.Response
-
 		employee_number := r.FormValue("employee_number")
 		password := r.FormValue("password")
 		res, err := model1.CheckLoginUser(employee_number, password)
