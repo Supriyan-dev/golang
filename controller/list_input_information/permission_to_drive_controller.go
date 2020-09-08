@@ -3,7 +3,6 @@ package list_input_information
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
@@ -13,27 +12,35 @@ import (
 	"github.com/gorilla/mux"
 
 	"../../db"
-	"../../initialize"
+	initialize "../../initialize/permission_to_drive"
+	model1 "../../model1/permission_to_drive"
 )
 
 func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
 	db := db.Connect()
+	_con := model1.ModelsPermission_init{DB: db}
+	result, err := _con.ModelPermissionToDrive()
+	if err != nil {
+		panic(err.Error())
+	}
 
-	_model := models_init{DB: db}
-
-	result, err := _model.ModelPermissionToDrive()
-
-	if err == "Success Response" {
-		_response.Status = http.StatusOK
-		_response.Message = err
-		_response.Data = result
-		_Response.ResponseJson(w, _response.Status, _response)
-
+	if r.Method == "GET" {
+		if result == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = result
+			_Response.ResponseJson(w, _response.Status, _response)
+		}
 	} else {
-		_response.Status = http.StatusBadRequest
-		_response.Message = err
-		_response.Data = ""
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
 		_Response.ResponseJson(w, _response.Status, _response)
 	}
 
@@ -42,7 +49,7 @@ func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	var join initialize.Join
 	var arrJoin []initialize.Join
-	var response initialize.Response
+	var _response initialize.Response
 
 	db := db.Connect()
 	defer db.Close()
@@ -55,10 +62,6 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	err := db.QueryRow("SELECT COUNT(*) FROM general_information").Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
-
-	if page > totalPage {
-		page = totalPage
-	}
 	if page <= 0 {
 		page = 1
 	}
@@ -79,52 +82,58 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = arrJoin
-	w.Header().Set("Content-Type", "Aplication/json")
-	json.NewEncoder(w).Encode(response)
+	if r.Method == "GET" {
+		if arrJoin != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = arrJoin
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else if page > totalPage {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.TotalPage = totalPage
+			_response.CurrentPage = page
+			_response.Data = "Null"
+			_Response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.TotalPage = totalPage
+		_response.CurrentPage = page
+		_response.Data = "Null"
+		_Response.ResponseJson(w, _response.Status, _response)
+	}
 }
 
 func PermissionToDriveUpdate(w http.ResponseWriter, r *http.Request) {
-	var response initialize.Response
-
+	var _response initialize.Response
+	var init_insert initialize.UpdatePermissionToDrive
 	db := db.Connect()
-
-	stmt, err := db.Prepare("UPDATE commuting_basic_information SET permitted_to_drive = ?, status_approve = ? WHERE id_commuting_basic_information = ?")
+	json.NewDecoder(r.Body).Decode(&init_insert)
+	_con := model1.ModelsPermission_init{DB: db}
+	result, err := _con.UpdateDataPermissionToDrive(&init_insert)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err)
 	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err.Error())
+	if r.Method == "PUT" {
+		if result != nil {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = result
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			_Response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		_Response.ResponseJson(w, _response.Status, _response)
 	}
-
-	keyVal := make(map[string]string)
-	json.Unmarshal(body, &keyVal)
-	idCommutingBasic := keyVal["id_commuting_basic_information"]
-	newPermitedToDrive := keyVal["permitted_to_drive"]
-	newStatusApprove := keyVal["status_approve"]
-
-	id, err := strconv.Atoi(idCommutingBasic)
-
-	result, err := stmt.Exec(newPermitedToDrive, newStatusApprove, id)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		panic(err.Error())
-	}
-
-	response.Status = 200
-	response.Message = "Success"
-	response.Data = map[string]int64{
-		"Data Yang Behasil Di Update": rowsAffected,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
 }
