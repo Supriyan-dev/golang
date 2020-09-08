@@ -1,16 +1,16 @@
 package enter_the_information
 
 import (
-	"log"
-	"../../initialize/Commuting"
 	db2 "../../db"
-	"strings"
+	"../../initialize/Commuting"
 	models3 "../../models"
+	"log"
+	"strings"
 )
 
 func CheckDataById(sql string, id string) (CountData int) {
 	db := db2.Connect()
-	err := db.QueryRow(sql,id).Scan(&CountData)
+	err := db.QueryRow(sql, id).Scan(&CountData)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -30,7 +30,7 @@ func CheckDataByQuery(sql string) (CountData int) {
 
 func CheckDataByIdNullString(sql string, id models3.NullString) (CountData int) {
 	db := db2.Connect()
-	err := db.QueryRow(sql,id).Scan(&CountData)
+	err := db.QueryRow(sql, id).Scan(&CountData)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -40,7 +40,7 @@ func CheckDataByIdNullString(sql string, id models3.NullString) (CountData int) 
 
 func CheckDataByIdInt(sql string, id int) (CountData int) {
 	db := db2.Connect()
-	err := db.QueryRow(sql,id).Scan(&CountData)
+	err := db.QueryRow(sql, id).Scan(&CountData)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -48,9 +48,9 @@ func CheckDataByIdInt(sql string, id int) (CountData int) {
 	return CountData
 }
 
-func CheckDataByStoreAndEmployee(sql string, store string,employee string) (CountData int) {
+func CheckDataByStoreAndEmployee(sql string, store string, employee string) (CountData int) {
 	db := db2.Connect()
-	err := db.QueryRow(sql,store,employee).Scan(&CountData)
+	err := db.QueryRow(sql, store, employee).Scan(&CountData)
 	if err != nil {
 		log.Println(err.Error())
 		defer db.Close()
@@ -148,21 +148,20 @@ func ValidatorUpdateUsageRecordApplyForTravelExpenses(Request *Commuting.UpdateU
 	if Request.IdGeneralInformation == "" {
 		return false, "Missing required field in body request → IdGeneralInformation  = <empty string>"
 	}
-	if Request.IdCommutingTrip == ""   {
-		return false, "Missing required field in body request → IdCommutingTrip  =" +Request.IdCommutingTrip
+	if Request.IdCommutingTrip == "" {
+		return false, "Missing required field in body request → IdCommutingTrip  =" + Request.IdCommutingTrip
 
 	}
-	CountDataCommutingTrip := CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =? `,Request.IdCommutingTrip)
+	CountDataCommutingTrip := CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =? `, Request.IdCommutingTrip)
 
-	if CountDataCommutingTrip == 0{
+	if CountDataCommutingTrip == 0 {
 		return false, "ID Commuting Not Found"
 	}
-
 
 	return true, "done"
 }
 
-func GetAdditionalUsageRecord(store_number string, employee_number string, id_commuting_trip int,Condition string)( DatatypeOfTransportation string, DataRoute string,DataPurpose string){
+func GetAdditionalUsageRecord(store_number string, employee_number string, id_commuting_trip int, Condition string) (DatatypeOfTransportation string, DataRoute string, DataPurpose string) {
 
 	var typeOfTransportation string
 	var DetailTo string
@@ -170,11 +169,11 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 	var Purpose string
 	var TransitPoint string
 	db := db2.Connect()
-
+	db.Close()
 	if Condition == "usageRecord-CheckData" {
 
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-			GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
+		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
  										COALESCE(b.detail_from,''), COALESCE(b.detail_to,''), COALESCE(b.purpose,''), COALESCE(b.transit_point,'')
 										from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
@@ -188,36 +187,37 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 		if errGetDataTypeOfTransportationAndRoute != nil {
 			log.Println(errGetDataTypeOfTransportationAndRoute)
 			return "", "", ""
-		} else {
-			for GetDataTypeOfTransportationAndRoute.Next() {
-				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose, &TransitPoint)
-
-				if errGetDataT != nil {
-					defer GetDataTypeOfTransportationAndRoute.Close()
-					log.Println(errGetDataT.Error())
-				}
-				DatatypeOfTransportation += typeOfTransportation + ` - `
-				DataRoute += DetailFrom + ` - ` + strings.ReplaceAll(TransitPoint, ";", " - ") + ` - ` + DetailTo
-				DataPurpose += Purpose + ` - `
-
-			}
-			if typeOfTransportation != "" {
-				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
-			}
-			//if DataRoute != "" {
-			//	DataRoute = DataRoute[0 : len(DataRoute)-3]
-			//}
-			if DataPurpose != "" {
-				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
-			}
-			//log.Println(DatatypeOfTransportation)
-			//log.Println(DataRoute)
-			//log.Println(DataPurpose)
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
+		for GetDataTypeOfTransportationAndRoute.Next() {
+			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose, &TransitPoint)
+
+			if errGetDataT != nil {
+				defer GetDataTypeOfTransportationAndRoute.Close()
+				log.Println(errGetDataT.Error())
+			}
+			DatatypeOfTransportation += typeOfTransportation + ` - `
+			DataRoute += DetailFrom + ` - ` + strings.ReplaceAll(TransitPoint, ";", " - ") + ` - ` + DetailTo
+			DataPurpose += Purpose + ` - `
+
+		}
+		defer GetDataTypeOfTransportationAndRoute.Close()
+		if typeOfTransportation != "" {
+			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+		}
+		//if DataRoute != "" {
+		//	DataRoute = DataRoute[0 : len(DataRoute)-3]
+		//}
+		if DataPurpose != "" {
+			DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+		}
+		//log.Println(DatatypeOfTransportation)
+		//log.Println(DataRoute)
+		//log.Println(DataPurpose)
+
 	}
 
-	if Condition == "usageRecordUseRoute"{
+	if Condition == "usageRecordUseRoute" {
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
 		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
  										COALESCE(b.detail_from,''), COALESCE(b.detail_to,''), COALESCE(b.purpose,'')
@@ -231,41 +231,38 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, store_number, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			defer GetDataTypeOfTransportationAndRoute.Close()
-			typeOfTransportation = ""
-			DetailTo = ""
-			DetailFrom = ""
-			Purpose = ""
-		} else {
-			for GetDataTypeOfTransportationAndRoute.Next() {
-				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
-
-				if errGetDataT != nil {
-					log.Println(errGetDataT.Error())
-				}
-				DatatypeOfTransportation += typeOfTransportation + ` - `
-				DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
-				DataPurpose += Purpose + ` - `
-
-			}
-			if typeOfTransportation != "" {
-				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
-			}
-			if DataRoute != "" {
-				DataRoute = DataRoute[0 : len(DataRoute)-3]
-			}
-			if DataPurpose != "" {
-				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
-			}
-			//log.Println(DatatypeOfTransportation)
-			//log.Println(DataRoute)
-			//log.Println(DataPurpose)
+			return "", "", ""
 		}
-		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 		defer GetDataTypeOfTransportationAndRoute.Close()
+		for GetDataTypeOfTransportationAndRoute.Next() {
+			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
+
+			if errGetDataT != nil {
+				log.Println(errGetDataT.Error())
+			}
+			DatatypeOfTransportation += typeOfTransportation + ` - `
+			DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
+			DataPurpose += Purpose + ` - `
+
+		}
+		defer GetDataTypeOfTransportationAndRoute.Close()
+		if typeOfTransportation != "" {
+			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+		}
+		if DataRoute != "" {
+			DataRoute = DataRoute[0 : len(DataRoute)-3]
+		}
+		if DataPurpose != "" {
+			DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+		}
+		//log.Println(DatatypeOfTransportation)
+		//log.Println(DataRoute)
+		//log.Println(DataPurpose)
+
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 	}
 
-	if Condition == "usageRecordHistory"{
+	if Condition == "usageRecordHistory" {
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
 		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
  										COALESCE(b.detail_from,''), COALESCE(b.detail_to,'')
@@ -279,41 +276,39 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, store_number, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			defer GetDataTypeOfTransportationAndRoute.Close()
-			typeOfTransportation = ""
-			DetailTo = ""
-			DetailFrom = ""
-			Purpose = ""
-		} else {
-			for GetDataTypeOfTransportationAndRoute.Next() {
-				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
-
-				if errGetDataT != nil {
-					log.Println(errGetDataT.Error())
-				}
-				DatatypeOfTransportation += typeOfTransportation + ` - `
-				DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
-				DataPurpose += Purpose + ` - `
-
-			}
-			if typeOfTransportation != "" {
-				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
-			}
-			if DataRoute != "" {
-				DataRoute = DataRoute[0 : len(DataRoute)-3]
-			}
-			if DataPurpose != "" {
-				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
-			}
-			//log.Println(DatatypeOfTransportation)
-			//log.Println(DataRoute)
-			//log.Println(DataPurpose)
+			return "", "", ""
 		}
-		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 		defer GetDataTypeOfTransportationAndRoute.Close()
+		for GetDataTypeOfTransportationAndRoute.Next() {
+			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
+
+			if errGetDataT != nil {
+				log.Println(errGetDataT.Error())
+			}
+			DatatypeOfTransportation += typeOfTransportation + ` - `
+			DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
+			DataPurpose += Purpose + ` - `
+
+		}
+		defer GetDataTypeOfTransportationAndRoute.Close()
+
+		if typeOfTransportation != "" {
+			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+		}
+		if DataRoute != "" {
+			DataRoute = DataRoute[0 : len(DataRoute)-3]
+		}
+		if DataPurpose != "" {
+			DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+		}
+		//log.Println(DatatypeOfTransportation)
+		//log.Println(DataRoute)
+		//log.Println(DataPurpose)
+
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 	}
 
-	if Condition == "DetailCommutingByEmployeeCode"{
+	if Condition == "DetailCommutingByEmployeeCode" {
 		// Get Data Transportation, detail from, detail to and purpose (horizontal)
 		GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := db.Query(`select COALESCE(trans.name_transportation_japanese,''), 
  										COALESCE(b.detail_from,''), COALESCE(b.detail_to,'')
@@ -327,38 +322,37 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 										`, employee_number, id_commuting_trip)
 
 		if errGetDataTypeOfTransportationAndRoute != nil {
-			defer GetDataTypeOfTransportationAndRoute.Close()
-			typeOfTransportation = ""
-			DetailTo = ""
-			DetailFrom = ""
-			Purpose = ""
-		} else {
-			for GetDataTypeOfTransportationAndRoute.Next() {
-				errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
-
-				if errGetDataT != nil {
-					log.Println(errGetDataT.Error())
-				}
-				DatatypeOfTransportation += typeOfTransportation + ` - `
-				DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
-				DataPurpose += Purpose + ` - `
-
-			}
-			if typeOfTransportation != "" {
-				DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
-			}
-			if DataRoute != "" {
-				DataRoute = DataRoute[0 : len(DataRoute)-3]
-			}
-			if DataPurpose != "" {
-				DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
-			}
-			//log.Println(DatatypeOfTransportation)
-			//log.Println(DataRoute)
-			//log.Println(DataPurpose)
+			return "", "", ""
 		}
-		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 		defer GetDataTypeOfTransportationAndRoute.Close()
+		for GetDataTypeOfTransportationAndRoute.Next() {
+			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
+
+			if errGetDataT != nil {
+				log.Println(errGetDataT.Error())
+			}
+			DatatypeOfTransportation += typeOfTransportation + ` - `
+			DataRoute += DetailFrom + ` - ` + DetailTo + ` - `
+			DataPurpose += Purpose + ` - `
+
+		}
+		defer GetDataTypeOfTransportationAndRoute.Close()
+
+		if typeOfTransportation != "" {
+			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
+		}
+		if DataRoute != "" {
+			DataRoute = DataRoute[0 : len(DataRoute)-3]
+		}
+		if DataPurpose != "" {
+			DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
+		}
+
+		//log.Println(DatatypeOfTransportation)
+		//log.Println(DataRoute)
+		//log.Println(DataPurpose)
+
+		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 	}
 
 	return DatatypeOfTransportation, DataRoute, DataPurpose

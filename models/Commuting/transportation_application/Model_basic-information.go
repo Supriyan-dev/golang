@@ -50,7 +50,8 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 		log.Println(errGetBasicInformation.Error())
 		log.Println(errGetCommutingBasicInformation.Error())
 	}
-
+	defer GetBasicInformation.Close()
+	defer GetCommutingBasicInformation.Close()
 	GetData1 := GetBasicInformation.Next()
 	ScanGetBasicInformation := GetBasicInformation.Scan(&init_DataApprove.IdGeneralBasicInformation, &init_BasicInformation.IdBasicInformation, &init_BasicInformation.FirstName, &init_BasicInformation.LastName, &init_BasicInformation.Address, &init_BasicInformation.AddressKana, &init_BasicInformation.AddressDetail, &init_BasicInformation.AddressDetailKana, &init_BasicInformation.AddPhoneNumber)
 

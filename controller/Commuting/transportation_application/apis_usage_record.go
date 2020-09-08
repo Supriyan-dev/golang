@@ -19,7 +19,6 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
 	db := db.Connect()
-	defer db.Close()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -28,7 +27,8 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err := _model.Model_GetByIdUsageRecord(storeNumber, employeeNumber)
-
+		defer _model.DB.Close()
+		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusInternalServerError
 			_response.Message = err.Error()
