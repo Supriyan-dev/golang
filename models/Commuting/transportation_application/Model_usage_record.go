@@ -31,6 +31,12 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   	bi.employee_code=?`, store_number, employee_number)
 
+	if errGetBasicInformation != nil {
+		log.Println(errGetBasicInformation)
+		defer GetBasicInformation.Close()
+	}
+	defer GetBasicInformation.Close()
+
 	rows, err := model.DB.Query(`select  ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
  										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft),MIN(b.purpose)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
@@ -45,12 +51,12 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	//var Arr_bi []Commuting.ShowBasicInformation1
 	var init_ur Commuting.ShowUsageRecord2
 	var Arr_ur []Commuting.ShowUsageRecord2
-	if err != nil && errGetBasicInformation != nil {
+	if err != nil  {
 		log.Println(err.Error())
-		log.Println(errGetBasicInformation.Error())
 		defer rows.Close()
-		defer GetBasicInformation.Close()
 	}
+	defer rows.Close()
+
 	GetBasicInformation.Next()
 	errScanBasicInformation := GetBasicInformation.Scan(&init_bi.IdBasicInformation, &init_bi.FirstName, &init_bi.LastName, &init_bi.Address, &init_bi.AddressKana, &init_bi.AddressDetail, &init_bi.AddressDetailKana, &init_bi.AddPhoneNumber)
 	var KodeBasicInformation models.NullInt
@@ -68,7 +74,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 		log.Println(GetKodeBasicInformation)
 		defer GetBasicInformation.Close()
 	}
-
+	defer GetBasicInformation.Close()
 	if errScanBasicInformation != nil {
 		init_biC = nil
 	} else {
@@ -107,8 +113,8 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
 	}
-	defer rows.Close()
-	defer GetBasicInformation.Close()
+
+
 	if init_biC != nil && Arr_ur != nil {
 		FinallyData := Commuting.FormatShowUsageRecord{
 			CountHistory:         CountHistory,
