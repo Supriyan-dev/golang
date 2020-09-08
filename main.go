@@ -156,7 +156,7 @@ func main() {
 	router.HandleFunc("/commuting-ApproveShowData", Approve.ReturnGetDataApproveCommutingSumByAllEmployeeCode)
 	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCode", Approve.ReturnGetDataApproveByCommutingEmployeeCode)
 	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCodeDetail", Approve.ReturnDetailCommutingByEmployeeCode)
-	router.HandleFunc("/commuting-Approve", Approve.ReturnCommutingApproveOrReject)
+	router.HandleFunc("/commuting-Approve/{employee_number}/{id_basic_information}/{code_commuting}", Approve.ReturnCommutingApproveOrReject)
 	// end Commuting Approve
 
 	// start master Data Transportation

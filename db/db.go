@@ -15,5 +15,6 @@ func Connect() *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.SetMaxIdleConns(5)
 	return db
 }
