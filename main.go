@@ -1,15 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	entertheinformation "./controller/Enter_the_information"
+	entertheinformation "./controller/Commuting/transportation_application"
+	Approve "./controller/Commuting/Approve"
 	controllerDataMaster "./controller/data_master_controller"
 	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
+
+	"fmt"
+	"net/http"
+	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
+	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 	loginController "./controller/login_controller"
 	login "./login_controller"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -157,13 +161,36 @@ func main() {
 	// router.HandleFunc("/commuting-basic-information", controller.ReturnAllCommutingBasicInformation).Methods("GET")
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
-	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation).Methods("POST")
-	router.HandleFunc("/commuting-transportation-applicationCheckData", entertheinformation.ReturnGetByCommutingUsageRecord).Methods("POST")
-	router.HandleFunc("/commuting-UsageRecord-Apply", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses).Methods("POST")
-	router.HandleFunc("/commuting-UsageRecord-DetailApply", entertheinformation.ReturnDetailInsertUsageRecordApplyForTravelExpenses).Methods("POST")
+	// start Commuting Transportation Application
+	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation)
+	router.HandleFunc("/commuting-basic-information-CheckData", entertheinformation.ReturnGetByCommutingBasicInformation)
+	router.HandleFunc("/commuting-UsageRecord-CheckData", entertheinformation.ReturnGetByCommutingUsageRecord)
+	router.HandleFunc("/commuting-UsageRecord-CheckDataForEdit", entertheinformation.ReturnGetByCommutingUsageRecordForEdit)
+	router.HandleFunc("/commuting-UsageRecord-Apply/{condition}/{store_id}/{employee_id}", entertheinformation.ReturnInsertUsageRecordApplyForTravelExpenses)
+	router.HandleFunc("/commuting-UsageRecord-Apply-Update", entertheinformation.ReturnUpdateUsageRecordApplyForTravelExpenses)
+	router.HandleFunc("/commuting-UsageRecord-Delete/{id_commuting_trip}", entertheinformation.ReturnDeleteUsageRecord)
+	router.HandleFunc("/commuting-UsageRecord-ShowUseMyRoute", entertheinformation.ReturnGetByCommutingUsageRecordUseMyRoute)
+	router.HandleFunc("/commuting-UsageRecord-ShowHistory", entertheinformation.ReturnGetByCommutingUsageRecordHistory)
+	router.HandleFunc("/commuting-UsageRecord-Draft/{id_commuting_trip}", entertheinformation.ReturnUpdateUsageRecordDraft)
+	router.HandleFunc("/commuting-UseUsageRecord/{id_commuting_trip}/{date}", entertheinformation.ReturnUseUsageRecord)
+	router.HandleFunc("/commuting-InputConfirmation-ShowDataById", entertheinformation.ReturnGetByCommutingInputConfirmation)
+	router.HandleFunc("/commuting-InputConfirmation-Submit/{id_commuting_trip}", entertheinformation.ReturnSubmitInputConfirmation)
 	// end Commuting Transportation Application
 
+	// start Commuting Approve
+	router.HandleFunc("/commuting-ApproveShowData", Approve.ReturnGetDataApproveCommutingSumByAllEmployeeCode)
+	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCode", Approve.ReturnGetDataApproveByCommutingEmployeeCode)
+	router.HandleFunc("/commuting-ApproveShowDataByEmployeeCodeDetail", Approve.ReturnDetailCommutingByEmployeeCode)
+	router.HandleFunc("/commuting-Approve/{employee_number}/{id_basic_information}/{code_commuting}", Approve.ReturnCommutingApproveOrReject)
+	// end Commuting Approve
+
+	// start master Data Transportation
+	router.HandleFunc("/Get-MasterDataTransportation", entertheinformation.ReturnGetDataMasterTransportation)
+	// end master Data Transportation
+
 	fmt.Println("Connected to port 9000")
+
+
 	handler := cors.AllowAll().Handler(router)
 	http.ListenAndServe(":9000", handler)
 
