@@ -10,6 +10,7 @@ import (
 	"../helpers"
 	"../initialize"
 	model1 "../model1/login"
+
 	"../response"
 	"github.com/gorilla/mux"
 )
@@ -25,6 +26,7 @@ func GenerateHashPasswordDataMaster(w http.ResponseWriter, r *http.Request) {
 func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var _response initialize.Response
+
 		employee_number := r.FormValue("employee_number")
 		password := r.FormValue("password")
 		res, err := model1.CheckLoginUser(employee_number, password)
@@ -42,6 +44,7 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		}
 		if res {
 			handler(w, r)
+
 		}
 
 		// token := jwt.New(jwt.SigningMethodHS256)
