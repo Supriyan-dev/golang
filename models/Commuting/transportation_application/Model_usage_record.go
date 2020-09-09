@@ -291,7 +291,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 	if CheckCountData != nil {
 		log.Println(CheckCountData)
 	}
-
+	defer model.DB.Close()
 	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
 										from commuting_trip comtrip, code_commuting cc,
@@ -307,55 +307,16 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		log.Println(err.Error())
 	}
 	defer rows.Close()
+	defer model.DB.Close()
+
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
 		if err != nil {
 			defer rows.Close()
+			defer model.DB.Close()
 			panic(err.Error())
 		}
 		DatatypeOfTransportation, DataRoute, _ := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_container.IdCommutingTrip, "usageRecordHistory")
-		// Get Data Transportation, detail from, detail to and purpose (horizontal)
-		//GetDataTypeOfTransportationAndRoute, errGetDataTypeOfTransportationAndRoute := model.DB.Query(`
-		//select MIN(detcomtrip.id_commuting_trip) as id, MIN(comtrip.route_profile_name), MIN(detcomtrip.type_of_transport),
-		//MIN(comtrip.attendance_code) from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo,
-		//basic_information bainfo, store_information storeinfo where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and
-		//geninfo.id_general_information = comtrip.id_general_information AND geninfo.id_basic_information = bainfo.id_basic_information and
-		//geninfo.id_store_code = storeinfo.id_code_store and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.submit ='Y'
-		//and comtrip.save_trip ='N' and detcomtrip.id_commuting_trip =? group by detcomtrip.id_commuting_trip order by comtrip.date asc
-		//`, store_number, employee_number, init_container.IdCommutingTrip)
-		//
-		//if errGetDataTypeOfTransportationAndRoute != nil {
-		//	log.Println(0)
-		//	typeOfTransportation = ""
-		//	DetailTo = ""
-		//	DetailFrom = ""
-		//	Purpose = ""
-		//} else {
-		//	for GetDataTypeOfTransportationAndRoute.Next() {
-		//		errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo, &Purpose)
-		//
-		//		if errGetDataT != nil {
-		//			log.Println(errGetDataT.Error())
-		//		}
-		//		DatatypeOfTransportation += typeOfTransportation + ` - `
-		//		DataRoute += DetailFrom + ` - - ` + DetailTo + `-`
-		//		DataPurpose += Purpose + ` - `
-		//
-		//	}
-		//	if typeOfTransportation != "" {
-		//		DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
-		//	}
-		//	if DataRoute != "" {
-		//		DataRoute = DataRoute[0 : len(DataRoute)-1]
-		//	}
-		//	if DataPurpose != "" {
-		//		DataPurpose = DataPurpose[0 : len(DataPurpose)-3]
-		//	}
-		//log.Println(DatatypeOfTransportation)
-		//log.Println(DataRoute)
-		//log.Println(DataPurpose)
-		//}
-		// end Get Data Transportation, detail from, detail to and purpose (horizontal)
 		FinnalyData := Commuting.ShowHistory{
 			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
 			IdCommutingTrip:       init_container.IdCommutingTrip,
@@ -375,6 +336,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 
 	}
 	defer rows.Close()
+	defer model.DB.Close()
 
 	DataSubmit := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from (select COUNT(*)
 										from commuting_trip comtrip, code_commuting cc,
