@@ -15,9 +15,9 @@ func Connect() *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(0)
-	db.SetMaxIdleConns(50)
-	db.SetMaxOpenConns(50)
+	db.SetMaxIdleConns(10)
+	//db.SetConnMaxLifetime(0)
+	//db.SetMaxIdleConns(50)
+	//db.SetMaxOpenConns(50)
 	return db
 }
