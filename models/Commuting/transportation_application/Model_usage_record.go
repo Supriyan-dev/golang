@@ -525,27 +525,31 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	if valid == false {
 		return nil, message
 	}
-
-	_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
-	log.Println(errExecuteCodeCommuting)
-	if errExecuteCodeCommuting != nil {
-		tx.Rollback()
-		return nil, "please check your data"
+	{
+		_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
+		log.Println(errExecuteCodeCommuting)
+		if errExecuteCodeCommuting != nil {
+			tx.Rollback()
+			return nil, "please check your data"
+		}
 	}
+	{
+		_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 
-	_, errExecuteCommutingTrip := model.DB.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
-
-	log.Println(errExecuteCommutingTrip)
-	if errExecuteCommutingTrip != nil {
-		tx.Rollback()
-		return nil, "please check your data"
+		log.Println(errExecuteCommutingTrip)
+		if errExecuteCommutingTrip != nil {
+			tx.Rollback()
+			return nil, "please check your data"
+		}
 	}
-	_, errExecuteDetailCommutingTrip := model.DB.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
-	log.Println(errExecuteDetailCommutingTrip)
-	if errExecuteDetailCommutingTrip != nil {
-		//log.Fatal(errExecuteDetailCommutingTrip)
-		tx.Rollback()
-		return nil, "please check your data"
+	{
+		_, errExecuteDetailCommutingTrip := model.DB.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
+		log.Println(errExecuteDetailCommutingTrip)
+		if errExecuteDetailCommutingTrip != nil {
+			//log.Fatal(errExecuteDetailCommutingTrip)
+			tx.Rollback()
+			return nil, "please check your data"
+		}
 	}
 	//_, errExecuteCodeCommuting := model.DB.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
 	//log.Println(errExecuteCodeCommuting)
