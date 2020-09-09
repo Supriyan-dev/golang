@@ -745,7 +745,7 @@ func (model Init_DB_CommutingApprove) CommutingApproveOrReject(dataApprove []app
 	for _, dataapprover := range dataApprove {
 
 		//sqlUpdate += "(?,?,CONVERT_TZ(NOW(),'+00:00','+09:00')),"
-		_, res := model.DB.ExecContext(ctx, `update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommuting)
+		_, res := model.DB.ExecContext(ctx, `update commuting_trip set status_approval = ?,date_time_approve = CONVERT_TZ(NOW(),@@session.time_zone,'+09:00') where id_commuting_trip = ?`, dataapprover.StatusDataApprove, dataapprover.IdCommutingTrip)
 		if res != nil {
 			log.Println(res.Error())
 			tx.Rollback()
