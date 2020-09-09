@@ -34,13 +34,11 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 				"messages": err.Error(),
 			})
 		}
-
 		if !res {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
 			response.ResponseJson(w, _response.Status, _response)
-
 		}
 		if res {
 			handler(w, r)

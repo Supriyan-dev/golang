@@ -20,12 +20,16 @@ func DataMasterLogin(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 	key := "P@ssw0rdL0g1n"
-
 	if r.Method == "POST" {
-		_response.Status = http.StatusOK
-		_response.Message = "Success"
-		_response.Data = aes256.Encrypt(ExcuteData, key)
-		response.ResponseJson(w, _response.Status, _response)
+		if ExcuteData == "Success" {
+			data := []byte(aes256.Encrypt(ExcuteData, key))
+			w.Write(data)
+		} else {
+			_response.Status = http.StatusMethodNotAllowed
+			_response.Message = "Sorry Your Method Missing Not Allowed"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		}
 	} else {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
