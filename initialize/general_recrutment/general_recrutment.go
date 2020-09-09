@@ -1,22 +1,25 @@
 package initialize
 
-import "database/sql"
+import (
+	"../../models"
+)
 
 type BasicInformationGeneral struct {
-	Id_basic_information int            `json:"id_basic_information"`
-	Employee_code        int            `json:"employee_code"`
-	First_name           string         `json:"first_name"`
-	Last_name            string         `json:"last_name"`
-	Gender               string         `json:"gender"`
-	Add_postal_code      sql.NullString `json:"add_postal_code"`
-	Id_prefecture        int            `json:"id_prefecture"`
-	Adress               sql.NullString `json:"addres"`
-	Adress_kana          sql.NullString `json:"adress_kana"`
-	Adress_detail        sql.NullString `json:"adress_detail"`
-	Adress_detail_kana   sql.NullString `json:"adress_detail_kana"`
-	Add_phone_number     sql.NullString `json:"add_phone_number"`
-	Marital_status       string         `json:"marital_status"`
-	Dormitory_status     string         `json:"dormitory_status"`
+	Id_basic_information int               `json:"id_basic_information"`
+	Employee_code        int               `json:"employee_code"`
+	First_name           string            `json:"first_name"`
+	Last_name            string            `json:"last_name"`
+	Gender               string            `json:"gender"`
+	Birthdate            string            `json:"birthdate"`
+	Add_postal_code      models.NullString `json:"add_postal_code"`
+	Id_prefecture        int               `json:"id_prefecture"`
+	Adress               models.NullString `json:"addres"`
+	Adress_kana          models.NullString `json:"adress_kana"`
+	Adress_detail        models.NullString `json:"adress_detail"`
+	Adress_detail_kana   models.NullString `json:"adress_detail_kana"`
+	Add_phone_number     models.NullString `json:"add_phone_number"`
+	Marital_status       string            `json:"marital_status"`
+	Dormitory_status     string            `json:"dormitory_status"`
 }
 
 type GeneralInformationGeneral struct {
@@ -62,20 +65,20 @@ type GeneralRecrutmentStatusApproval struct {
 
 type GeneralRecrutmentJoin struct {
 	// start struct basic information
-	Id_basic_information int            `json:"id_basic_information"`
-	Employee_code        int            `json:"employee_code"`
-	First_name           string         `json:"first_name"`
-	Last_name            string         `json:"last_name"`
-	Gender               string         `json:"gender"`
-	Add_postal_code      sql.NullString `json:"add_postal_code"`
-	Id_prefecture        int            `json:"id_prefecture"`
-	Adress               sql.NullString `json:"addres"`
-	Adress_kana          sql.NullString `json:"adress_kana"`
-	Adress_detail        sql.NullString `json:"adress_detail"`
-	Adress_detail_kana   sql.NullString `json:"adress_detail_kana"`
-	Add_phone_number     sql.NullString `json:"add_phone_number"`
-	Marital_status       string         `json:"marital_status"`
-	Dormitory_status     string         `json:"dormitory_status"`
+	Id_basic_information int               `json:"id_basic_information"`
+	Employee_code        int               `json:"employee_code"`
+	First_name           string            `json:"first_name"`
+	Last_name            string            `json:"last_name"`
+	Gender               string            `json:"gender"`
+	Add_postal_code      models.NullString `json:"add_postal_code"`
+	Id_prefecture        int               `json:"id_prefecture"`
+	Adress               models.NullString `json:"addres"`
+	Adress_kana          models.NullString `json:"adress_kana"`
+	Adress_detail        models.NullString `json:"adress_detail"`
+	Adress_detail_kana   models.NullString `json:"adress_detail_kana"`
+	Add_phone_number     models.NullString `json:"add_phone_number"`
+	Marital_status       string            `json:"marital_status"`
+	Dormitory_status     string            `json:"dormitory_status"`
 	// end struct basic information
 	// start struct general information
 	Id_general_information                        int    `json:"id_general_information"`
