@@ -65,6 +65,6 @@ type FormatDataDetailCommutingByEmployeeCode struct {
 }
 
 type Init_InputDataApprove struct {
-	IdCommuting       string `json:"id_commuting"`
+	IdCommutingTrip   string `json:"id_commuting_trip"`
 	StatusDataApprove string `json:"status_data_approve"`
 }

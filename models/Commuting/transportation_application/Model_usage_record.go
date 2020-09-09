@@ -455,7 +455,11 @@ func (model Models_init_Usage_Record) Model_InsertUsageRecordApplyForTravelExpen
 	//else {
 	//	Status_Draft = "Y"
 	//}
-	checkCountData := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'`, store_id, employee_id)
+	checkCountData := utils_enter_the_information.CheckDataByStoreAndEmployee(`select count(*) from (select MIN(detcomtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), MIN(comtrip.route_profile_name),  MIN(comtrip.attendance_code),
+MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detcomtrip.commute_distance),0), COALESCE(SUM(detcomtrip.cost),0)  from commuting_trip comtrip, detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
+where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
+geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
+group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id, employee_id)
 	checkDataCommutingTrip := utils_enter_the_information.CheckDataByQuery(`select id_commuting_trip from commuting_trip order by id_commuting_trip desc limit 1`)
 
 	checkDataCommutingTrip = checkDataCommutingTrip + 1
