@@ -1,11 +1,14 @@
 package main
 
 import (
-	entertheinformation "./controller/Commuting/transportation_application"
 	Approve "./controller/Commuting/Approve"
+	entertheinformation "./controller/Commuting/transportation_application"
 	controllerDataMaster "./controller/data_master_controller"
 	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
+	"github.com/gorilla/handlers"
+	"github.com/rs/cors"
+	"os"
 
 	"fmt"
 	"net/http"
@@ -15,7 +18,6 @@ import (
 	login "./login_controller"
 
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 func main() {
@@ -190,8 +192,9 @@ func main() {
 
 	fmt.Println("Connected to port 9000")
 
-
-	handler := cors.AllowAll().Handler(router)
-	http.ListenAndServe(":9000", handler)
+	handler := handlers.LoggingHandler(os.Stdout,router)
+	//handler = cors.AllowAll().Handler(router)
+	corsHandle := cors.AllowAll().Handler(handler)
+	http.ListenAndServe(":9000", corsHandle)
 
 }
