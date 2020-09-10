@@ -38,7 +38,8 @@ func main() {
 	// end profile data user encrypt
 
 	// start forgot password
-	router.HandleFunc("/forgot-password", ForgotPassword.ReturnForgotPassword)
+	router.HandleFunc("/forgot-passwordWithEmail", ForgotPassword.ReturnForgotPasswordWithEmail)
+	router.HandleFunc("/forgot-passwordWithPin", ForgotPassword.ReturnForgotPasswordWithPin)
 	router.HandleFunc("/forgot-password-action", ForgotPassword.ReturnForgotPasswordAction)
 	// end forgot password
 

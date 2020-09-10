@@ -4,11 +4,17 @@
     <list default="true" id="eb0e2378-df00-48f1-822c-a26b234ae5a8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
 <<<<<<< HEAD
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.go" afterDir="false" />
 =======
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/initialize/Commuting/init_transportation_application.go" beforeDir="false" afterPath="$PROJECT_DIR$/initialize/Commuting/init_transportation_application.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+>>>>>>> hs
+=======
+      <change beforePath="$PROJECT_DIR$/controller/forgot_password/apis_forgot_password.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/forgot_password/apis_forgot_password.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/users/Model_auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/users/Model_auth.go" afterDir="false" />
 >>>>>>> hs
     </list>
     <option name="SHOW_DIALOG" value="false" />
