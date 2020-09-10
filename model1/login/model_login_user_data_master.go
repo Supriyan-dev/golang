@@ -13,7 +13,7 @@ import (
 type ModelLogin_init models.DB_init
 
 func CheckLoginUser(employee_number, password string) (bool, error) {
-	var login initialize.Login
+	var login initialize.Users
 	var pwd string
 
 	db := db.Connect()
