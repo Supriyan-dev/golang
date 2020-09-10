@@ -1,14 +1,15 @@
 package main
 
 import (
-	entertheinformation "./controller/Commuting/transportation_application"
 	Approve "./controller/Commuting/Approve"
+	entertheinformation "./controller/Commuting/transportation_application"
 	controllerDataMaster "./controller/data_master_controller"
 	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 
 	"fmt"
 	"net/http"
+
 	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 	loginController "./controller/login_controller"
@@ -28,7 +29,8 @@ func main() {
 	// start profile data user encrypt
 	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
 	router.HandleFunc("/generate_hash_data_master/{password}", login.GenerateHashPasswordDataMaster).Methods("GET")
-	router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
+	// router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
+	// router.HandleFunc("/enc", login.CheckLoginDataMaster)
 	router.HandleFunc("/read_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
 	// end profile data user encrypt
 
@@ -130,7 +132,7 @@ func main() {
 	// end crud under 18 salary
 
 	// start crud user
-	// router.HandleFunc("/user", login.CheckLogin(controllerDataMaster.ReturnAllUser))
+	router.HandleFunc("/user", login.CheckLogin(controllerDataMaster.ReturnAllUser))
 	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination)
 	router.HandleFunc("/user/get", controllerDataMaster.GetUser)
 	router.HandleFunc("/user/create", controllerDataMaster.CreateUser)
@@ -189,7 +191,6 @@ func main() {
 	// end master Data Transportation
 
 	fmt.Println("Connected to port 9000")
-
 
 	handler := cors.AllowAll().Handler(router)
 	http.ListenAndServe(":9000", handler)

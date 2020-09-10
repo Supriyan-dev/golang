@@ -10,7 +10,6 @@ type BasicInformationGeneral struct {
 	First_name           string            `json:"first_name"`
 	Last_name            string            `json:"last_name"`
 	Gender               string            `json:"gender"`
-	Birthdate            string            `json:"birthdate"`
 	Add_postal_code      models.NullString `json:"add_postal_code"`
 	Id_prefecture        int               `json:"id_prefecture"`
 	Adress               models.NullString `json:"addres"`
