@@ -75,7 +75,7 @@ type FormatShowUsageRecordForEdit struct {
 }
 
 type ShowUsageRecord struct {
-	IdDetailCommutingTrip int                `json:"id_detail_commuting_trip"`
+	IdDetailCommutingTrip int                `json:"id_commuting_trip_detail"`
 	IdCommutingTrip       int                `json:"id_commuting_trip"`
 	TypeOfTransport       models3.NullString `json:"type_of_transport"`
 	Purpose               models3.NullString `json:"purpose"`
