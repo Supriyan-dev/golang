@@ -498,7 +498,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, message
 	}
 
-	_, errExecuteCodeCommuting := tx.ExecContext(ctx, queryinsertCodeCommuting, RandomInt)
+	_, errExecuteCodeCommuting := tx.Exec(queryinsertCodeCommuting, RandomInt)
 	log.Println("code commuting")
 	log.Println(errExecuteCodeCommuting)
 	if errExecuteCodeCommuting != nil {
@@ -506,7 +506,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteCommutingTrip := tx.ExecContext(ctx, queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
+	_, errExecuteCommutingTrip := tx.Exec(queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 	log.Println("data ")
 	log.Println(errExecuteCommutingTrip)
 	if errExecuteCommutingTrip != nil {
@@ -514,7 +514,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteDetailCommutingTrip := tx.ExecContext(ctx, querySqlinsertCommutingTripDetail, vals...)
+	_, errExecuteDetailCommutingTrip := tx.Exec( querySqlinsertCommutingTripDetail, vals...)
 	log.Println("detail data")
 	log.Println(errExecuteDetailCommutingTrip)
 	if errExecuteDetailCommutingTrip != nil {
