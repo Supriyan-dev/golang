@@ -27,6 +27,7 @@ func main() {
 	// ** 29 Agu 2020
 
 	// Key_hash (salt) untuk digunakan pada proses enkripsi atau dekripsi json (salt jangan diubah)
+	// key := "P@ssw0rdL0g1n"
 	key := "P@ssw0rdL0g1n"
 	// ********************* Contoh JSON ****************************************
 	data := `{"id_user" : "id_user", "first_name":"first_name", "last_name":"last_name", "employee_number":"employee_number", "id_code_store":"id_code_store", "password":"password", "id_role":"id_role", "email":"email", "recovery_pin":"recovery_pin", "photo_url":"photo_url", "photo_name":"photo_name"}`

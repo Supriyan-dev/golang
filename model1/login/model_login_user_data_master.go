@@ -41,3 +41,16 @@ func CheckLoginUser(employee_number, password string) (bool, error) {
 
 	return true, nil
 }
+
+// func (model1 ModelLogin_init) ReadDataUserLogin(Employee_number, Password string) (all initialize.Users, err error) {
+// 	rows, err := model1.DB.Query(`SELECT id_user, employee_number, password FROM user WHERE employee_number = ? AND password = ?`, Employee_number, Password)
+// 	if err != nil {
+// 		log.Print(err)
+// 	}
+// 	errScan := rows.Scan(&all.Employee_number, &all.Password)
+// 	if errScan != nil {
+// 		log.Println(errScan)
+// 	}
+
+// 	return all, nil
+// }

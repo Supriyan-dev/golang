@@ -19,17 +19,18 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Bas
 	// {
 	// var allTest []initialize.BasicInformationGeneral
 	// var test initialize.BasicInformationGeneral
-	stmt, err := db.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, add_phone_number, marital_status, dormitory_status) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+	// var Employee_number int
+	stmt, err := db.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, add_phone_number, marital_status, dormitory_status) values(?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?) WHERE employee_number =`)
 	if err != nil {
-		// tx.Rollback()
+		tx.Rollback()
 		log.Fatal(err)
 	}
-	result, err := stmt.Exec(test.Employee_code, test.First_name, test.Last_name, test.Gender, test.Birthdate, test.Add_postal_code, test.Id_prefecture,
+	result, err := stmt.Exec(test.Employee_code, test.First_name, test.Last_name, test.Gender, test.Add_postal_code, test.Id_prefecture,
 		test.Adress, test.Adress_kana, test.Adress_detail, test.Adress_detail_kana,
 		test.Add_phone_number, test.Marital_status, test.Dormitory_status)
 	log.Println(result)
 	if err != nil {
-		// tx.Rollback()
+		tx.Rollback()
 		log.Fatal(err)
 	}
 
@@ -38,7 +39,6 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Bas
 		First_name:         test.First_name,
 		Last_name:          test.Last_name,
 		Gender:             test.Gender,
-		Birthdate:          test.Birthdate,
 		Add_postal_code:    test.Add_postal_code,
 		Id_prefecture:      test.Id_prefecture,
 		Adress:             test.Adress,
