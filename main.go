@@ -17,6 +17,7 @@ import (
 	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 	loginController "./controller/login_controller"
 	login "./login_controller"
+	ForgotPassword "./controller/forgot_password"
 
 	"github.com/gorilla/mux"
 )
@@ -35,6 +36,11 @@ func main() {
 	// router.HandleFunc("/enc", login.CheckLoginDataMaster)
 	router.HandleFunc("/read_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
 	// end profile data user encrypt
+
+	// start forgot password
+	router.HandleFunc("/forgot-password", ForgotPassword.ReturnForgotPassword)
+	router.HandleFunc("/forgot-password-action", ForgotPassword.ReturnForgotPasswordAction)
+	// end forgot password
 
 	// start data status approve general information status approve
 	router.HandleFunc("/general_recrutment/create", generalRecrutment.DataGeneralRecrutment)
