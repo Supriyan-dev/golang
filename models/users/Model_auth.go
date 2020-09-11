@@ -16,7 +16,7 @@ import (
 
 type Models_init_Users models.DB_init
 
-func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEmail int, err error) {
+func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEmail string, err error) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 
 	yearTokyo := time.Now().In(loc).Year()
@@ -28,17 +28,17 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 	GetDataEmploye := model.DB.QueryRow(`select employee_number from user where email =?`, email).Scan(&DataEmployee)
 
 	if GetDataEmploye != nil {
-		log.Println(GetDataEmploye)
+		return GetDataEmploye.Error(), nil
 	}
 
 	if checkEmail != nil {
-		log.Println(checkEmail.Error())
+		return checkEmail.Error(), nil
 	}
 
 	if checkEmailInt > 0 {
-		responseEmail = 1
+		responseEmail = `Success Response`
 	} else {
-		responseEmail = 0
+		responseEmail = `Email Not Found`
 	}
 
 	//send email
@@ -65,7 +65,7 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 		ForgotAction, errForgotAction := model.DB.Exec(`update user set recovery_pin = ? where email =?`, RandomInt, email)
 
 		if errForgotAction != nil {
-			log.Println(errForgotAction)
+			return errForgotAction.Error(), nil
 		}
 
 		rowsAffected, _ := ForgotAction.RowsAffected()
@@ -516,11 +516,18 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 
 </html>`
 
-			//hasher := md5.New()
-			//hasher.Write([]byte(email))
-			//tokenString := hex.EncodeToString(hasher.Sum(nil))
-			//linkForgotPassword := `link/` + email + `/` + tokenString
-			from := mail.NewEmail("Workflow Kasumi", "workflow@kasumi.co.jp")
+			var DataEmail string
+			CheckDataEmail := model.DB.QueryRow(`select email from information_basic_app order by id_information_basic_app asc limit 1`).Scan(&DataEmail)
+
+			if CheckDataEmail != nil {
+				return CheckDataEmail.Error(), nil
+			}
+
+			if DataEmail == "" {
+				return "no email data in database", nil
+			}
+
+			from := mail.NewEmail("Workflow Kasumi", DataEmail)
 			subject := "パスワードをお忘れですか - Workflow Kasumi"
 			to := mail.NewEmail("", email)
 			plainTextContent := `hello` + email
@@ -529,13 +536,12 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 			client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
 			_, err := client.Send(message)
 			if err != nil {
-				log.Println(err.Error())
-				return 0, nil
+				return err.Error(), nil
 			} else {
 				//fmt.Println(response.StatusCode)
 				//fmt.Println(response.Body)
 				//fmt.Println(response.Headers)
-				return responseEmail, nil
+				return "Success Response", nil
 			}
 		}
 

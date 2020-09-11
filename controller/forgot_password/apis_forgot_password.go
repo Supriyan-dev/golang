@@ -23,7 +23,7 @@ func ReturnForgotPasswordWithEmail(w http.ResponseWriter, r *http.Request) {
 		resultDataEmail, err := _model.ForgotPasswordWithEmail(_Email)
 		defer db.Close()
 		if err == nil {
-			if  resultDataEmail == 0 {
+			if  resultDataEmail != "Success Response" {
 				_response.Status = http.StatusBadRequest
 				_response.Message = `data email not found`
 				_response.Data = nil
