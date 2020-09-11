@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eb0e2378-df00-48f1-822c-a26b234ae5a8" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -36,6 +37,9 @@
       <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_input_confirmation.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_input_confirmation.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/enter_the_information/utils_validator_transportation_application.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/enter_the_information/utils_validator_transportation_application.go" afterDir="false" />
+>>>>>>> hs
+=======
+      <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" afterDir="false" />
 >>>>>>> hs
     </list>
     <option name="SHOW_DIALOG" value="false" />
