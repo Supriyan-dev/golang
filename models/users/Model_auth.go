@@ -520,7 +520,7 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 			//hasher.Write([]byte(email))
 			//tokenString := hex.EncodeToString(hasher.Sum(nil))
 			//linkForgotPassword := `link/` + email + `/` + tokenString
-			from := mail.NewEmail("Workflow Kasumi", "siapasayachannel@gmail.com")
+			from := mail.NewEmail("Workflow Kasumi", "workflow@kasumi.co.jp")
 			subject := "パスワードをお忘れですか - Workflow Kasumi"
 			to := mail.NewEmail("", email)
 			plainTextContent := `hello` + email
