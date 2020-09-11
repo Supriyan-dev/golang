@@ -145,6 +145,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 		if err != nil {
 			log.Println(err.Error())
 		}
+		defer rows.Close()
 		execute, err1 := rows.Exec(insertD.InsuranceCompany, insertD.DriverLicenseExpiryDate, insertD.PersonalInjury, insertD.PropertyDamage, insertD.CarInsuranceDocumentExpiryDate, insertD.IdCommutingBasicInformation)
 
 		if err1 != nil && execute == nil {
@@ -176,7 +177,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			log.Println(err.Error())
 		}
 
-		defer model.DB.Close()
+		defer rows.Close()
 
 		valid, message := utils_enter_the_information.ValidatorInsertBasicInformation(insertD)
 

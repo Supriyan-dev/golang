@@ -141,7 +141,7 @@ func (model Models_init_input_confirmation) GetDataInputConfimation(store_number
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
 	}
-	defer rows.Close()
+
 	if init_biC != nil && Arr_ur != nil {
 		FinallyData := Commuting.IC_Format{
 			StatusDriversLicense: StatusDriversLicense,
