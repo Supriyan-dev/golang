@@ -12,6 +12,7 @@ import (
 	model1 "../model1/login"
 	"../response"
 	"github.com/gorilla/mux"
+	"github.com/mervick/aes-everywhere/go/aes256"
 )
 
 func GenerateHashPasswordWorkFlow(w http.ResponseWriter, r *http.Request) {
@@ -26,9 +27,28 @@ func GenerateHashPasswordWorkFlow(w http.ResponseWriter, r *http.Request) {
 func CheckLogin(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var _response initialize.Response
+		type Login struct {
+			Employee_number string
+			Password        string
+		}
 
-		employee_number := r.FormValue("employee_number")
-		password := r.FormValue("password")
+		key := "P@ssw0rdL0g1n"
+
+		inputan := r.FormValue("data")
+		decrypted := aes256.Decrypt(inputan, key)
+
+		jsonData := []byte(decrypted)
+
+		var data Login
+
+		err := json.Unmarshal(jsonData, &data)
+		if err != nil {
+			log.Println(err)
+		}
+
+		employee_number := data.Employee_number
+		password := data.Password
+
 		res, err := model1.CheckLoginUserWorkFlow(employee_number, password)
 
 		if err != nil {
