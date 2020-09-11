@@ -708,6 +708,10 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	if errTx != nil {
 		log.Fatal(errTx)
 	}
+	CheckMaxData := utils_enter_the_information.CheckDataByQuery(`select MAX(id_commuting_trip) from commuting_trip limit 1`)
+
+	CheckMaxData = CheckMaxData +1
+
 	sqlUseCommutingTrip := `insert into commuting_trip (id_general_information,
 	route_profile_name, date, attendance_code, created_date,created_time) 
 	select a.id_general_information, a.route_profile_name, '` + date + `', a.attendance_code, 
@@ -718,7 +722,7 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	sqlUseDetailCommutingTrip := `INSERT INTO detail_commuting_trip( id_commuting_trip, type_of_transport, 
 	purpose, detail_from,detail_to, distance, cost, point_trip, transit_point, commute_distance,
 	go_out_distance)
-	select detcomtrip.id_commuting_trip,detcomtrip.type_of_transport,detcomtrip.purpose,
+	select `+strconv.Itoa(CheckMaxData)+`,detcomtrip.type_of_transport,detcomtrip.purpose,
 	detcomtrip.detail_from, detcomtrip.detail_to, detcomtrip.distance, detcomtrip.cost, 
 	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
 	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip =` + id
