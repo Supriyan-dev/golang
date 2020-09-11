@@ -1,4 +1,5 @@
 FROM golang:latest
+ENV SENDGRID_API_KEY='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'
 LABEL maintainer="Derandi Hermanda"
 LABEL version="1.0"
 LABEL description="Golang Services."
