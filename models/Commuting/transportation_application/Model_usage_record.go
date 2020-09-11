@@ -417,10 +417,7 @@ MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0) ,COALESCE(SUM(detc
 where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
 geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and bainfo.employee_code =? and comtrip.save_trip ='Y'
 group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id, employee_id)
-	checkDataCommutingTrip := utils_enter_the_information.CheckDataByQuery(`select id_commuting_trip from commuting_trip order by id_commuting_trip desc limit 1`)
 
-	checkDataCommutingTrip = checkDataCommutingTrip + 1
-	log.Println(checkDataCommutingTrip)
 	if con == "Y" && checkCountData >= 3 {
 		return nil, "You cannot register up to more than 3 routes"
 	}
@@ -432,6 +429,14 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 	if errTx != nil {
 		log.Fatal(errTx)
 	}
+	var checkDataCommutingTrip int
+	checkDataCommutingTripSQL := tx.QueryRow(`select MAX(id_commuting_trip)+1 from commuting_trip limit 1`).Scan(&checkDataCommutingTrip)
+
+	if checkDataCommutingTripSQL != nil {
+		tx.Rollback()
+		return nil, "please check your data"
+	}
+
 	//insertCommutingTrip, errInsertCommutingTrip := model.DB.PrepareContext(ctx,`insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
 	//	VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`)
 	//insertCodeCommuting, errInsertCodeCommuting := model.DB.PrepareContext(ctx,`insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
@@ -463,7 +468,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		//log.Println(initializeDataD.Distance)
 		vals = append(vals, checkDataCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
-	//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
+		//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
 	querySqlinsertCommutingTripDetail = querySqlinsertCommutingTripDetail[0 : len(querySqlinsertCommutingTripDetail)-1]
 	//stmtDetail, errStmtDetail := model.DB.PrepareContext(ctx,sqlDetail)
 
@@ -494,7 +499,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, message
 	}
 
-	_, errExecuteCodeCommuting := model.DB.Exec(queryinsertCodeCommuting, RandomInt)
+	_, errExecuteCodeCommuting := tx.Exec(queryinsertCodeCommuting, RandomInt)
 	log.Println("code commuting")
 	log.Println(errExecuteCodeCommuting)
 	if errExecuteCodeCommuting != nil {
@@ -502,7 +507,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteCommutingTrip := model.DB.Exec(queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
+	_, errExecuteCommutingTrip := tx.Exec(queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 	log.Println("data ")
 	log.Println(errExecuteCommutingTrip)
 	if errExecuteCommutingTrip != nil {
@@ -510,7 +515,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteDetailCommutingTrip := model.DB.Exec(querySqlinsertCommutingTripDetail, vals...)
+	_, errExecuteDetailCommutingTrip := tx.Exec(querySqlinsertCommutingTripDetail, vals...)
 	log.Println("detail data")
 	log.Println(errExecuteDetailCommutingTrip)
 	if errExecuteDetailCommutingTrip != nil {
