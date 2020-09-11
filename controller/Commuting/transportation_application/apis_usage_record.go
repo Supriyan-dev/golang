@@ -290,6 +290,7 @@ func ReturnUseUsageRecord(w http.ResponseWriter, r *http.Request) {
 		_response.Data = nil
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
+
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_UseUsageRecord(_id, _date)
 		defer db.Close()
