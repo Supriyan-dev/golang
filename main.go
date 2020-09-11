@@ -29,8 +29,7 @@ func main() {
 	// start profile data user encrypt
 	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
 	router.HandleFunc("/generate_hash_data_master/{password}", login.GenerateHashPasswordDataMaster).Methods("GET")
-	// router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
-	// router.HandleFunc("/enc", login.CheckLoginDataMaster)
+	router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
 	router.HandleFunc("/read_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
 	// end profile data user encrypt
 
