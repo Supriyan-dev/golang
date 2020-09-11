@@ -202,7 +202,6 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		db.Close()
 
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
@@ -248,7 +247,6 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		defer db.Close()
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
 		}
@@ -284,7 +282,6 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			return "", "", ""
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		defer db.Close()
 		for GetDataTypeOfTransportationAndRoute.Next() {
 			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
 
@@ -297,7 +294,6 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		defer db.Close()
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
 		}
@@ -331,7 +327,6 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			return "", "", ""
 		}
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		defer db.Close()
 		for GetDataTypeOfTransportationAndRoute.Next() {
 			errGetDataT := GetDataTypeOfTransportationAndRoute.Scan(&typeOfTransportation, &DetailFrom, &DetailTo)
 
@@ -343,8 +338,8 @@ func GetAdditionalUsageRecord(store_number string, employee_number string, id_co
 			DataPurpose += Purpose + ` - `
 
 		}
+
 		defer GetDataTypeOfTransportationAndRoute.Close()
-		defer db.Close()
 		if typeOfTransportation != "" {
 			DatatypeOfTransportation = DatatypeOfTransportation[0 : len(DatatypeOfTransportation)-3]
 		}

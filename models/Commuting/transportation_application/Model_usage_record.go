@@ -148,7 +148,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordForEdit(store_numb
 		log.Println("error show Commuting Trip")
 		log.Println(errShowCommutingTrip)
 	}
-
+	defer QueryShowCommutingTrip.Close()
 	QueryShowCommutingTrip.Next()
 	errShowCommutingTripScan := QueryShowCommutingTrip.Scan(&shCommutingTrip.IdCommutingTrip, &shCommutingTrip.RouteProfileName, &shCommutingTrip.Date, &shCommutingTrip.AttendanceCode)
 
@@ -291,7 +291,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 	if CheckCountData != nil {
 		log.Println(CheckCountData)
 	}
-	defer model.DB.Close()
+
 	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
 										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
 										from commuting_trip comtrip, code_commuting cc,
@@ -307,14 +307,11 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		log.Println(err.Error())
 	}
 	defer rows.Close()
-	defer model.DB.Close()
 
 	for rows.Next() {
 		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
 		if err != nil {
-			defer rows.Close()
-			defer model.DB.Close()
-			panic(err.Error())
+			log.Println(err)
 		}
 		DatatypeOfTransportation, DataRoute, _ := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_container.IdCommutingTrip, "usageRecordHistory")
 		FinnalyData := Commuting.ShowHistory{
@@ -336,7 +333,6 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 
 	}
 	defer rows.Close()
-	defer model.DB.Close()
 
 	DataSubmit := utils_enter_the_information.CheckDataByStoreAndEmployee(`select COUNT(*) from (select COUNT(*)
 										from commuting_trip comtrip, code_commuting cc,
@@ -514,7 +510,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteDetailCommutingTrip := tx.Exec( querySqlinsertCommutingTripDetail, vals...)
+	_, errExecuteDetailCommutingTrip := tx.Exec(querySqlinsertCommutingTripDetail, vals...)
 	log.Println("detail data")
 	log.Println(errExecuteDetailCommutingTrip)
 	if errExecuteDetailCommutingTrip != nil {
@@ -706,7 +702,12 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (r
 }
 
 func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date string) (response int, condition string) {
+	ctx := context.Background()
+	tx, errTx := model.DB.BeginTx(ctx, nil)
 
+	if errTx != nil {
+		log.Fatal(errTx)
+	}
 	sqlUseCommutingTrip := `insert into commuting_trip (id_general_information,
 	route_profile_name, date, attendance_code, created_date,created_time) 
 	select a.id_general_information, a.route_profile_name, '` + date + `', a.attendance_code, 
@@ -722,14 +723,27 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
 	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip =` + id
 
-	stmtUseCommutingTrip, errstmtCommutingTrip := model.DB.Query(sqlUseCommutingTrip)
-	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := model.DB.Query(sqlUseDetailCommutingTrip)
+	stmtUseCommutingTrip, errstmtCommutingTrip := tx.Query(sqlUseCommutingTrip)
 
-	if errstmtCommutingTrip != nil && errstmtDetailCommutingTrip != nil {
-		return 0, "Please Check Your ID"
+	if errstmtCommutingTrip != nil {
+		tx.Rollback()
+		return 0, "Please Cheeck Your ID"
 	}
 	defer stmtUseCommutingTrip.Close()
+	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := tx.Query(sqlUseDetailCommutingTrip)
+
+	if errstmtDetailCommutingTrip != nil {
+		tx.Rollback()
+		return 0, "Please Cheeck Your ID"
+	}
 	defer stmtUseDetailCommutingTrip.Close()
+
+	CommitErr := tx.Commit()
+	log.Println(CommitErr)
+	if CommitErr != nil {
+		//log.Fatal(CommitErr)
+		return 0, "please check your data"
+	}
 
 	return 1, "Success Response"
 }

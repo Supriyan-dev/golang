@@ -15,7 +15,7 @@ func (model Init_DB_CommutingMaster_Data) GetDataTransportation() (sh []initMast
 	if errDataTransportation != nil {
 		log.Println(errDataTransportation.Error())
 	}
-
+	defer GetDataTransportation.Close()
 	var ms initMasterData.Init_masterDataTransportationJapanese
 
 	for GetDataTransportation.Next() {

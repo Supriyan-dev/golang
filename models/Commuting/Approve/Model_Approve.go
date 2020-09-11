@@ -293,7 +293,7 @@ DESC` + limitPage)
 	if errShowDataApprove != nil {
 		log.Println(errShowDataApprove)
 	}
-
+	defer showDataApprove.Close()
 	var Datatrip models.NullString
 	var EmployeeNumber models.NullString
 	var StatusCommuting models.NullString
@@ -535,7 +535,7 @@ func (model Init_DB_CommutingApprove) GetDataApproveByCommutingEmployeeCode(page
 	if errShowDataApprove != nil {
 		log.Println(errShowDataApprove)
 	}
-
+	defer showDataApprove.Close()
 	var Datatrip models.NullString
 	var StatusCommuting models.NullString
 	var sumCost int64
