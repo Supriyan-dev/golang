@@ -702,6 +702,25 @@ func (model Models_init_Usage_Record) Model_UpdateUsageRecordDraft(id string) (r
 }
 
 func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date string) (response int, condition string) {
+
+	RandomInte := rand.Intn(999999)
+	var RandomInt int
+
+	checkIntRandom := utils_enter_the_information.CheckDataByIdInt(`select COUNT(*) from code_commuting where code_random = ?`, RandomInte)
+
+	if checkIntRandom == 0 {
+		RandomInt = RandomInte
+	} else {
+		for {
+			RandomInteg := rand.Intn(999999)
+			checkIntRandom := utils_enter_the_information.CheckDataByIdInt(`select COUNT(*) from code_commuting where code_random = ?`, RandomInteg)
+			if checkIntRandom == 0 {
+				RandomInt = RandomInteg
+				break
+			}
+		}
+	}
+
 	ctx := context.Background()
 	tx, errTx := model.DB.BeginTx(ctx, nil)
 
@@ -710,11 +729,19 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	}
 	CheckMaxData := utils_enter_the_information.CheckDataByQuery(`select MAX(id_commuting_trip) from commuting_trip limit 1`)
 
-	CheckMaxData = CheckMaxData +1
+	CheckId := utils_enter_the_information.CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =?`,id)
+
+	if CheckId <1 {
+		return 0, "Please Check Your ID"
+	}
+	CheckMaxData = CheckMaxData + 1
+	sqlUseCodeCommuting := `insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
+		VALUES(` + strconv.Itoa(RandomInt) + `,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`
 
 	sqlUseCommutingTrip := `insert into commuting_trip (id_general_information,
-	route_profile_name, date, attendance_code, created_date,created_time) 
+	route_profile_name, date, attendance_code,save_trip,code_commuting, created_date,created_time) 
 	select a.id_general_information, a.route_profile_name, '` + date + `', a.attendance_code, 
+	'N',` + strconv.Itoa(RandomInt) + `,	
 	DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),
 	TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s')
 	from commuting_trip a where a.id_commuting_trip =` + id
@@ -722,23 +749,31 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	sqlUseDetailCommutingTrip := `INSERT INTO detail_commuting_trip( id_commuting_trip, type_of_transport, 
 	purpose, detail_from,detail_to, distance, cost, point_trip, transit_point, commute_distance,
 	go_out_distance)
-	select `+strconv.Itoa(CheckMaxData)+`,detcomtrip.type_of_transport,detcomtrip.purpose,
+	select ` + strconv.Itoa(CheckMaxData) + `,detcomtrip.type_of_transport,detcomtrip.purpose,
 	detcomtrip.detail_from, detcomtrip.detail_to, detcomtrip.distance, detcomtrip.cost, 
 	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
 	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip =` + id
 
+	stmtUseCodeCommuting, errstmtUseCodeCommuting := tx.Query(sqlUseCodeCommuting)
+
+	if errstmtUseCodeCommuting != nil {
+		tx.Rollback()
+		return 0, "Please Check Your ID"
+	}
+
+	defer stmtUseCodeCommuting.Close()
 	stmtUseCommutingTrip, errstmtCommutingTrip := tx.Query(sqlUseCommutingTrip)
 
 	if errstmtCommutingTrip != nil {
 		tx.Rollback()
-		return 0, "Please Cheeck Your ID"
+		return 0, "Please Check Your ID"
 	}
 	defer stmtUseCommutingTrip.Close()
 	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := tx.Query(sqlUseDetailCommutingTrip)
 
 	if errstmtDetailCommutingTrip != nil {
 		tx.Rollback()
-		return 0, "Please Cheeck Your ID"
+		return 0, "Please Check Your ID"
 	}
 	defer stmtUseDetailCommutingTrip.Close()
 

@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eb0e2378-df00-48f1-822c-a26b234ae5a8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/controller/Commuting/transportation_application/apis_usage_record.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utils_handleSleepConnection.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +56,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="WindowStateProjectService">
     <state width="1320" height="136" key="GridCell.Tab.0.bottom" timestamp="1599721595906">
