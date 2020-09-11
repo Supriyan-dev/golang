@@ -7,6 +7,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.go" afterDir="false" />
 =======
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
@@ -22,6 +23,9 @@
       <change beforePath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/Commuting/transportation_application/Model_usage_record.go" afterDir="false" />
 >>>>>>> hs
 =======
+>>>>>>> hs
+=======
+      <change beforePath="$PROJECT_DIR$/models/users/Model_auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/users/Model_auth.go" afterDir="false" />
 >>>>>>> hs
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -516,11 +516,9 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 
 </html>`
 
-			log.Println(rowsAffected)
 			//hasher := md5.New()
 			//hasher.Write([]byte(email))
 			//tokenString := hex.EncodeToString(hasher.Sum(nil))
-
 			//linkForgotPassword := `link/` + email + `/` + tokenString
 			from := mail.NewEmail("Workflow Kasumi", "siapasayachannel@gmail.com")
 			subject := "パスワードをお忘れですか - Workflow Kasumi"
@@ -531,7 +529,8 @@ func (model Models_init_Users) ForgotPasswordWithEmail(email string) (responseEm
 			client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
 			_, err := client.Send(message)
 			if err != nil {
-				log.Println(err)
+				log.Println(err.Error())
+				return 0, nil
 			} else {
 				//fmt.Println(response.StatusCode)
 				//fmt.Println(response.Body)
@@ -577,6 +576,7 @@ func (model Models_init_Users) ForgotPasswordAction(email string, pin string, Ne
 
 		if errForgotAction != nil {
 			log.Println(errForgotAction)
+			return errForgotAction.Error(),nil
 		}
 
 		rowsAffected, _ := ForgotAction.RowsAffected()
