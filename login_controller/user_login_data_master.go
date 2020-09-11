@@ -2,19 +2,12 @@ package login_controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
-
-	// controller "../controller/data_master_controller"
 
 	"../helpers"
 	"../initialize"
 	model1 "../model1/login"
-
-	// model2 "../model1/login"
-
-	// model2 "../model1/data_master_model"
 	"../response"
 	"github.com/gorilla/mux"
 	"github.com/mervick/aes-everywhere/go/aes256"
@@ -31,8 +24,27 @@ func GenerateHashPasswordDataMaster(w http.ResponseWriter, r *http.Request) {
 func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var _response initialize.Response
-		employee_number := r.FormValue("employee_number")
-		password := r.FormValue("password")
+		type Login struct {
+			Employee_number string
+			Password        string
+		}
+
+		key := "P@ssw0rdL0g1n"
+
+		inputan := r.FormValue("data")
+		decrypted := aes256.Decrypt(inputan, key)
+
+		jsonData := []byte(decrypted)
+
+		var data Login
+
+		err := json.Unmarshal(jsonData, &data)
+		if err != nil {
+			log.Println(err)
+		}
+
+		employee_number := data.Employee_number
+		password := data.Password
 
 		res, err := model1.CheckLoginUser(employee_number, password)
 
@@ -47,15 +59,9 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 			_response.Data = "Null"
 			response.ResponseJson(w, _response.Status, _response)
 		}
-		key := "P@ssw0rdL0g1n"
+
 		if res {
-			log.Println(employee_number)
-			log.Println(password)
-			enc := employee_number + password
-			encrypted := aes256.Encrypt(enc, key)
-			fmt.Println(encrypted)
-			data := []byte(encrypted)
-			w.Write(data)
+			handler(w, r)
 		}
 
 		// token := jwt.New(jwt.SigningMethodHS256)
