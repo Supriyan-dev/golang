@@ -721,12 +721,12 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 		}
 	}
 
-	ctx := context.Background()
-	tx, errTx := model.DB.BeginTx(ctx, nil)
-
-	if errTx != nil {
-		log.Fatal(errTx)
-	}
+	//ctx := context.Background()
+	//tx, errTx := model.DB.BeginTx(ctx, nil)
+	//
+	//if errTx != nil {
+	//	log.Fatal(errTx)
+	//}
 	CheckMaxData := utils_enter_the_information.CheckDataByQuery(`select MAX(id_commuting_trip) from commuting_trip limit 1`)
 
 	CheckId := utils_enter_the_information.CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =?`,id)
@@ -754,35 +754,35 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	detcomtrip.point_trip, detcomtrip.transit_point, detcomtrip.commute_distance,
 	detcomtrip.go_out_distance from detail_commuting_trip detcomtrip where id_commuting_trip =` + id
 
-	stmtUseCodeCommuting, errstmtUseCodeCommuting := tx.Query(sqlUseCodeCommuting)
+	stmtUseCodeCommuting, errstmtUseCodeCommuting := model.DB.Query(sqlUseCodeCommuting)
 
 	if errstmtUseCodeCommuting != nil {
-		tx.Rollback()
+		//tx.Rollback()
 		return 0, "Please Check Your ID"
 	}
 
 	defer stmtUseCodeCommuting.Close()
-	stmtUseCommutingTrip, errstmtCommutingTrip := tx.Query(sqlUseCommutingTrip)
+	stmtUseCommutingTrip, errstmtCommutingTrip := model.DB.Query(sqlUseCommutingTrip)
 
 	if errstmtCommutingTrip != nil {
-		tx.Rollback()
+		//tx.Rollback()
 		return 0, "Please Check Your ID"
 	}
 	defer stmtUseCommutingTrip.Close()
-	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := tx.Query(sqlUseDetailCommutingTrip)
+	stmtUseDetailCommutingTrip, errstmtDetailCommutingTrip := model.DB.Query(sqlUseDetailCommutingTrip)
 
 	if errstmtDetailCommutingTrip != nil {
-		tx.Rollback()
+		//tx.Rollback()
 		return 0, "Please Check Your ID"
 	}
 	defer stmtUseDetailCommutingTrip.Close()
 
-	CommitErr := tx.Commit()
-	log.Println(CommitErr)
-	if CommitErr != nil {
-		//log.Fatal(CommitErr)
-		return 0, "please check your data"
-	}
+	//CommitErr := tx.Commit()
+	//log.Println(CommitErr)
+	//if CommitErr != nil {
+	//	//log.Fatal(CommitErr)
+	//	return 0, "please check your data"
+	//}
 
 	return 1, "Success Response"
 }

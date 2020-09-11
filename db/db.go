@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 func Connect() *sql.DB {
@@ -16,9 +17,9 @@ func Connect() *sql.DB {
 	}
 
 	//db.SetMaxIdleConns(10)
-	//db.SetConnMaxLifetime(time.Second)
-	//db.SetMaxIdleConns(50)
-	//db.SetMaxOpenConns(50)
+	db.SetConnMaxLifetime(time.Second)
+	db.SetMaxIdleConns(50)
+	db.SetMaxOpenConns(50)
 	//db.Ping()
 	KillSleepConnection()
 
