@@ -40,7 +40,7 @@ func ReturnGetDataApproveCommutingSumByAllEmployeeCode(w http.ResponseWriter, r 
 		ResultData, err, CountData := _model.GetDataApproveCommutingSumByAllEmployeeCode(page, filter, showData, searching, condition, store_code,department_code)
 		defer _model.DB.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.CurrentPage = 0
 			_response.TotalPage = 0
@@ -84,20 +84,13 @@ func ReturnGetDataApproveByCommutingEmployeeCode(w http.ResponseWriter, r *http.
 		ResultData, err,CountData := _model.GetDataApproveByCommutingEmployeeCode(page, showData, searching, employee_number)
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.CurrentPage = 0
 			_response.TotalPage = 0
 			_response.Data = nil
 			_Response.ResponseJson(w, _response.Status, _response)
 		} else {
-			//CountData := models3.CheckDataByStoreAndEmployee(`select count(*) from (select COUNT(*)
-			//								from commuting_trip comtrip, code_commuting cc,
-			//								detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
-			//								where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
-			//								geninfo.id_basic_information = bainfo.id_basic_information and geninfo.id_store_code = storeinfo.id_code_store  and storeinfo.code_store =? and cc.code_random = comtrip.code_commuting
-			//								and bainfo.employee_code =? and comtrip.save_trip ='N' and comtrip.submit = 'Y'
-			//								group by detcomtrip.id_commuting_trip order by comtrip.date asc) t`, storeNumber, employeeNumber)
 			_response.Status = http.StatusOK
 			_response.Message = "Success Response"
 			_response.CurrentPage = Mpage
@@ -146,7 +139,6 @@ func ReturnDetailCommutingByEmployeeCode(w http.ResponseWriter, r *http.Request)
 
 func ReturnCommutingApproveOrReject(w http.ResponseWriter, r *http.Request) {
 
-	//var initializeData Commuting.Init_InputDataApprove
 	var initializeData []Commuting.Init_InputDataApprove
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&initializeData)
