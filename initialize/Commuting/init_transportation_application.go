@@ -95,6 +95,7 @@ type ShowUsageRecord2 struct {
 	RouteProfileName models3.NullString `json:"route_profile_name"`
 	Date             models3.NullString `json:"date"`
 	TypeOfTransport  string             `json:"type_of_transport"`
+	AttendanceCode   models3.NullString `json:"attendance_code"`
 	Purpose          string             `json:"purpose"`
 	Route            string             `json:"route"`
 	Distance         models3.NullFloat  `json:"distance"`
@@ -127,7 +128,7 @@ type ShowUseMyRoute struct {
 }
 
 type InsertBasicInformation struct {
-	IdCommutingBasicInformation string `json:"id_commuting_basic_information"`
+	IdCommutingBasicInformation    string `json:"id_commuting_basic_information"`
 	InsuranceCompany               string `json:"insurance_company"`
 	DriverLicenseExpiryDate        string `json:"driver_license_expiry_date"`
 	PersonalInjury                 string `json:"personal_injury"`
@@ -177,7 +178,7 @@ type UpdateDetailUsageRecordApplyForTravelExpenses struct {
 	Purpose               string  `json:"purpose"`
 	DetailFrom            string  `json:"detail_from"`
 	DetailTo              string  `json:"detail_to"`
-	Distance              float64  `json:"distance"`
+	Distance              float64 `json:"distance"`
 	Cost                  int     `json:"cost"`
 	PointTrip             float64 `json:"point_trip"`
 	TransitPoint          string  `json:"transit_point"`

@@ -39,7 +39,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	defer GetBasicInformation.Close()
 
 	rows, err := model.DB.Query(`select  ct.date,ct.route_profile_name,MIN(b.id_commuting_trip),COALESCE(SUM(b.distance),0)
- 										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft),MIN(b.purpose)
+ 										as distance,COALESCE(SUM(commute_distance),0) as commute_distance, COALESCE(SUM(b.cost),0) as cost , MIN(ct.draft), MIN(ct.attendance_code)
  										 from basic_information bi, commuting_trip ct, detail_commuting_trip b, store_information si , general_information gi, 
 										master_transportation trans
 										where ct.id_commuting_trip = b.id_commuting_trip and gi.id_basic_information = bi.id_basic_information
@@ -86,7 +86,8 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 	StatusTemporari := ""
 
 	for rows.Next() {
-		err := rows.Scan(&init_ur.Date, &init_ur.RouteProfileName, &init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
+		err := rows.Scan(&init_ur.Date, &init_ur.RouteProfileName, &init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.AttendanceCode)
+		//err := rows.Scan(&init_ur.Date, &init_ur.RouteProfileName, &init_ur.IdCommutingTrip, &init_ur.Distance, &init_ur.CommuteDistance, &init_ur.Cost, &StatusTemporari, &init_ur.Purpose)
 		//err := rows.Scan(&init_ur.IdDetailCommutingTrip, &init_ur.IdCommutingTrip, &init_ur.TypeOfTransport, &init_ur.Purpose, &init_ur.DetailFrom, &init_ur.DetailTo, &init_ur.Distance, &init_ur.Cost, &init_ur.PointTrip, &init_ur.TransitPoint, &init_ur.CommuteDistance, &init_ur.GoOutDistance)
 		if err != nil {
 			log.Println(err.Error())
@@ -112,6 +113,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecord(store_number stri
 				CommuteDistance:  init_ur.CommuteDistance,
 				Cost:             init_ur.Cost,
 				StatusTemporary:  StatusTemporari,
+				AttendanceCode:   init_ur.AttendanceCode,
 			}
 			Arr_ur = append(Arr_ur, dataCommutingTrip)
 		}
@@ -468,7 +470,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		//log.Println(initializeDataD.Distance)
 		vals = append(vals, checkDataCommutingTrip, initializeDataD.TypeOfTransport, initializeDataD.Purpose, initializeDataD.DetailFrom, initializeDataD.DetailTo, initializeDataD.Distance, initializeDataD.Cost, initializeDataD.PointTrip, initializeDataD.TransitPoint, initializeDataD.CommuteDistance, initializeDataD.GoOutDistance)
 	}
-		//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
+	//sqlDetail = sqlDetail[0 : len(sqlDetail)-1]
 	querySqlinsertCommutingTripDetail = querySqlinsertCommutingTripDetail[0 : len(querySqlinsertCommutingTripDetail)-1]
 	//stmtDetail, errStmtDetail := model.DB.PrepareContext(ctx,sqlDetail)
 
@@ -734,9 +736,9 @@ func (model Models_init_Usage_Record) Model_UseUsageRecord(id string, date strin
 	//}
 	CheckMaxData := utils_enter_the_information.CheckDataByQuery(`select MAX(id_commuting_trip) from commuting_trip limit 1`)
 
-	CheckId := utils_enter_the_information.CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =?`,id)
+	CheckId := utils_enter_the_information.CheckDataById(`select count(*) from commuting_trip where id_commuting_trip =?`, id)
 
-	if CheckId <1 {
+	if CheckId < 1 {
 		return 0, "Please Check Your ID"
 	}
 	CheckMaxData = CheckMaxData + 1

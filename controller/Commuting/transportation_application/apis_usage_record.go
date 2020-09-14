@@ -30,7 +30,7 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 		defer _model.DB.Close()
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.Data = nil
 			_Response.ResponseJson(w, _response.Status, _response)
@@ -62,7 +62,7 @@ func ReturnGetByCommutingUsageRecordForEdit(w http.ResponseWriter, r *http.Reque
 		ResultData, err := _model.Model_GetByIdUsageRecordForEdit(storeNumber, employeeNumber, id_commuting_trip)
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.Data = nil
 			_Response.ResponseJson(w, _response.Status, _response)
@@ -92,7 +92,7 @@ func ReturnGetByCommutingUsageRecordUseMyRoute(w http.ResponseWriter, r *http.Re
 		ResultData, err := _model.Model_GetByIdUsageRecordUseMyRoute(storeNumber, employeeNumber)
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.Data = nil
 			_Response.ResponseJson(w, _response.Status, _response)
@@ -133,7 +133,7 @@ func ReturnGetByCommutingUsageRecordHistory(w http.ResponseWriter, r *http.Reque
 		ResultData, err, CountData := _model.Model_GetByIdUsageRecordHistory(storeNumber, employeeNumber, page, filter, showData, searching)
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.CurrentPage = 0
 			_response.TotalPage = 0

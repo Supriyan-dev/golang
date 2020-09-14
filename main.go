@@ -3,6 +3,7 @@ package main
 import (
 	Approve "./controller/Commuting/Approve"
 	entertheinformation "./controller/Commuting/transportation_application"
+	list_GR "./controller/list_general_recruitment"
 	controllerDataMaster "./controller/data_master_controller"
 	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
@@ -197,6 +198,12 @@ func main() {
 	// start master Data Transportation
 	router.HandleFunc("/Get-MasterDataTransportation", entertheinformation.ReturnGetDataMasterTransportation)
 	// end master Data Transportation
+
+	// start list general recruitment
+	router.HandleFunc("/Get-list-GR", list_GR.ReturnGetAllDataByStatus)
+	router.HandleFunc("/Get-list-GR-detail", list_GR.ReturnGetAllDataDetailByStatus)
+	// end list general recruitment
+
 
 	fmt.Println("Connected to port 9000")
 
