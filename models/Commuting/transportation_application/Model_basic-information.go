@@ -40,11 +40,11 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
  									   bi.employee_code=?`, store_number, employee_number)
 	var init_BasicInformation Commuting.ShowBasicInformation1
-	var Arr_BasicInformation []Commuting.ShowBasicInformation1
+	var interface_BasicInformation interface{}
 	var init_DataApprove Commuting.ShowBasicInformation2
-	var Arr_DataApprove []Commuting.ShowBasicInformation2
+	var interface_DataApprove interface{}
 	var init_CommutingBasicInformation Commuting.ShowBasicInformation3
-	var Arr_init_CommutingBasicInformation []Commuting.ShowBasicInformation3
+	var interface_CommutingBasicInformation interface{}
 	if errGetBasicInformation != nil && errGetCommutingBasicInformation != nil {
 		return nil, errors.New("error basic information and commuting basic information")
 		log.Println(errGetBasicInformation.Error())
@@ -54,9 +54,24 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 	defer GetCommutingBasicInformation.Close()
 	GetData1 := GetBasicInformation.Next()
 	ScanGetBasicInformation := GetBasicInformation.Scan(&init_DataApprove.IdGeneralBasicInformation, &init_BasicInformation.IdBasicInformation, &init_BasicInformation.FirstName, &init_BasicInformation.LastName, &init_BasicInformation.Address, &init_BasicInformation.AddressKana, &init_BasicInformation.AddressDetail, &init_BasicInformation.AddressDetailKana, &init_BasicInformation.AddPhoneNumber)
-
+	//get divisi code
+	var KodeBasicInformation models.NullInt
+	GetKodeBasicInformation := model.DB.QueryRow(`SELECT CONCAT(RIGHT(store_information.code_store, 4),
+	LPAD(RIGHT(department_information.department_code, 2), 2 , '0'),
+	LPAD(RIGHT(store_section_information.store_section_code, 2), 2 , '0'),
+	LPAD(RIGHT(unit_information.unit_code, 2), 2 , '0')) AS 'division_code'
+	FROM general_information LEFT OUTER JOIN store_information ON general_information.id_store_code = store_information.id_code_store
+	LEFT OUTER JOIN department_information ON general_information.id_department = department_information.id_department LEFT OUTER JOIN 
+	unit_information ON general_information.id_unit = unit_information.id_unit LEFT OUTER JOIN store_section_information ON
+	general_information.id_store_section = store_section_information.id_store_section LEFT OUTER JOIN basic_information ON
+	basic_information.id_basic_information = general_information.id_basic_information WHERE basic_information.id_basic_information = ?`, init_BasicInformation.IdBasicInformation).Scan(&KodeBasicInformation)
+	if GetKodeBasicInformation != nil {
+		log.Println(GetKodeBasicInformation)
+		defer GetBasicInformation.Close()
+	}
+	//end divisi code
 	if ScanGetBasicInformation != nil {
-		return nil, errors.New("error Scan basic information ")
+		return nil, ScanGetBasicInformation
 		log.Println(ScanGetBasicInformation)
 	}
 
@@ -70,18 +85,17 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			AddressDetail:      init_BasicInformation.AddressDetail,
 			AddressDetailKana:  init_BasicInformation.AddressKana,
 			AddPhoneNumber:     init_BasicInformation.AddPhoneNumber,
+			DivisionCode:       KodeBasicInformation,
 		}
-		Arr_BasicInformation = append(Arr_BasicInformation, showData)
+		interface_BasicInformation = showData
 	} else {
-		return nil, errors.New("error Arr Basic information")
-		Arr_BasicInformation = nil
+		interface_BasicInformation = nil
 	}
 
 	GetData2 := GetCommutingBasicInformation.Next()
 	ScanCommutingBasicInformation := GetCommutingBasicInformation.Scan(&init_CommutingBasicInformation.IdCommutingBasicInformation, &init_CommutingBasicInformation.IdGeneralInformation, &init_CommutingBasicInformation.InsuranceCompany, &init_CommutingBasicInformation.DriverLicenseExpiryDate, &init_CommutingBasicInformation.PersonalInjury, &init_CommutingBasicInformation.PropertyDamage, &init_CommutingBasicInformation.CarInsuranceDocumentExpiryDate, &init_DataApprove.StatusApproved, &init_DataApprove.DateApprove, &init_DataApprove.TimeApprove, &init_DataApprove.DateSubmit)
 
 	if ScanCommutingBasicInformation != nil {
-		return nil, errors.New("error Scan Basic Information")
 		log.Println(ScanCommutingBasicInformation)
 	}
 
@@ -93,7 +107,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			TimeApprove:               init_DataApprove.TimeApprove,
 			DateSubmit:                init_DataApprove.DateSubmit,
 		}
-		Arr_DataApprove = append(Arr_DataApprove, showData2)
+		interface_DataApprove = showData2
 		showData3 := Commuting.ShowBasicInformation3{
 			IdCommutingBasicInformation:    init_CommutingBasicInformation.IdCommutingBasicInformation,
 			IdGeneralInformation:           init_CommutingBasicInformation.IdGeneralInformation,
@@ -103,20 +117,16 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 			PropertyDamage:                 init_CommutingBasicInformation.PropertyDamage,
 			CarInsuranceDocumentExpiryDate: init_CommutingBasicInformation.CarInsuranceDocumentExpiryDate,
 		}
-		Arr_init_CommutingBasicInformation = append(Arr_init_CommutingBasicInformation, showData3)
+		interface_CommutingBasicInformation = showData3
 	} else {
-		return nil, errors.New("error Arr Data Approve and commuting basic information")
-		Arr_DataApprove = nil
-		Arr_init_CommutingBasicInformation = nil
+		interface_DataApprove = nil
+		interface_CommutingBasicInformation = nil
 	}
 
 	FinallyData := Commuting.FormatShowBasicInformation{
-		//DataBasicInformation: Arr_BasicInformation,
-		//DataApprove:          Arr_DataApprove,
-		//DataApply:            Arr_init_CommutingBasicInformation,
-		DataBasicInformation: init_BasicInformation,
-		DataApprove:          init_DataApprove,
-		DataApply:            init_DataApprove,
+		DataBasicInformation: interface_BasicInformation,
+		DataApprove:          interface_DataApprove,
+		DataApply:            interface_CommutingBasicInformation,
 	}
 	sh = append(sh, FinallyData)
 

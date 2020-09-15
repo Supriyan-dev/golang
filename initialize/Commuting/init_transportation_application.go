@@ -42,6 +42,7 @@ type ShowBasicInformation1 struct {
 	AddressDetail      models3.NullString `json:"address_detail"`
 	AddressDetailKana  models3.NullString `json:"address_detail_kana"`
 	AddPhoneNumber     models3.NullString `json:"add_phone_number"`
+	DivisionCode       models3.NullInt    `json:"division_code"`
 }
 
 type ShowBasicInformation2 struct {
