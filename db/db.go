@@ -21,7 +21,7 @@ func Connect() *sql.DB {
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(50)
 	//db.Ping()
-	KillSleepConnection()
+	//KillSleepConnection()
 
 	return db
 }
@@ -30,7 +30,7 @@ func KillSleepConnection()  {
 
 	//db, err := sql.Open("mysql", "root:@/kasumi_development")
 	db, err := sql.Open("mysql", "godx1:G0LangDX_1@tcp(mysql_lara:3306)/kasumi_development")
-	//
+
 	if err != nil {
 		log.Fatal(err)
 	}
