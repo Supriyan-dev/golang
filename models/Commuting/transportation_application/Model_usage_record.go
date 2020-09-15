@@ -436,6 +436,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 
 	if checkDataCommutingTripSQL != nil {
 		tx.Rollback()
+		log.Println(checkDataCommutingTripSQL.Error())
 		return nil, "please check your data"
 	}
 
@@ -449,8 +450,8 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 	//								cost,point_trip,transit_point,commute_distance,go_out_distance)
 	//								VALUES`
 
-	queryInsertCommutingTrip := `insert into commuting_trip(id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
- 		VALUES(?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`
+	queryInsertCommutingTrip := `insert into commuting_trip(id_commuting_trip,id_general_information,route_profile_name,date,attendance_code,code_commuting,created_date,created_time,save_trip,draft)
+ 		VALUES(?,?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),?,?)`
 
 	queryinsertCodeCommuting := `insert into code_commuting(code_random,std_deviation,created_time,created_date,status_commuting)
 		VALUES(?,'0',TIME_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%H:%i:%s'),DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),'not_approved')`
@@ -509,7 +510,7 @@ group by comtrip.id_commuting_trip ORDER BY MIN(comtrip.date) asc) t`, store_id,
 		return nil, "please check your data"
 	}
 
-	_, errExecuteCommutingTrip := tx.Exec(queryInsertCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
+	_, errExecuteCommutingTrip := tx.Exec(queryInsertCommutingTrip,checkDataCommutingTrip, initializeData.IdGeneralInformation, initializeData.RouteProfileName, initializeData.Date, initializeData.Attendance, RandomInt, con, Status_Draft)
 	log.Println("data ")
 	log.Println(errExecuteCommutingTrip)
 	if errExecuteCommutingTrip != nil {
