@@ -64,7 +64,7 @@ func (model Models_init_listGeneralRecruitment) GetListGeneralRecruitment(status
 	queryCountAllList := `select count(*) from (select et.id_employment_type , et.employment_status, bi.id_basic_information, bi.employee_code, bi.first_name, bi.last_name, gi.join_date, si.code_store, ssi.store_section_name, gisa.status from basic_information bi, general_information gi, employment_type et,general_recruitment_status_approval gisa, store_information si , store_section_information ssi
 		where bi.id_basic_information = gi.id_basic_information and bi.id_basic_information = et.id_basic_information
         and gi.id_store_code = si.id_code_store and gi.id_store_section = ssi.id_store_section
-		and gisa.id_basic_information = et.id_basic_information` + filterMonth + queryStatus + searchingAction + `) t`
+		and gisa.id_basic_information = et.id_basic_information and gisa.real_data ='yes' ` + filterMonth + queryStatus + searchingAction + `) t`
 
 	errGetCountData := model.DB.QueryRow(queryCountAllList).Scan(&CountData)
 
@@ -75,7 +75,7 @@ func (model Models_init_listGeneralRecruitment) GetListGeneralRecruitment(status
 	queryAllList := `select et.id_employment_type , et.employment_status, bi.id_basic_information, bi.employee_code, bi.first_name, bi.last_name, gi.join_date, si.code_store, ssi.store_section_name, gisa.status from basic_information bi, general_information gi, employment_type et,general_recruitment_status_approval gisa, store_information si , store_section_information ssi
 		where bi.id_basic_information = gi.id_basic_information and bi.id_basic_information = et.id_basic_information
         and gi.id_store_code = si.id_code_store and gi.id_store_section = ssi.id_store_section
-		and gisa.id_basic_information = et.id_basic_information` + filterMonth + queryStatus + searchingAction + ` order by bi.employee_code asc ` + limitPage
+		and gisa.id_basic_information = et.id_basic_information and gisa.real_data ='yes' ` + filterMonth + queryStatus + searchingAction + ` order by bi.employee_code asc ` + limitPage
 
 	GetAllDataGR, errGetAllDataGR := model.DB.Query(queryAllList)
 
