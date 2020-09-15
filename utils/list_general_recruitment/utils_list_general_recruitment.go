@@ -2,7 +2,6 @@ package list_general_recruitment
 
 import (
 	db2 "../../db"
-	"log"
 	"strconv"
 )
 
@@ -32,7 +31,7 @@ func GetDataWorkingTime(idemployeeType int ,employeeType string, id_basic_inform
 	}
 	errQR := db.QueryRow(query).Scan(&start_working,&end_working)
 	if errQR != nil {
-		log.Println(errQR.Error())
+		//log.Println(errQR.Error())
 	}
 	return start_working, end_working
 }
@@ -69,7 +68,7 @@ func GetDataDetailWorkingTime(employeeType string, id_basic_information int ) (s
 	}
 	errQR := db.QueryRow(query).Scan(&salary,&EmployentInsuranceNo,&PensionNo,&start_working,&end_working)
 	if errQR != nil {
-		log.Println(errQR.Error())
+		//log.Println(errQR.Error())
 	}
 	return salary, EmployentInsuranceNo, PensionNo , start_working , end_working
 }
