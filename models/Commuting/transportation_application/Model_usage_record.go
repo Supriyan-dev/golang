@@ -12,7 +12,6 @@ import (
 )
 
 type Models_init_Usage_Record models.DB_init
-
 // indonesia
 // Menampilkan semua detail_commuting_trip berdasarkan code_store dan employee_store di group by berdasarkan id_commuting_trip
 // data di looping
