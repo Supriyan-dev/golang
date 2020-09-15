@@ -20,7 +20,7 @@ type Models_init_basic_information models.DB_init
 // - using table commuting_basic_information, basic_information, store_inormation and general_information
 // - looped data from the above search
 
-func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string) (sh []Commuting.FormatShowBasicInformation, err error) {
+func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string, id_general_information string) (sh []Commuting.FormatShowBasicInformation, err error) {
 
 	GetBasicInformation, errGetBasicInformation := model.DB.Query(`select gi.id_general_information
 										,bi.id_basic_information,bi.first_name, bi.last_name, bi.adress, bi.adress_kana,
@@ -28,7 +28,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 										from basic_information bi,store_information si , general_information gi where
 										gi.id_basic_information = bi.id_basic_information and 
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
- 									   	bi.employee_code=?`, store_number, employee_number)
+ 									   	bi.employee_code=? and gi.id_general_information = ?`, store_number, employee_number, id_general_information)
 
 	GetCommutingBasicInformation, errGetCommutingBasicInformation := model.DB.Query(`select cbi.id_commuting_basic_information, cbi.id_general_information,
  									   cbi.insurance_company, cbi.driver_license_expiry_date, cbi.personal_injury,
@@ -38,7 +38,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
  									   where cbi.id_general_information = gi.id_general_information and 
  									   gi.id_basic_information = bi.id_basic_information and 
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
- 									   bi.employee_code=?`, store_number, employee_number)
+ 									   bi.employee_code=? and gi.id_general_information = ?`, store_number, employee_number, id_general_information)
 	var init_BasicInformation Commuting.ShowBasicInformation1
 	var interface_BasicInformation interface{}
 	var init_DataApprove Commuting.ShowBasicInformation2
