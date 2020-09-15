@@ -1,7 +1,7 @@
 package transportation_application
 
 import (
-	"../../../db"
+	db2 "../../../db"
 	"../../../initialize"
 	"../../../initialize/Commuting"
 	models_enter_the_information "../../../models/Commuting/transportation_application"
@@ -10,7 +10,6 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +19,7 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
 
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -29,9 +28,6 @@ func ReturnGetByCommutingUsageRecord(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err := _model.Model_GetByIdUsageRecord(storeNumber, employeeNumber)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
@@ -54,7 +50,7 @@ func ReturnGetByCommutingUsageRecordForEdit(w http.ResponseWriter, r *http.Reque
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
 	id_commuting_trip := r.FormValue("id_commuting_trip")
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -63,9 +59,6 @@ func ReturnGetByCommutingUsageRecordForEdit(w http.ResponseWriter, r *http.Reque
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err := _model.Model_GetByIdUsageRecordForEdit(storeNumber, employeeNumber, id_commuting_trip)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
@@ -86,7 +79,7 @@ func ReturnGetByCommutingUsageRecordUseMyRoute(w http.ResponseWriter, r *http.Re
 
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -95,9 +88,7 @@ func ReturnGetByCommutingUsageRecordUseMyRoute(w http.ResponseWriter, r *http.Re
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err := _model.Model_GetByIdUsageRecordUseMyRoute(storeNumber, employeeNumber)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
+
 		if err != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
@@ -127,7 +118,7 @@ func ReturnGetByCommutingUsageRecordHistory(w http.ResponseWriter, r *http.Reque
 	if showData != "" {
 		showDataint, _ = strconv.Atoi(showData)
 	}
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.CurrentPage = 0
@@ -138,9 +129,6 @@ func ReturnGetByCommutingUsageRecordHistory(w http.ResponseWriter, r *http.Reque
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		ResultData, err, CountData := _model.Model_GetByIdUsageRecordHistory(storeNumber, employeeNumber, page, filter, showData, searching)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err != nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
@@ -170,7 +158,7 @@ func ReturnInsertUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 	employee_id := param["employee_id"]
 	store_id := param["store_id"]
 
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -179,9 +167,6 @@ func ReturnInsertUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_InsertUsageRecordApplyForTravelExpenses(con, store_id, employee_id, &initializeData)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -201,7 +186,7 @@ func ReturnUpdateUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 	var initializeData Commuting.UpdateUsageRecordApplyForTravelExpenses
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&initializeData)
-	db := db.Connect()
+	db := db2.Connect()
 	if r.Method != "PATCH" {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Status Method Not Allowed"
@@ -210,9 +195,6 @@ func ReturnUpdateUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_UpdateUsageRecordApplyForTravelExpenses(&initializeData)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -230,7 +212,7 @@ func ReturnUpdateUsageRecordApplyForTravelExpenses(w http.ResponseWriter, r *htt
 func ReturnDeleteUsageRecord(w http.ResponseWriter, r *http.Request) {
 
 	var _response initialize.ResponseMaster
-	db := db.Connect()
+	db := db2.Connect()
 	vars := mux.Vars(r)
 	_id := vars["id_commuting_trip"]
 	if r.Method != "DELETE" {
@@ -241,7 +223,6 @@ func ReturnDeleteUsageRecord(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_DeleteUsageRecordApplyForTravelExpenses(_id)
-		defer db.Close()
 		if err == "Success Response" && resultData > 0 {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -261,7 +242,7 @@ func ReturnDeleteUsageRecord(w http.ResponseWriter, r *http.Request) {
 func ReturnUpdateUsageRecordDraft(w http.ResponseWriter, r *http.Request) {
 
 	var _response initialize.ResponseMaster
-	db := db.Connect()
+	db :=  db2.Connect()
 	vars := mux.Vars(r)
 	_id := vars["id_commuting_trip"]
 	if r.Method != "PATCH" {
@@ -272,9 +253,6 @@ func ReturnUpdateUsageRecordDraft(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_UpdateUsageRecordDraft(_id)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
 		if err == "Success Response" && resultData > 0 {
 			_response.Status = http.StatusOK
 			_response.Message = err
@@ -295,7 +273,7 @@ func ReturnUpdateUsageRecordDraft(w http.ResponseWriter, r *http.Request) {
 func ReturnUseUsageRecord(w http.ResponseWriter, r *http.Request) {
 
 	var _response initialize.ResponseMaster
-	db := db.Connect()
+	db :=  db2.Connect()
 	vars := mux.Vars(r)
 	_id := vars["id_commuting_trip"]
 	_date := vars["date"]
@@ -305,12 +283,9 @@ func ReturnUseUsageRecord(w http.ResponseWriter, r *http.Request) {
 		_response.Data = nil
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
-
 		_model := models_enter_the_information.Models_init_Usage_Record{DB: db}
 		resultData, err := _model.Model_UseUsageRecord(_id, _date)
-		_model.DB.SetConnMaxLifetime(time.Second)
-		_model.DB.SetMaxIdleConns(50)
-		_model.DB.SetMaxOpenConns(50)
+
 		if err == "Success Response" && resultData > 0 {
 			_response.Status = http.StatusOK
 			_response.Message = err

@@ -20,7 +20,7 @@ func Connect() *sql.DB {
 	//db.SetMaxIdleConns(50)
 	//db.SetMaxOpenConns(50)
 	//db.Ping()
-	//KillSleepConnection()
+	KillSleepConnection()
 
 	return db
 }
@@ -35,27 +35,35 @@ func KillSleepConnection()  {
 	}
 	//db.SetMaxIdleConns(10)
 	var datakill string
-	showsleepConnection, errshowSleepConnection := db.Query(`select id from information_schema.processlist where Command='Sleep' and USER ='godx1'`)
+	var DataLimit int
+	limitSleepData := db.QueryRow(`select COUNT(*) from information_schema.processlist where Command='Sleep' and USER ='godx1'`).Scan(&DataLimit)
 
-	if errshowSleepConnection != nil {
-		//log.Println(errshowSleepConnection)
+	if limitSleepData != nil {
+		//log.Println(limitSleepData)
 	}
-	for showsleepConnection.Next() {
-		showsleepConnection.Scan(&datakill)
+	if DataLimit >50 {
+		showsleepConnection, errshowSleepConnection := db.Query(`select id from information_schema.processlist where Command='Sleep' and USER ='godx1'`)
 
-		//log.Println(datakill)
-
-		killExecute, errkillExecute := db.Exec(`kill ?`, datakill)
-
-		if errkillExecute != nil {
-			//log.Println(errkillExecute.Error())
+		if errshowSleepConnection != nil {
+			//log.Println(errshowSleepConnection)
 		}
-		_, errcheckExecute := killExecute.RowsAffected()
-		if errcheckExecute != nil {
-			//log.Println(errcheckExecute.Error())
-		}
-		//log.Println(checkExecute)
+		for showsleepConnection.Next() {
+			showsleepConnection.Scan(&datakill)
 
+			//log.Println(datakill)
+
+			killExecute, errkillExecute := db.Exec(`kill ?`, datakill)
+
+			if errkillExecute != nil {
+				//log.Println(errkillExecute.Error())
+			}
+			_, errcheckExecute := killExecute.RowsAffected()
+			if errcheckExecute != nil {
+				//log.Println(errcheckExecute.Error())
+			}
+			//log.Println(checkExecute)
+
+		}
 	}
 }
 
