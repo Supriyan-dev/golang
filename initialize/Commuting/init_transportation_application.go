@@ -135,7 +135,6 @@ type InsertBasicInformation struct {
 	PersonalInjury                 string `json:"personal_injury"`
 	PropertyDamage                 string `json:"property_damage"`
 	CarInsuranceDocumentExpiryDate string `json:"car_insurance_document_expiry_date"`
-	IdGeneralInformation           string `json:"id_general_information"`
 }
 
 type InsertUsageRecordApplyForTravelExpenses struct {
