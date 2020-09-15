@@ -56,7 +56,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber)
 		defer db.Close()
 		if err != nil {
-			_response.Status = http.StatusInternalServerError
+			_response.Status = http.StatusBadRequest
 			_response.Message = err.Error()
 			_response.Data = nil
 			_Response.ResponseJson(w, _response.Status, _response)
