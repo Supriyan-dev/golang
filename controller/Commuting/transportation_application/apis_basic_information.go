@@ -45,6 +45,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
+	IdGeneralInformation := r.FormValue("id_general_information")
 	db := db.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
@@ -53,7 +54,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
-		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber)
+		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber,IdGeneralInformation)
 		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusBadRequest
