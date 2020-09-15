@@ -294,7 +294,8 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 	}
 
 	rows, err := model.DB.Query(`select  MIN(comtrip.id_commuting_trip), MIN(detcomtrip.id_detail_commuting_trip), comtrip.date, MIN(comtrip.route_profile_name), MIN(comtrip.attendance_code), 
-										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0), MIN(cc.status_commuting), CAST(comtrip.date_time_approve as DATE) as date_time_approve
+										MIN(detcomtrip.purpose), COALESCE(SUM(detcomtrip.distance),0), COALESCE(SUM(detcomtrip.commute_distance),0) , COALESCE(SUM(detcomtrip.cost),0),
+										COALESCE(MIN(comtrip.status_approval),''), COALESCE(CAST(comtrip.date_time_approve as DATE),'') as date_time_approve
 										from commuting_trip comtrip, code_commuting cc,
 										detail_commuting_trip detcomtrip, general_information geninfo, basic_information bainfo, store_information storeinfo
 										where comtrip.id_commuting_trip = detcomtrip.id_commuting_trip and geninfo.id_general_information = comtrip.id_general_information AND
@@ -308,13 +309,24 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 		log.Println(err.Error())
 	}
 	defer rows.Close()
-
+	var DataStatusApproval string
+	var DataDateTimeApproval string
+	var DataStatusCommuting string
 	for rows.Next() {
-		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &init_container.StatusCommuting, &init_container.DateApprove)
+		err := rows.Scan(&init_container.IdCommutingTrip, &init_container.IdDetailCommutingTrip, &init_container.Date, &init_container.RouteProfileName, &init_container.AttendanceCode, &init_container.Purpose, &init_container.Distance, &init_container.CommuteDistance, &init_container.Cost, &DataStatusApproval, &DataDateTimeApproval)
 		if err != nil {
 			log.Println(err)
 		}
 		DatatypeOfTransportation, DataRoute, _ := utils_enter_the_information.GetAdditionalUsageRecord(store_number, employee_number, init_container.IdCommutingTrip, "usageRecordHistory")
+		if DataStatusApproval == "Y" {
+			DataStatusCommuting = "承認済み" + " チェック日： " + DataDateTimeApproval
+		} else if DataStatusApproval == "T" && DataDateTimeApproval != "" {
+			DataStatusCommuting = "差戻し" + " チェック日: " + DataDateTimeApproval
+		}else if DataStatusApproval == "B"{
+			DataStatusCommuting = "未検査"
+		}else if DataStatusApproval == "T" && DataDateTimeApproval == ""{
+			DataStatusCommuting = "未検査"
+		}
 		FinnalyData := Commuting.ShowHistory{
 			IdDetailCommutingTrip: init_container.IdDetailCommutingTrip,
 			IdCommutingTrip:       init_container.IdCommutingTrip,
@@ -327,8 +339,7 @@ func (model Models_init_Usage_Record) Model_GetByIdUsageRecordHistory(store_numb
 			CommuteDistance:       init_container.CommuteDistance,
 			Cost:                  init_container.Cost,
 			Route:                 DataRoute,
-			StatusCommuting:       init_container.StatusCommuting,
-			DateApprove:           init_container.DateApprove,
+			StatusCommuting:       DataStatusCommuting,
 		}
 		Arr_History = append(Arr_History, FinnalyData)
 

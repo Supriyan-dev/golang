@@ -211,5 +211,4 @@ type ShowHistory struct {
 	Cost                  int64              `json:"cost"`
 	Route                 string             `json:"route"`
 	StatusCommuting       string             `json:"status_commuting"`
-	DateApprove           models3.NullString `json:"date_approve"`
 }
