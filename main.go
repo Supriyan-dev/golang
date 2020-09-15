@@ -173,7 +173,7 @@ func main() {
 	// router.HandleFunc("/commuting-trip", controller.ReturnAllCommutingTrip).Methods("GET")
 
 	// start Commuting Transportation Application
-	router.HandleFunc("/commuting-basic-information", entertheinformation.ReturnCreateCommutingBasicInformation)
+	router.HandleFunc("/commuting-basic-information/{employee_number}", entertheinformation.ReturnCreateCommutingBasicInformation)
 	router.HandleFunc("/commuting-basic-information-CheckData", entertheinformation.ReturnGetByCommutingBasicInformation)
 	router.HandleFunc("/commuting-UsageRecord-CheckData", entertheinformation.ReturnGetByCommutingUsageRecord)
 	router.HandleFunc("/commuting-UsageRecord-CheckDataForEdit", entertheinformation.ReturnGetByCommutingUsageRecordForEdit)

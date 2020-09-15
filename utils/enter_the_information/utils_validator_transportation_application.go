@@ -81,10 +81,6 @@ func ValidatorInsertBasicInformation(Request *Commuting.InsertBasicInformation) 
 		return false, "Missing required field in body request → InsureCompany = <empty string>"
 	}
 
-	if Request.IdGeneralInformation == "" {
-		return false, "Missing required field in body request → IdGeneralInformation = <empty string>"
-	}
-
 	//Data := "select count(*) from commuting_basic_information where id_general_information = ?"
 	//
 	//CheckData := CheckDataById(Data, Request.IdGeneralInformation)

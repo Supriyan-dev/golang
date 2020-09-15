@@ -7,6 +7,7 @@ import (
 	models_enter_the_information "../../../models/Commuting/transportation_application"
 	_Response "../../../response"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -15,6 +16,8 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 	var init_insert Commuting.InsertBasicInformation
 	var _response initialize.ResponseMaster
 	json.NewDecoder(r.Body).Decode(&init_insert)
+	param := mux.Vars(r)
+	employee_number := param["employee_number"]
 	db := db.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
@@ -23,7 +26,7 @@ func ReturnCreateCommutingBasicInformation(w http.ResponseWriter, r *http.Reques
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
-		resultData, err := _model.Model_InsertBasicInformation(&init_insert)
+		resultData, err := _model.Model_InsertBasicInformation(&init_insert,employee_number)
 		defer db.Close()
 		if err == "Success Response" {
 			_response.Status = http.StatusOK
@@ -45,7 +48,6 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 
 	storeNumber := r.FormValue("store_number")
 	employeeNumber := r.FormValue("employee_number")
-	IdGeneralInformation := r.FormValue("id_general_information")
 	db := db.Connect()
 	if r.Method != "POST" {
 		_response.Status = http.StatusMethodNotAllowed
@@ -54,7 +56,7 @@ func ReturnGetByCommutingBasicInformation(w http.ResponseWriter, r *http.Request
 		_Response.ResponseJson(w, _response.Status, _response)
 	} else {
 		_model := models_enter_the_information.Models_init_basic_information{DB: db}
-		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber,IdGeneralInformation)
+		ResultData, err := _model.Model_GetByIdCommutingBasicInformation(storeNumber, employeeNumber)
 		defer db.Close()
 		if err != nil {
 			_response.Status = http.StatusBadRequest

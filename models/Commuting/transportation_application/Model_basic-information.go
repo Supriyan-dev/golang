@@ -20,7 +20,7 @@ type Models_init_basic_information models.DB_init
 // - using table commuting_basic_information, basic_information, store_inormation and general_information
 // - looped data from the above search
 
-func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string, id_general_information string) (sh []Commuting.FormatShowBasicInformation, err error) {
+func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformation(store_number string, employee_number string) (sh []Commuting.FormatShowBasicInformation, err error) {
 
 	GetBasicInformation, errGetBasicInformation := model.DB.Query(`select gi.id_general_information
 										,bi.id_basic_information,bi.first_name, bi.last_name, bi.adress, bi.adress_kana,
@@ -28,7 +28,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 										from basic_information bi,store_information si , general_information gi where
 										gi.id_basic_information = bi.id_basic_information and 
  									   	gi.id_store_code = si.id_code_store and si.code_store =? and 
- 									   	bi.employee_code=? and gi.id_general_information = ?`, store_number, employee_number, id_general_information)
+ 									   	bi.employee_code=? `, store_number, employee_number)
 
 	GetCommutingBasicInformation, errGetCommutingBasicInformation := model.DB.Query(`select cbi.id_commuting_basic_information, cbi.id_general_information,
  									   cbi.insurance_company, cbi.driver_license_expiry_date, cbi.personal_injury,
@@ -38,7 +38,7 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
  									   where cbi.id_general_information = gi.id_general_information and 
  									   gi.id_basic_information = bi.id_basic_information and 
  									   gi.id_store_code = si.id_code_store and si.code_store =? and 
- 									   bi.employee_code=? and gi.id_general_information = ?`, store_number, employee_number, id_general_information)
+ 									   bi.employee_code=? `, store_number, employee_number)
 	var init_BasicInformation Commuting.ShowBasicInformation1
 	var interface_BasicInformation interface{}
 	var init_DataApprove Commuting.ShowBasicInformation2
@@ -143,11 +143,21 @@ func (model Models_init_basic_information) Model_GetByIdCommutingBasicInformatio
 // if there is an update to the commuting_basic_information table by id_general_information
 // if not present will insert into the commuting_basic_information table
 
-func (model Models_init_basic_information) Model_InsertBasicInformation(insertD *Commuting.InsertBasicInformation) (it []Commuting.InsertBasicInformation, condition string) {
+func (model Models_init_basic_information) Model_InsertBasicInformation(insertD *Commuting.InsertBasicInformation,employee_number string) (it []Commuting.InsertBasicInformation, condition string) {
 
-	checkdata := utils_enter_the_information.CheckDataById(`select count(*) from commuting_basic_information where id_general_information = ? `, insertD.IdGeneralInformation)
-	log.Println(checkdata)
-	if checkdata > 1 {
+	checkdata := utils_enter_the_information.CheckDataById(`select count(*) from commuting_basic_information where id_commuting_basic_information = ? `, insertD.IdCommutingBasicInformation)
+	var	DataIdGeralInformation string
+	GetIdGeneralInformation := model.DB.QueryRow(`select gi.id_general_information from general_information gi, basic_information bi where gi.id_basic_information = bi.id_basic_information and bi.employee_code = ?`,employee_number).Scan(&DataIdGeralInformation)
+
+	if GetIdGeneralInformation != nil {
+		return nil, GetIdGeneralInformation.Error()
+	}
+
+	if DataIdGeralInformation == ""{
+		return nil, "general information not found"
+	}
+
+	if checkdata > 0 {
 		rows, err := model.DB.Prepare(`update commuting_basic_information set insurance_company = ?, driver_license_expiry_date =?,
  									personal_injury = ?, property_damage = ?, car_insurance_document_expiry_date = ?
  									where id_commuting_basic_information = ?  `)
@@ -163,17 +173,16 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			return nil, "Missing required field in body request"
 		}
 
-		datainsert := Commuting.InsertBasicInformation{
+		dataupdate := Commuting.InsertBasicInformation{
 			IdCommutingBasicInformation:    insertD.IdCommutingBasicInformation,
 			InsuranceCompany:               insertD.InsuranceCompany,
 			DriverLicenseExpiryDate:        insertD.DriverLicenseExpiryDate,
 			PersonalInjury:                 insertD.PersonalInjury,
 			PropertyDamage:                 insertD.PropertyDamage,
 			CarInsuranceDocumentExpiryDate: insertD.CarInsuranceDocumentExpiryDate,
-			IdGeneralInformation:           insertD.IdGeneralInformation,
 		}
 
-		it = append(it, datainsert)
+		it = append(it, dataupdate)
 
 		return it, "Success Response"
 
@@ -195,7 +204,7 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			return nil, message
 		}
 
-		execute, err1 := rows.Exec(insertD.InsuranceCompany, insertD.DriverLicenseExpiryDate, insertD.PersonalInjury, insertD.PropertyDamage, insertD.CarInsuranceDocumentExpiryDate, insertD.IdGeneralInformation)
+		execute, err1 := rows.Exec(insertD.InsuranceCompany, insertD.DriverLicenseExpiryDate, insertD.PersonalInjury, insertD.PropertyDamage, insertD.CarInsuranceDocumentExpiryDate, DataIdGeralInformation)
 
 		if err1 != nil && execute == nil {
 			log.Println(err1)
@@ -209,7 +218,6 @@ func (model Models_init_basic_information) Model_InsertBasicInformation(insertD 
 			PersonalInjury:                 insertD.PersonalInjury,
 			PropertyDamage:                 insertD.PropertyDamage,
 			CarInsuranceDocumentExpiryDate: insertD.CarInsuranceDocumentExpiryDate,
-			IdGeneralInformation:           insertD.IdGeneralInformation,
 		}
 
 		it = append(it, datainsert)
