@@ -12,6 +12,7 @@ type Join struct {
 	Insurance_company models.NullString `json:"insurance_company"`
 	Personal_injury	 models.NullString `json:"personal_injury"`
 	Property_damage models.NullString `json:"property_damage"`
+	Status_approve string`json:"status_approve"`
 }
 
 type UpdatePermissionToDrive struct {

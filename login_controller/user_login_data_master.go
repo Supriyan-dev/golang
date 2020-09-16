@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	// "io/ioutil"
+	"io/ioutil"
+	// "io"
+	// "strings"
 	"../helpers"
 	"../initialize"
 	model1 "../model1/login"
@@ -29,9 +31,10 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 			Password        string
 		}
 
-		// type Raw struct {
-		// 	Data string `json:"data"`
-		// }
+		type Raw struct {
+			Data string
+		}
+		var t Raw
 		// b, err1 := ioutil.ReadAll(r.Body)
 		// defer r.Body.Close()
 		// if err1 != nil {
@@ -53,6 +56,8 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		// 	return
 		// }
 		// log.Println(output)
+		body, _ := ioutil.ReadAll(r.Body)
+  		  json.Unmarshal(body, &t)
 		key := "P@ssw0rdL0g1n"
 
 		inputan := r.FormValue("data")
