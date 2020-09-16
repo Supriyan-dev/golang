@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
+	// "io/ioutil"
 	"../helpers"
 	"../initialize"
 	model1 "../model1/login"
@@ -28,6 +28,28 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 			Employee_number string
 			Password        string
 		}
+
+		// b, err := ioutil.ReadAll(r.Body)
+		// if err != nil {
+		// 	http.Error(w, err.Error(), 500)
+		// 	return
+		// }
+
+		// // Unmarshal
+		// var msg Login
+		// err = json.Unmarshal(b, &msg)
+		// if err != nil {
+		// 	http.Error(w, err.Error(), 500)
+		// 	return
+		// }
+
+		// output, err := json.Marshal(msg)
+		// if err != nil {
+		// 	http.Error(w, err.Error(), 500)
+		// 	return
+		// }
+
+		// OutPutData := []byte(output)
 
 		key := "P@ssw0rdL0g1n"
 
