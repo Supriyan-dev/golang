@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	// "io/ioutil"
+	"io/ioutil"
 	"../helpers"
 	"../initialize"
 	model1 "../model1/login"
@@ -29,32 +29,34 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 			Password        string
 		}
 
-		// b, err := ioutil.ReadAll(r.Body)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), 500)
-		// 	return
-		// }
-
-		// // Unmarshal
-		// var msg Login
-		// err = json.Unmarshal(b, &msg)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), 500)
-		// 	return
-		// }
-
-		// output, err := json.Marshal(msg)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), 500)
-		// 	return
-		// }
-
-		// OutPutData := []byte(output)
-
+		type Raw struct {
+			Data string `json:"data"`
+		}
+		b, err1 := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+		if err1 != nil {
+			http.Error(w, err1.Error(), 500)
+			return
+		}
+	
+		// Unmarshal
+		var msg Raw
+		err1 = json.Unmarshal(b, &msg)
+		if err1 != nil {
+			http.Error(w, err1.Error(), 500)
+			return
+		}
+	
+		output, err1 := json.Marshal(msg)
+		if err1 != nil {
+			http.Error(w, err1.Error(), 500)
+			return
+		}
+		log.Println(output)
 		key := "P@ssw0rdL0g1n"
 
 		inputan := r.FormValue("data")
-		decrypted := aes256.Decrypt(inputan, key)
+		decrypted := aes256.Decrypt(output, key)
 
 		jsonData := []byte(decrypted)
 

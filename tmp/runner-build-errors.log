@@ -1,0 +1,2 @@
+# _/home/jeffri/go/Go_DX_Services/login_controller
+login_controller/user_login_data_master.go:59:30: cannot use output (type []byte) as type string in argument to aes256.Decrypt
