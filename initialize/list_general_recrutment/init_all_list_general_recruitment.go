@@ -11,7 +11,7 @@ type ShowAllListGeneralRecrutment struct {
 	FirstName               models.NullString `json:"first_name"`
 	LastName                models.NullString `json:"last_name"`
 	JoinDate                models.NullString `json:"join_date"`
-	CodeStore               string            `json:"code_store"`
+	CodeStore               models.NullString            `json:"code_store"`
 	StoreSectionName        models.NullString `json:"store_section_name"`
 	EmploymentType          string            `json:"employment_type"`
 	StartWorking            string            `json:"start_working"`
