@@ -25,7 +25,6 @@ func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 
-	log.Println(ExcuteData)
 
 	if r.Method == "GET" {
 		if ExcuteData == nil {

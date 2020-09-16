@@ -9,6 +9,9 @@ type Join struct {
 	Last_name                          string            `json:"last_name"`
 	Driver_license_expiry_date         models.NullString `json:"driver_license_expiry_date"`
 	Car_insurance_document_expiry_date models.NullString `json:"car_insurance_document_expiry_date"`
+	Insurance_company models.NullString `json:"insurance_company"`
+	Personal_injury	 models.NullString `json:"personal_injury"`
+	Property_damage models.NullString `json:"property_damage"`
 }
 
 type UpdatePermissionToDrive struct {
