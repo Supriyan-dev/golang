@@ -56,7 +56,7 @@ func ReturnAllFilterInformation(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 
-	if r.Method == "GET" {
+	if r.Method == "POST" {
 		if ExcuteData == nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
