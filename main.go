@@ -141,7 +141,7 @@ func main() {
 	// end crud under 18 salary
 
 	// start crud user
-	router.HandleFunc("/user", login.CheckLogin(controllerDataMaster.ReturnAllUser))
+	router.HandleFunc("/user", controllerDataMaster.ReturnAllUser)
 	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination)
 	router.HandleFunc("/user/get", controllerDataMaster.GetUser)
 	router.HandleFunc("/user/create", controllerDataMaster.CreateUser)

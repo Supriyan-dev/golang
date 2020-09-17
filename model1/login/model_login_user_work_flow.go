@@ -3,7 +3,7 @@ package login
 import (
 	"database/sql"
 	"fmt"
-
+"log"
 	"../../db"
 	"../../helpers"
 	"../../initialize"
@@ -41,3 +41,21 @@ func CheckLoginUserWorkFlow(employee_number, password string) (bool, error) {
 
 	return true, nil
 }
+
+
+func (model1 ModelLoginWorkFlow_init) ReadDataUserLogin(Employee_number string) (all initialize.Users, err error) {
+	var allNull initialize.NullString
+	rows, err := model1.DB.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE employee_number = ?`, Employee_number)
+	if err != nil {
+		log.Print(err)
+	}
+	for rows.Next() {
+		errScan := rows.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name)
+		if errScan != nil {
+			log.Println(errScan)
+		}
+	}
+	return all, nil
+}
+

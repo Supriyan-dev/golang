@@ -34,8 +34,6 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
 			_response.Data = ExcuteData
-
-			log.Println(_response.Data)
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
