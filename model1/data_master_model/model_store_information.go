@@ -31,6 +31,29 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 	return arrStoreInformation, nil
 }
 
+func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string) (arrEmp []initialize.Filter, err error) {
+	var emp initialize.Filter
+	db := db.Connect()
+	rows, err := db.Query(`SELECT si.id_code_store, bi.first_name,bi.last_name, bi.employee_code FROM store_information si
+	INNER JOIN general_information gi ON si.id_code_store = gi.id_store_code
+	INNER JOIN basic_information bi ON bi.id_basic_information = gi.id_basic_information WHERE id_code_store = ?`, Id_code_store)
+	if err != nil {
+		log.Print(err)
+	}
+	defer db.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&emp.Id_code_store, &emp.First_name, &emp.Last_name, &emp.Employee_number); err != nil {
+			log.Fatal(err.Error())
+
+		} else {
+			arrEmp = append(arrEmp, emp)
+		}
+	}
+
+	return arrEmp, nil
+}
+
 func (model1 Models_init) GetIdStoreInformation(Id_code_store string) (si []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()

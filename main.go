@@ -58,6 +58,7 @@ func main() {
 	// start data master
 	// start crud store information
 	router.HandleFunc("/storeinformation", controllerDataMaster.ReturnAllStoreInformation)
+	router.HandleFunc("/storeinformation/filter", controllerDataMaster.ReturnAllFilterInformation)
 	router.HandleFunc("/storeinformation/{page}/{perPage}", controllerDataMaster.ReturnAllStoreInformationPagination)
 	router.HandleFunc("/storeinformation/get", controllerDataMaster.GetStoreInformation)
 	router.HandleFunc("/storeinformation/create", controllerDataMaster.CreateStoreInformation)

@@ -46,6 +46,37 @@ func ReturnAllStoreInformation(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func ReturnAllFilterInformation(w http.ResponseWriter, r *http.Request) {
+	var _response initialize.Response
+	_id := r.FormValue("id_code_store")
+	db := db.Connect()
+	_con := model1.Models_init{DB: db}
+	ExcuteData, err := _con.ReturnFilterStoreInformationModel(_id)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if r.Method == "GET" {
+		if ExcuteData == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = ExcuteData
+			response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		response.ResponseJson(w, _response.Status, _response)
+	}
+
+}
+
 func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request) {
 	var storeInformation initialize.StoreInformation
 	var arrStoreInformation []initialize.StoreInformation
