@@ -13,7 +13,7 @@ type ModelExp_init models.DB_init
 func (model1 ModelExp_init) ReturnAllExp() (arrAll []initialize.ExpCategory, err error) {
 	var all initialize.ExpCategory
 	db := db.Connect()
-	rows, err := db.Query("SELECT * FROM exp_category")
+	rows, err := db.Query("SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code FROM exp_category")
 
 	if err != nil {
 		log.Print(err)

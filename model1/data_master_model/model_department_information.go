@@ -15,7 +15,7 @@ func (model1 ModelDept_init) ReadDataDepartmentInformation() (arrRead []initiali
 
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM department_information")
+	rows, err := db.Query("SELECT id_department, department_code, department_name, id_code_store FROM department_information")
 
 	if err != nil {
 		log.Print(err)

@@ -55,7 +55,7 @@ func (model1 ModelUser_init) ReadDataUserLogin(Employee_number, Password string)
 
 func (model1 ModelUser_init) ReturnAllDataUser() (arrAll []initialize.Users, err error) {
 	var all initialize.Users
-	rows, err := model1.DB.Query(`SELECT * FROM user `)
+	rows, err := model1.DB.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name FROM user `)
 	if err != nil {
 		log.Print(err)
 	}

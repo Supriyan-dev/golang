@@ -14,7 +14,7 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 	var all initialize.PartTimeUnder18Salary
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM part_time_under_18_salary")
+	rows, err := db.Query("SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary")
 
 	if err != nil {
 		log.Print(err)

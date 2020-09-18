@@ -14,7 +14,7 @@ func (model1 ModelUnit_init) ReturnAllDataUnitInformation() (arrAll []initialize
 	var all initialize.UnitInformation
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM unit_information")
+	rows, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information")
 
 	if err != nil {
 		log.Print(err)

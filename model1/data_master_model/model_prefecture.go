@@ -14,7 +14,7 @@ func (model1 ModelPref_init) ReturnAllDataPrefecture() (arrAll []initialize.Pref
 	var all initialize.Prefect
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM prefecture")
+	rows, err := db.Query("SELECT id_prefecture, ISO, prefecture_name FROM prefecture")
 	if err != nil {
 		log.Print(err)
 	}

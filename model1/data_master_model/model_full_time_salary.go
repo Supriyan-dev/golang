@@ -14,7 +14,7 @@ func (model1 ModelFull_init) ReturnAllFulltime() (arrGet []initialize.FullTimeSa
 	var all initialize.FullTimeSalary
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM full_time_salary")
+	rows, err := db.Query("SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary")
 
 	if err != nil {
 		log.Print(err)

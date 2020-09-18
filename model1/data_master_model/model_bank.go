@@ -12,11 +12,10 @@ type ModelBank_init models.DB_init
 
 func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err error) {
 	var all initialize.Bank
-	var Null initialize.NullStringBank
 
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM bank")
+	rows, err := db.Query("SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank")
 
 	if err != nil {
 		log.Print(err)
@@ -24,7 +23,7 @@ func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err 
 	defer db.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&all.Id_bank, &all.Bank_code, &Null.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special); err != nil {
+		if err := rows.Scan(&all.Id_bank, &all.Bank_code, &all.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special); err != nil {
 
 			log.Fatal(err.Error())
 
@@ -38,7 +37,6 @@ func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err 
 
 func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Bank, err error) {
 	var all initialize.Bank
-	var Null initialize.NullStringBank
 
 	db := db.Connect()
 
@@ -49,7 +47,7 @@ func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Ba
 	defer result.Close()
 	for result.Next() {
 
-		err := result.Scan(&all.Id_bank, &all.Bank_code, &Null.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special)
+		err := result.Scan(&all.Id_bank, &all.Bank_code, &all.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special)
 		if err != nil {
 			panic(err.Error())
 		} else {
@@ -61,7 +59,6 @@ func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Ba
 }
 
 func (model1 ModelBank_init) InsertDataBank(insert *initialize.Bank) (arrInsert []initialize.Bank, err error) {
-	var Null initialize.NullStringBank
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO bank (bank_code, bank_name, branch_code,branch_name,special) VALUES (?,?,?,?,?)")
 	if err != nil {
@@ -69,7 +66,7 @@ func (model1 ModelBank_init) InsertDataBank(insert *initialize.Bank) (arrInsert 
 	}
 	defer db.Close()
 
-	result, err := stmt.Exec(insert.Bank_code, Null.Bank_name, insert.Branch_code, insert.Branch_name, insert.Special)
+	result, err := stmt.Exec(insert.Bank_code, insert.Bank_name, insert.Branch_code, insert.Branch_name, insert.Special)
 	log.Println(result)
 
 	Execute := initialize.Bank{
@@ -87,7 +84,6 @@ func (model1 ModelBank_init) InsertDataBank(insert *initialize.Bank) (arrInsert 
 }
 
 func (model1 ModelBank_init) UdpateDatabank(update *initialize.Bank) (arrUpdate []initialize.Bank, err error) {
-	var Null initialize.NullStringBank
 
 	db := db.Connect()
 
@@ -96,7 +92,7 @@ func (model1 ModelBank_init) UdpateDatabank(update *initialize.Bank) (arrUpdate 
 		panic(err.Error())
 	}
 
-	result, err := stmt.Exec(update.Bank_code, Null.Bank_name, update.Branch_code, update.Branch_name, update.Special, update.Id_bank)
+	result, err := stmt.Exec(update.Bank_code, update.Bank_name, update.Branch_code, update.Branch_name, update.Special, update.Id_bank)
 	log.Println(result)
 
 	Execute := initialize.Bank{

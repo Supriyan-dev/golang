@@ -14,7 +14,7 @@ func (model1 ModelSection_init) ReturnAllStoreSectionInformation() (arrAll []ini
 	var all initialize.StoreSectionInformation
 	db := db.Connect()
 
-	rows, err := db.Query("SELECT * FROM store_section_information")
+	rows, err := db.Query("SELECT id_store_section, store_section_code, store_section_name FROM store_section_information")
 
 	if err != nil {
 		log.Print(err)
