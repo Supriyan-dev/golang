@@ -11,7 +11,7 @@ import (
 )
 
 func DataGeneralRecrutment(w http.ResponseWriter, r *http.Request) {
-	var init_insert initialize.BasicInformationGeneral
+	var init_insert initialize.GeneralRecrutmentJoin
 	var _response initialize.Response
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()

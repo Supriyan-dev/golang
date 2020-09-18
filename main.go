@@ -209,8 +209,12 @@ func main() {
 	fmt.Println("Connected to port 9000")
 
 	handler := handlers.LoggingHandler(os.Stdout,router)
-	//handler = cors.AllowAll().Handler(router)
-	corsHandle := cors.AllowAll().Handler(handler)
+		corsHandle := cors.AllowAll().Handler(handler)
 	http.ListenAndServe(":9000", corsHandle)
 
 }
+// install fresh golang
+// export GOPATH=$HOME/go
+// export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+// go get github.com/pilu/fresh
+// fresh

@@ -8,23 +8,41 @@ import (
 	"../../models"
 )
 
+
 type ModelGeneral_init models.DB_init
 
-func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.BasicInformationGeneral) (join []initialize.BasicInformationGeneral, err error) {
+func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.GeneralRecrutmentJoin) (array []initialize.GeneralRecrutmentJoin,err error) {
+	// var test1 initialize.BasicInformationGeneral
+	// var test2 initialize.GeneralInformationGeneral
+	// var 
+	// log.Println(array)
 	db := db.Connect()
 	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
-	// {
-	// var allTest []initialize.BasicInformationGeneral
-	// var test initialize.BasicInformationGeneral
-	// var Employee_number int
-	stmt, err := db.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, add_phone_number, marital_status, dormitory_status) values(?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?) WHERE employee_number =`)
+
+	stmt, err := tx.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender,
+		 birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, 
+		 add_phone_number, marital_status, dormitory_status) 
+		 values(?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?)`)
 	if err != nil {
 		tx.Rollback()
-		log.Fatal(err)
+		panic(err.Error())
 	}
+
+	var id_basic_information int
+
+	var dataIdBasicInformation string
+
+	checkIdBasicInformation := db.QueryRow(`select MAX(id_basic_information)+1 from basic_information limit 1 `).Scan(&id_basic_information)
+
+	if checkIdBasicInformation != nil {
+		log.Println(checkIdBasicInformation)
+	}
+	log.Println(dataIdBasicInformation)
+	log.Println(id_basic_information)
+
 	result, err := stmt.Exec(test.Employee_code, test.First_name, test.Last_name, test.Gender, test.Add_postal_code, test.Id_prefecture,
 		test.Adress, test.Adress_kana, test.Adress_detail, test.Adress_detail_kana,
 		test.Add_phone_number, test.Marital_status, test.Dormitory_status)
@@ -33,30 +51,123 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Bas
 		tx.Rollback()
 		log.Fatal(err)
 	}
-
-	ExcuteData := initialize.BasicInformationGeneral{
-		Employee_code:      test.Employee_code,
-		First_name:         test.First_name,
-		Last_name:          test.Last_name,
-		Gender:             test.Gender,
-		Add_postal_code:    test.Add_postal_code,
-		Id_prefecture:      test.Id_prefecture,
-		Adress:             test.Adress,
-		Adress_kana:        test.Adress_kana,
-		Adress_detail:      test.Adress_detail,
-		Adress_detail_kana: test.Adress_detail_kana,
-		Add_phone_number:   test.Add_phone_number,
-		Marital_status:     test.Marital_status,
-		Dormitory_status:   test.Dormitory_status,
+	
+	stmt, err = tx.Prepare(`INSERT INTO general_information (id_basic_information, id_store_code, id_department, id_store_section, id_unit,
+		 join_date, id_bank, account_type, account_number, account_name, first_smester_in_other_company, distance_trip, 
+		 resume_document, written_oath_document, employee_agreement_document, certificate_of_residence_card_document,
+		  application_form_of_commuting_method_document, compliance_agreement_document, with_holding_slip_document, 
+		  dependent_deduction_form_document, pension_book_document, health_check_report_document, office_code) 
+		  VALUES (?,?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+	if err != nil {
+		tx.Rollback()
+		panic(err.Error())
 	}
-	join = append(join, ExcuteData)
+	
+	result1, err := stmt.Exec(&id_basic_information, test.Id_store_code, test.Id_department, test.Id_store_section, test.Id_unit,
+		test.Id_bank, test.Account_type, test.Account_number, test.Account_name, test.First_smester_in_other_company,
+		test.Distance_trip, test.Resume_document, test.Written_oath_document, test.Employee_agreement_document,
+		test.Certificate_of_residence_card_document, test.Application_form_of_commuting_method_document, test.Compliance_agreement_document,
+		test.With_holding_slip_document, test.Dependent_deduction_form_document, test.Pension_book_document, test.Health_check_report_document, test.Office_code)
+		log.Println(result1)
+		if err != nil {
+			log.Fatal(err)
+		}
+	
+	array = []initialize.GeneralRecrutmentJoin{
+		initialize.GeneralRecrutmentJoin{
+			Employee_code:      test.Employee_code,
+			First_name:         test.First_name,
+			Last_name:          test.Last_name,
+			Gender:             test.Gender,
+			Add_postal_code:    test.Add_postal_code,
+			Id_prefecture:      test.Id_prefecture,
+			Adress:             test.Adress,
+			Adress_kana:        test.Adress_kana,
+			Adress_detail:      test.Adress_detail,
+			Adress_detail_kana: test.Adress_detail_kana,
+			Add_phone_number:   test.Add_phone_number,
+			Marital_status:     test.Marital_status,
+			Dormitory_status:   test.Dormitory_status,
+		},	
+		initialize.GeneralRecrutmentJoin{
+			Id_basic_information:                   test.Id_basic_information,
+			Id_store_code:                          test.Id_store_code,
+			Id_department:                          test.Id_department,
+			Id_store_section:                       test.Id_store_section,
+			Id_unit:                                test.Id_unit,
+			Id_bank:                                test.Id_bank,
+			Account_type:                           test.Account_type,
+			Account_number:                         test.Account_number,
+			First_smester_in_other_company:         test.First_smester_in_other_company,
+			Distance_trip:                          test.Distance_trip,
+			Resume_document:                        test.Resume_document,
+			Written_oath_document:                  test.Written_oath_document,
+			Employee_agreement_document:            test.Employee_agreement_document,
+			Certificate_of_residence_card_document: test.Certificate_of_residence_card_document,
+			Application_form_of_commuting_method_document: test.Application_form_of_commuting_method_document,
+			Compliance_agreement_document:                 test.Compliance_agreement_document,
+			With_holding_slip_document:                    test.With_holding_slip_document,
+			Dependent_deduction_form_document:             test.Dependent_deduction_form_document,
+			Pension_book_document:                         test.Pension_book_document,
+			Health_check_report_document:                  test.Health_check_report_document,
+			Office_code:                                   test.Office_code,
+		},
+	}
+	
+	// array1 = append(array1, test)
+
+	// The next query is handled similarly
+
+
+	// {
+	// var allTest1 []initialize.BasicInformationGeneral
+	// var test initialize.BasicInformationGeneral
+	// var Employee_number int
+	// stmt, err := db.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, add_phone_number, marital_status, dormitory_status) values(?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?)`)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	log.Fatal(err)
+	// }
+
+	// stmt1, err := tx.Exec("INSERT INTO general_information (id_basic_information, id_store_code, id_department, id_code_store, id_unit, join_date, id_bank, account_type, account_number, account_name, first_smester_in_other_company, distance_trip, resume_document, written_oath_document, employee_agreement_document, certificate_of_residence_card_document, application_form_of_commuting_method_document, compliance_agreement_document, with_holding_slip_document, dependent_deduction_form_document, pension_book_document, health_check_report_document, office_code) VALUES (last_insert_id(),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	log.Fatal(err)
+	// }
+	// log.Println(stmt)
+	// log.Println(stmt1)
+	// result, err := stmt.Exec(test.Employee_code, test.First_name, test.Last_name, test.Gender, test.Add_postal_code, test.Id_prefecture,
+	// 	test.Adress, test.Adress_kana, test.Adress_detail, test.Adress_detail_kana,
+	// 	test.Add_phone_number, test.Marital_status, test.Dormitory_status)
+	// log.Println(result)
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	log.Fatal(err)
+	// }
+
+	// ExcuteData := initialize.BasicInformationGeneral{
+	// 	Employee_code:      test.Employee_code,
+	// 	First_name:         test.First_name,
+	// 	Last_name:          test.Last_name,
+	// 	Gender:             test.Gender,
+	// 	Add_postal_code:    test.Add_postal_code,
+	// 	Id_prefecture:      test.Id_prefecture,
+	// 	Adress:             test.Adress,
+	// 	Adress_kana:        test.Adress_kana,
+	// 	Adress_detail:      test.Adress_detail,
+	// 	Adress_detail_kana: test.Adress_detail_kana,
+	// 	Add_phone_number:   test.Add_phone_number,
+	// 	Marital_status:     test.Marital_status,
+	// 	Dormitory_status:   test.Dormitory_status,
+	// }
+	// join = append(join, ExcuteData)
 
 	commitTx := tx.Commit()
 
 	if commitTx != nil {
 		log.Fatal(commitTx)
 	}
-	return join, nil
+	return array, nil
 
 	// 	return join, nil
 	// }
