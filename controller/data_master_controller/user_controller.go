@@ -158,7 +158,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
-			_response.Data = init_insert
+			_response.Data = ExcuteData
 			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {

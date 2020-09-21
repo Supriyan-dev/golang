@@ -96,24 +96,23 @@ func (model1 ModelUser_init) GetDataUser(Id_user string) (arrGet []initialize.Us
 
 func (model1 ModelUser_init) InsertDataUser(insert *initialize.Users) (arrInsert []initialize.Users, err error) {
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO user (id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
 	var a int
 	checkIdBasicInformation := db.QueryRow(`select MAX(id_user)+1 from user limit 1 `).Scan(&a)
 	if checkIdBasicInformation != nil {
 		log.Println(checkIdBasicInformation)
 	}
-	log.Println(a)
+	stmt, err := db.Prepare("INSERT INTO user (id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 
-	stmt.Exec(&a, insert.First_name, insert.Last_name, insert.Employee_number, insert.Id_code_store, insert.Password, insert.Id_role, insert.Email, insert.Recovery_pin, insert.Photo_url, insert.Photo_name)
+	stmt.Exec(a, insert.First_name, insert.Last_name, insert.Employee_number, insert.Id_code_store, insert.Password, insert.Id_role, insert.Email, insert.Recovery_pin, insert.Photo_url, insert.Photo_name)
 	if err != nil {
 		panic(err.Error())
 	}
 	Excute := initialize.Users{
-		Id_user:a,
+		Id_user:         a,
 		First_name:      insert.First_name,
 		Last_name:       insert.Last_name,
 		Employee_number: insert.Employee_number,
@@ -125,7 +124,6 @@ func (model1 ModelUser_init) InsertDataUser(insert *initialize.Users) (arrInsert
 		Photo_url:       insert.Photo_url,
 		Photo_name:      insert.Photo_name,
 	}
-
 	arrInsert = append(arrInsert, Excute)
 
 	return arrInsert, nil
