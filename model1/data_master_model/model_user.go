@@ -2,10 +2,15 @@ package model1
 
 import (
 	"log"
-
+"fmt"
 	"../../db"
 	"../../initialize"
 	"../../models"
+	// "../../helpers"
+	"crypto/md5"
+	
+	
+
 )
 
 type ModelUser_init models.DB_init
@@ -96,37 +101,44 @@ func (model1 ModelUser_init) GetDataUser(Id_user string) (arrGet []initialize.Us
 
 func (model1 ModelUser_init) InsertDataUser(insert *initialize.Users) (arrInsert []initialize.Users, err error) {
 	db := db.Connect()
+
+	// var dam = hex.EncodeToString(pass[:])
+
 	var a int
 	checkIdBasicInformation := db.QueryRow(`select MAX(id_user)+1 from user limit 1 `).Scan(&a)
 	if checkIdBasicInformation != nil {
 		log.Println(checkIdBasicInformation)
 	}
-	log.Println(a)
+
 	stmt, err := db.Prepare("INSERT INTO user (id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
 
-
-	stmt.Exec(&a, insert.First_name, insert.Last_name, insert.Employee_number, insert.Id_code_store, insert.Password, insert.Id_role, insert.Email, insert.Recovery_pin, insert.Photo_url, insert.Photo_name)
+	stmt.Exec(a, insert.First_name, insert.Last_name, insert.Employee_number, insert.Id_code_store, insert.Password, insert.Id_role, insert.Email, insert.Recovery_pin, insert.Photo_url, insert.Photo_name)
 	if err != nil {
 		panic(err.Error())
 	}
+	log.Println(insert.Password)
+	data := []byte(insert.Password)
+	log.Println(data)
+	b := md5.Sum(data)
+	log.Println(b)
+	pass := fmt.Sprintf("%x", b)
 	Excute := initialize.Users{
-		Id_user: insert.Id_user,
+		Id_user:         a,
 		First_name:      insert.First_name,
 		Last_name:       insert.Last_name,
 		Employee_number: insert.Employee_number,
 		Id_code_store:   insert.Id_code_store,
-		Password:        insert.Password,
+		Password:        pass,
 		Id_role:         insert.Id_role,
 		Email:           insert.Email,
 		Recovery_pin:    insert.Recovery_pin,
 		Photo_url:       insert.Photo_url,
 		Photo_name:      insert.Photo_name,
 	}
-
 	arrInsert = append(arrInsert, Excute)
 
 	return arrInsert, nil
