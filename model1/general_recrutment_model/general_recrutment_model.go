@@ -73,8 +73,55 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Gen
 			log.Fatal(err)
 		}
 	
-	array = []initialize.GeneralRecrutmentJoin{
-		initialize.GeneralRecrutmentJoin{
+		type GeneralRecrutmentJoin struct {
+			Id_basic_information int              
+			Employee_code        int              
+			First_name           string           
+			Last_name            string           
+			Gender               string           
+			Add_postal_code      models.NullString
+			Id_prefecture        int              
+			Adress               models.NullString
+			Adress_kana          models.NullString
+			Adress_detail        models.NullString
+			Adress_detail_kana   models.NullString
+			Add_phone_number     models.NullString
+			Marital_status       string           
+			Dormitory_status     string           
+			Id_general_information                        int   
+			Id_store_code                                 int   
+			Id_department                                 int   
+			Id_store_section                              int   
+			Id_unit                                       int   
+			Id_bank                                       int   
+			Account_type                                  string
+			Account_number                                int   
+			Account_name                                  string
+			First_smester_in_other_company                string
+			Distance_trip                                 string
+			Resume_document                               string
+			Written_oath_document                         string
+			Employee_agreement_document                   string
+			Certificate_of_residence_card_document        string
+			Application_form_of_commuting_method_document string
+			Compliance_agreement_document                 string
+			With_holding_slip_document                    string
+			Dependent_deduction_form_document             string
+			Pension_book_document                         string
+			Health_check_report_document                  string
+			Office_code                                   string
+			Id_general_recruitment_status_approval int   
+			Status                                 string
+			Reason                                 string
+			Data_check                             string
+			Message_for_edit                       string
+			By_employee_code                       string
+			Flag                                   string
+			Real_data                              string
+		
+		}
+		
+	var data = initialize.GeneralRecrutmentJoin{
 			Employee_code:      test.Employee_code,
 			First_name:         test.First_name,
 			Last_name:          test.Last_name,
@@ -88,8 +135,10 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Gen
 			Add_phone_number:   test.Add_phone_number,
 			Marital_status:     test.Marital_status,
 			Dormitory_status:   test.Dormitory_status,
-		},	
-		initialize.GeneralRecrutmentJoin{
+		}	
+	array = append(array, data)
+
+	var data2 = initialize.GeneralRecrutmentJoin{
 			Id_basic_information:                   test.Id_basic_information,
 			Id_store_code:                          test.Id_store_code,
 			Id_department:                          test.Id_department,
@@ -111,56 +160,8 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Gen
 			Pension_book_document:                         test.Pension_book_document,
 			Health_check_report_document:                  test.Health_check_report_document,
 			Office_code:                                   test.Office_code,
-		},
 	}
-	
-	// array1 = append(array1, test)
-
-	// The next query is handled similarly
-
-
-	// {
-	// var allTest1 []initialize.BasicInformationGeneral
-	// var test initialize.BasicInformationGeneral
-	// var Employee_number int
-	// stmt, err := db.Prepare(`INSERT INTO basic_information (employee_code, first_name, last_name, gender, birthdate, add_postal_code, id_prefecture, Adress, Adress_kana, Adress_detail, Adress_detail_kana, add_phone_number, marital_status, dormitory_status) values(?,?,?,?,DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+09:00'),'%Y-%m-%d'),?,?,?,?,?,?,?,?,?)`)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	log.Fatal(err)
-	// }
-
-	// stmt1, err := tx.Exec("INSERT INTO general_information (id_basic_information, id_store_code, id_department, id_code_store, id_unit, join_date, id_bank, account_type, account_number, account_name, first_smester_in_other_company, distance_trip, resume_document, written_oath_document, employee_agreement_document, certificate_of_residence_card_document, application_form_of_commuting_method_document, compliance_agreement_document, with_holding_slip_document, dependent_deduction_form_document, pension_book_document, health_check_report_document, office_code) VALUES (last_insert_id(),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	log.Fatal(err)
-	// }
-	// log.Println(stmt)
-	// log.Println(stmt1)
-	// result, err := stmt.Exec(test.Employee_code, test.First_name, test.Last_name, test.Gender, test.Add_postal_code, test.Id_prefecture,
-	// 	test.Adress, test.Adress_kana, test.Adress_detail, test.Adress_detail_kana,
-	// 	test.Add_phone_number, test.Marital_status, test.Dormitory_status)
-	// log.Println(result)
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	log.Fatal(err)
-	// }
-
-	// ExcuteData := initialize.BasicInformationGeneral{
-	// 	Employee_code:      test.Employee_code,
-	// 	First_name:         test.First_name,
-	// 	Last_name:          test.Last_name,
-	// 	Gender:             test.Gender,
-	// 	Add_postal_code:    test.Add_postal_code,
-	// 	Id_prefecture:      test.Id_prefecture,
-	// 	Adress:             test.Adress,
-	// 	Adress_kana:        test.Adress_kana,
-	// 	Adress_detail:      test.Adress_detail,
-	// 	Adress_detail_kana: test.Adress_detail_kana,
-	// 	Add_phone_number:   test.Add_phone_number,
-	// 	Marital_status:     test.Marital_status,
-	// 	Dormitory_status:   test.Dormitory_status,
-	// }
-	// join = append(join, ExcuteData)
+	array = append(array, data2)
 
 	commitTx := tx.Commit()
 
@@ -168,6 +169,7 @@ func (model1 ModelGeneral_init) InsertDataGeneralRecrutment(test *initialize.Gen
 		log.Fatal(commitTx)
 	}
 	return array, nil
+	// log.Println(array)
 
 	// 	return join, nil
 	// }

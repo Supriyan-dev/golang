@@ -4,6 +4,8 @@ import (
 	Approve "./controller/Commuting/Approve"
 	entertheinformation "./controller/Commuting/transportation_application"
 	list_GR "./controller/list_general_recruitment"
+	controllerDriverManagement "./controller/driver_management_controller"
+
 	controllerDataMaster "./controller/data_master_controller"
 	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
@@ -14,8 +16,6 @@ import (
 	"fmt"
 	"net/http"
 
-	// controllerDataMaster "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/data_master_controller"
-	// controllerPermissionToDrive "github.com/jeffri/golang-test/GO_DX_SERVICES/controller/list_input_information"
 	loginController "./controller/login_controller"
 	login "./login_controller"
 	ForgotPassword "./controller/forgot_password"
@@ -160,6 +160,59 @@ func main() {
 	router.HandleFunc("/exp-category/{id_exp}", controllerDataMaster.DeleteExpCategory)
 	// // end crud exp category
 	// //end data master
+
+// ==========================================================================================================================================================
+	// start data driver management
+
+	// start prefecture driver management 
+	router.HandleFunc("/prefecture-driver-management", controllerDriverManagement.ReturnAllPrefect)
+	router.HandleFunc("/prefecture-driver-management/{page}/{perPage}", controllerDriverManagement.ReturnAllPrefectPagination)
+	router.HandleFunc("/prefecture-driver-management/get", controllerDriverManagement.GetPrefect)
+	// router.HandleFunc("/prefecture-driver-management/create", controllerDriverManagement.CreatePrefect)
+	// router.HandleFunc("/prefecture-driver-management/update", controllerDriverManagement.UpdatePrefect)
+	router.HandleFunc("/prefecture-driver-management/{id_prefecture}", controllerDriverManagement.DeletePrefect)
+	// end prefecture driver management
+	
+	// start store information driver management
+	router.HandleFunc("/storeinformation-driver-management", controllerDriverManagement.ReturnAllStoreInformation)
+	router.HandleFunc("/storeinformation-driver-management/filter", controllerDriverManagement.ReturnAllFilterInformation)
+	router.HandleFunc("/storeinformation-driver-management/{page}/{perPage}", controllerDriverManagement.ReturnAllStoreInformationPagination)
+	router.HandleFunc("/storeinformation-driver-management/get", controllerDriverManagement.GetStoreInformation)
+	// router.HandleFunc("/storeinformation-driver-management/search/{store_name}/{code_store}", controllerDriverManagement.SearchStoreInformation)
+	// router.HandleFunc("/storeinformation-driver-management/create", controllerDriverManagement.CreateStoreInformation)
+	// router.HandleFunc("/storeinformation-driver-management/update", controllerDriverManagement.UpdateStoreInformation)
+	// router.HandleFunc("/storeinformation-driver-management/{id_code_store}", controllerDriverManagement.DeleteStoreInformation)
+	// end store information driver management
+
+	// start store section information driver management
+	router.HandleFunc("/store-section-information-driver-management", controllerDriverManagement.ReturnAllStroreSectionInformation)
+	router.HandleFunc("/store-section-information-driver-management/{page}/{perPage}", controllerDriverManagement.ReturnAllStroreSectionInformationPagination)
+	router.HandleFunc("/store-section-information-driver-management/get", controllerDriverManagement.GetStoreSectionInformation)
+	// router.HandleFunc("/store-section-information-driver-management/create", controllerDriverManagement.CreateStoreSectionInformation)
+	// router.HandleFunc("/store-section-information-driver-management/update", controllerDriverManagement.UpdateStoreSectionInformation)
+	router.HandleFunc("/store-section-information-driver-management/{id_store_section}", controllerDriverManagement.DeleteStoreSectionInformation)
+	// end store section information driver management 
+
+	// start unit information driver management
+	router.HandleFunc("/unit-information-driver-management", controllerDriverManagement.ReturnAllUnitInformation)
+	router.HandleFunc("/unit-information-driver-management/{page}/{perPage}", controllerDriverManagement.ReturnAllUnitInformationPagination)
+	router.HandleFunc("/unit-information-driver-management/get", controllerDriverManagement.GetUnitInformation)
+	// router.HandleFunc("/unit-information-driver-management/create", controllerDriverManagement.CreateUnitInformation)
+	// router.HandleFunc("/unit-information-driver-management/update", controllerDriverManagement.UpdateUnitInformation)
+	router.HandleFunc("/unit-information-driver-management/{id_unit}", controllerDriverManagement.DeleteUnitInformation)
+	// end unit information driver management
+
+	// start department information 
+	router.HandleFunc("/department-information-driver-management", controllerDriverManagement.ReturnAllDepartementInformation)
+	router.HandleFunc("/department-information-driver-management/{page}/{perPage}", controllerDriverManagement.ReturnAllDepartementInformationPagination)
+	router.HandleFunc("/department-information-driver-management/get", controllerDriverManagement.GetDepartementInformation)
+	// router.HandleFunc("/department-information-driver-management/create", controllerDriverManagement.CreateDepartementInformation)
+	// router.HandleFunc("/department-information-driver-management/update", controllerDriverManagement.UpdateDepartementInformation)
+	router.HandleFunc("/department-information-driver-management/{id_department}", controllerDriverManagement.DeleteDepartementInformation)
+	// end department information
+	
+	// end data driver management
+// ==========================================================================================================================================================
 
 	// router.HandleFunc("/basic-information", controller.ReturnAllBasicInformation).Methods("GET")
 	// router.HandleFunc("/cash-claim", controller.ReturnAllCashClaim).Methods("GET")

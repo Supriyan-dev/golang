@@ -13,14 +13,14 @@ type Models_init models.DB_init
 func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	rows, err := db.Query("SELECT id_code_store, code_store, store_name FROM store_information")
+	rows, err := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information")
 	if err != nil {
 		log.Print(err)
 	}
 	defer db.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
+		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude); err != nil {
 			log.Fatal(err.Error())
 
 		} else {
@@ -57,13 +57,13 @@ func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string
 func (model1 Models_init) GetIdStoreInformation(Id_code_store string) (si []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	result, errExcuteData := db.Query("SELECT id_code_store, code_store, store_name FROM store_information WHERE id_code_store = ?", Id_code_store)
+	result, errExcuteData := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information WHERE id_code_store = ?", Id_code_store)
 	if errExcuteData != nil {
 		panic(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
-		errExcuteData := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name)
+		errExcuteData := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude)
 		if errExcuteData != nil {
 			panic(err.Error())
 		} else {
