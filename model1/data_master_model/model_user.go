@@ -102,8 +102,6 @@ func (model1 ModelUser_init) GetDataUser(Id_user string) (arrGet []initialize.Us
 func (model1 ModelUser_init) InsertDataUser(insert *initialize.Users) (arrInsert []initialize.Users, err error) {
 	db := db.Connect()
 
-	// var dam = hex.EncodeToString(pass[:])
-
 	var a int
 	checkIdBasicInformation := db.QueryRow(`select MAX(id_user)+1 from user limit 1 `).Scan(&a)
 	if checkIdBasicInformation != nil {

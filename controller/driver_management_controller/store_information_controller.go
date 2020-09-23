@@ -131,7 +131,7 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 
 	firstIndex := (totalDataPerPage * page) - totalDataPerPage
 
-	query := fmt.Sprintf("select id_code_store,code_store,store_name from store_information limit %d,%d", firstIndex, totalDataPerPage)
+	query := fmt.Sprintf("select id_code_store,code_store,store_name, latitude, longitude FROM store_information limit %d,%d", firstIndex, totalDataPerPage)
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -139,7 +139,7 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
+		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude); err != nil {
 			log.Fatal(err.Error())
 		} else {
 			arrStoreInformation = append(arrStoreInformation, storeInformation)

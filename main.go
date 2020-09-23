@@ -51,6 +51,7 @@ func main() {
 
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive)
+	router.HandleFunc("/permission_to_drive/search", controllerPermissionToDrive.PermissionToDriveSearch)
 	router.HandleFunc("/permission_to_drive/update", controllerPermissionToDrive.PermissionToDriveUpdate)
 	router.HandleFunc("/permission_to_drive/{page}/{perPage}", controllerPermissionToDrive.PermissionToDrivePagination)
 	// end permission to drive
@@ -264,10 +265,12 @@ func main() {
 	handler := handlers.LoggingHandler(os.Stdout,router)
 		corsHandle := cors.AllowAll().Handler(handler)
 	http.ListenAndServe(":9000", corsHandle)
-
 }
 // install fresh golang
 // export GOPATH=$HOME/go
 // export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 // go get github.com/pilu/fresh
 // fresh
+
+
+// sudo /etc/init.d/apache2 stop

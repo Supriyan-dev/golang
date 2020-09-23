@@ -46,6 +46,42 @@ func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func PermissionToDriveSearch(w http.ResponseWriter, r *http.Request) {
+	var _response initialize.Response
+	db := db.Connect()
+	type Name struct {
+		Keyword string `json:"keyword"`
+	}
+	var Keyword Name
+	json.NewDecoder(r.Body).Decode(&Keyword)
+	_con := model1.ModelsPermission_init{DB: db}
+	result, err := _con.ModelPermissionToDriveSearch(Keyword.Keyword)
+	log.Println(result)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if r.Method == "POST" {
+		if result == nil {
+			_response.Status = http.StatusBadRequest
+			_response.Message = "Sorry Your Input Missing Body Bad Request"
+			_response.Data = "Null"
+			_Response.ResponseJson(w, _response.Status, _response)
+		} else {
+			_response.Status = http.StatusOK
+			_response.Message = "Success"
+			_response.Data = result
+			_Response.ResponseJson(w, _response.Status, _response)
+		}
+	} else {
+		_response.Status = http.StatusMethodNotAllowed
+		_response.Message = "Sorry Your Method Missing Not Allowed"
+		_response.Data = "Null"
+		_Response.ResponseJson(w, _response.Status, _response)
+	}
+
+}
+
 func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	var join initialize.Join
 	var arrJoin []initialize.Join
@@ -67,7 +103,7 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	}
 
 	firstIndex := (totalDataPerPage * page) - totalDataPerPage
-	query := fmt.Sprintf(`SELECT store_information.code_store, basic_information.employee_code, basic_information.first_name, 
+	query := fmt.Sprintf(`SELECT store_information.id_code_store, store_information.code_store, basic_information.employee_code, basic_information.first_name, 
 	basic_information.last_name, commuting_basic_information.driver_license_expiry_date, commuting_basic_information.car_insurance_document_expiry_date, 
 	commuting_basic_information.insurance_company, commuting_basic_information.personal_injury, commuting_basic_information.property_damage, commuting_basic_information.status_approve
 	FROM general_information INNER JOIN store_information ON general_information.id_store_code = store_information.id_code_store 
@@ -80,7 +116,7 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for result.Next() {
-		if err := result.Scan(&join.Id_store_code, &join.Employee_code,
+		if err := result.Scan(&join.Id_code_store, &join.Code_store, &join.Employee_code,
 			&join.First_name, &join.Last_name, &join.Driver_license_expiry_date, &join.Car_insurance_document_expiry_date, &join.Insurance_company,
 			 &join.Personal_injury, &join.Property_damage, &join.Status_approve); err != nil {
 			log.Fatal(err.Error())

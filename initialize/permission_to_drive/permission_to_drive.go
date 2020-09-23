@@ -3,8 +3,9 @@ package initialize
 import "../../models"
 
 type Join struct {
-	Id_store_code                      string               `json:"id_store_code"`
-	Employee_code                      string               `json:"employee_code"`
+	Id_code_store                      int               `json:"id_code_store"`
+	Code_store                         string            `json:"code_store"`
+	Employee_code                      string            `json:"employee_code"`
 	First_name                         string            `json:"first_name"`
 	Last_name                          string            `json:"last_name"`
 	Driver_license_expiry_date         models.NullString `json:"driver_license_expiry_date"`
