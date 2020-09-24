@@ -56,7 +56,6 @@ func PermissionToDriveSearch(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&Keyword)
 	_con := model1.ModelsPermission_init{DB: db}
 	result, err := _con.ModelPermissionToDriveSearch(Keyword.Keyword)
-	log.Println(result)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -79,7 +78,6 @@ func PermissionToDriveSearch(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		_Response.ResponseJson(w, _response.Status, _response)
 	}
-
 }
 
 func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
@@ -98,6 +96,9 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	err := db.QueryRow("SELECT COUNT(*) FROM general_information").Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
+	if page > totalPage {
+		page = totalPage
+	}
 	if page <= 0 {
 		page = 1
 	}
@@ -138,6 +139,7 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.TotalPage = totalPage
 			_response.CurrentPage = page
+			log.Println(totalDataPerPage)
 			_response.Data = "Null"
 			_Response.ResponseJson(w, _response.Status, _response)
 		}

@@ -44,7 +44,8 @@ func (model ModelsPermission_init) ModelPermissionToDriveSearch(Keyword string) 
 	basic_information.employee_code, basic_information.first_name, basic_information.last_name
 	FROM general_information INNER JOIN store_information ON general_information.id_store_code = store_information.id_code_store 
 	INNER JOIN commuting_basic_information ON commuting_basic_information.id_general_information = general_information.id_general_information 
-	INNER JOIN basic_information ON basic_information.id_basic_information = general_information.id_basic_information WHERE CONCAT_WS('', basic_information.employee_code, basic_information.first_name, basic_information.last_name) LIKE ?`, `%` + Keyword + `%`)
+	INNER JOIN basic_information ON basic_information.id_basic_information = general_information.id_basic_information WHERE CONCAT_WS('',store_information.code_store, basic_information.employee_code, basic_information.first_name, basic_information.last_name,  commuting_basic_information.driver_license_expiry_date, commuting_basic_information.car_insurance_document_expiry_date, 
+	commuting_basic_information.insurance_company, commuting_basic_information.personal_injury, commuting_basic_information.property_damage, commuting_basic_information.status_approve) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		panic(err.Error())
 	}

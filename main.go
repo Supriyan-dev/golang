@@ -62,6 +62,7 @@ func main() {
 	router.HandleFunc("/storeinformation/filter", controllerDataMaster.ReturnAllFilterInformation)
 	router.HandleFunc("/storeinformation/{page}/{perPage}", controllerDataMaster.ReturnAllStoreInformationPagination)
 	router.HandleFunc("/storeinformation/get", controllerDataMaster.GetStoreInformation)
+	router.HandleFunc("/storeinformation/search", controllerDataMaster.SearchDataStoreInformation)
 	router.HandleFunc("/storeinformation/create", controllerDataMaster.CreateStoreInformation)
 	router.HandleFunc("/storeinformation/update", controllerDataMaster.UpdateStoreInformation)
 	router.HandleFunc("/storeinformation/{id_code_store}", controllerDataMaster.DeleteStoreInformation)
@@ -71,6 +72,7 @@ func main() {
 	router.HandleFunc("/departement-information", controllerDataMaster.ReturnAllDepartementInformation)
 	router.HandleFunc("/departement-information/{page}/{perPage}", controllerDataMaster.ReturnAllDepartementInformationPagination)
 	router.HandleFunc("/departement-information/get", controllerDataMaster.GetDepartementInformation)
+	router.HandleFunc("/departement-information/search", controllerDataMaster.SearchDataDepartmentInformation)
 	router.HandleFunc("/departement-information/create", controllerDataMaster.CreateDepartementInformation)
 	router.HandleFunc("/departement-information/update", controllerDataMaster.UpdateDepartementInformation)
 	router.HandleFunc("/departement-information/{id_department}", controllerDataMaster.DeleteDepartementInformation)
@@ -80,6 +82,7 @@ func main() {
 	router.HandleFunc("/store-section-information", controllerDataMaster.ReturnAllStroreSectionInformation)
 	router.HandleFunc("/store-section-information/{page}/{perPage}", controllerDataMaster.ReturnAllStroreSectionInformationPagination)
 	router.HandleFunc("/store-section-information/get", controllerDataMaster.GetStoreSectionInformation)
+	router.HandleFunc("/store-section-information/search", controllerDataMaster.SearchDataStoreSectionInformation)
 	router.HandleFunc("/store-section-information/create", controllerDataMaster.CreateStoreSectionInformation)
 	router.HandleFunc("/store-section-information/update", controllerDataMaster.UpdateStoreSectionInformation)
 	router.HandleFunc("/store-section-information/{id_store_section}", controllerDataMaster.DeleteStoreSectionInformation)
@@ -89,6 +92,7 @@ func main() {
 	router.HandleFunc("/unit-information", controllerDataMaster.ReturnAllUnitInformation)
 	router.HandleFunc("/unit-information/{page}/{perPage}", controllerDataMaster.ReturnAllUnitInformationPagination)
 	router.HandleFunc("/unit-information/get", controllerDataMaster.GetUnitInformation)
+	router.HandleFunc("/unit-information/search", controllerDataMaster.SearchDataUnitInformation)
 	router.HandleFunc("/unit-information/create", controllerDataMaster.CreateUnitInformation)
 	router.HandleFunc("/unit-information/update", controllerDataMaster.UpdateUnitInformation)
 	router.HandleFunc("/unit-information/{id_unit}", controllerDataMaster.DeleteUnitInformation)
@@ -98,6 +102,7 @@ func main() {
 	router.HandleFunc("/prefecture", controllerDataMaster.ReturnAllPrefect)
 	router.HandleFunc("/prefecture/{page}/{perPage}", controllerDataMaster.ReturnAllPrefectPagination)
 	router.HandleFunc("/prefecture/get", controllerDataMaster.GetPrefect)
+	router.HandleFunc("/prefecture/search", controllerDataMaster.SearchDataPrefecture)
 	router.HandleFunc("/prefecture/create", controllerDataMaster.CreatePrefect)
 	router.HandleFunc("/prefecture/update", controllerDataMaster.UpdatePrefect)
 	router.HandleFunc("/prefecture/{id_prefecture}", controllerDataMaster.DeletePrefect)
@@ -107,18 +112,17 @@ func main() {
 	router.HandleFunc("/bank", controllerDataMaster.ReturnAllBank)
 	router.HandleFunc("/bank/{page}/{perPage}", controllerDataMaster.ReturnAllBankPagination)
 	router.HandleFunc("/bank/get", controllerDataMaster.GetBank)
+	router.HandleFunc("/bank/search", controllerDataMaster.SearchDataBank)
 	router.HandleFunc("/bank/create", controllerDataMaster.CreateBank)
 	router.HandleFunc("/bank/update", controllerDataMaster.UpdateBank)
 	router.HandleFunc("/bank/{id_bank}", controllerDataMaster.DeleteBank)
-
-	// start crud exp category
-
 	// end crud bank
 
 	// start crud full time salary
 	router.HandleFunc("/full-time-salary", controllerDataMaster.ReturnAllFullTimeSalary)
 	router.HandleFunc("/full-time-salary/{page}/{perPage}", controllerDataMaster.ReturnAllFullTimeSalaryPagination)
 	router.HandleFunc("/full-time-salary/get", controllerDataMaster.GetFullTimeSalary)
+	router.HandleFunc("/full-time-salary/search", controllerDataMaster.GetFullTimeSalary)
 	router.HandleFunc("/full-time-salary/create", controllerDataMaster.CreateFullTimeSalary)
 	router.HandleFunc("/full-time-salary/update", controllerDataMaster.UpdateFullTimeSalary)
 	router.HandleFunc("/full-time-salary/{id_full_time_salary}", controllerDataMaster.DeleteFullTimeSalary)

@@ -56,6 +56,26 @@ func (model1 ModelAbove_init) GetDataAbove(Id_part_time_above_18_salary string) 
 	return arrGet, nil
 }
 
+func (model1 ModelAbove_init) SearchPartTimeAbove18SalaryModel(Keyword string) (arrJoin []initialize.PartTimeAbove18Salary, err error) {
+	var get initialize.PartTimeAbove18Salary
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&get.Id_part_time_above_18_salary, &get.Id_code_store, &get.Day_salary, &get.Night_salary, &get.Morning_salary, &get.Peek_time_salary); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, get)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 ModelAbove_init) InsertDataPartTimeAbove(insert *initialize.PartTimeAbove18Salary) (arrInsert []initialize.PartTimeAbove18Salary, err error) {
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO part_time_above_18_salary (id_code_store, day_salary, night_salary, morning_salary, peek_time_salary) VALUES(?,?,?,?,?)")

@@ -33,6 +33,26 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 	return arrAll, nil
 }
 
+func (model1 ModelUnder_init) SearchPartTimeUnder18SalaryModels(Keyword string) (arrJoin []initialize.PartTimeUnder18Salary, err error) {
+	var all initialize.PartTimeUnder18Salary
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_part_time_under_18_salary, id_code_store, salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&all.Id_part_time_under_18_salary, &all.Id_code_store, &all.Salary); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, all)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 ModelUnder_init) GetAllDataPartTimeUnder(Id_part_time_under_18_salary string) (arrGet []initialize.PartTimeUnder18Salary, err error) {
 	var get initialize.PartTimeUnder18Salary
 	db := db.Connect()

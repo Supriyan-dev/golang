@@ -31,6 +31,30 @@ func (model1 ModelUser_init) ReadDataUserLogin(Employee_number, Password string)
 	return all, nil
 }
 
+func (model1 ModelUser_init) SearchUserModels(Keyword string) (arrJoin []initialize.Users, err error) {
+	var all initialize.Users
+	var allNull initialize.NullString
+
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name  WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, all)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 // func (model1 ModelUser_init) ReadDataUserLogin(Employee_number string) (decrypted string, err error) {
 // 	var all initialize.UsersEncrypt
 // 	var allNull initialize.NullString

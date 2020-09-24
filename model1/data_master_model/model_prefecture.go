@@ -30,7 +30,26 @@ func (model1 ModelPref_init) ReturnAllDataPrefecture() (arrAll []initialize.Pref
 	}
 
 	return arrAll, nil
+}
 
+func (model1 ModelPref_init) SearchPrefectureModels(Keyword string) (arrJoin []initialize.Prefect, err error) {
+	var all initialize.Prefect
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_prefecture, ISO, prefecture_name WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&all.Id_prefecture, &all.ISO, &all.Prefecture_name); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, all)
+		}
+	}
+
+	return arrJoin, nil
 }
 
 func (model1 ModelPref_init) GetDataPrefecture(Id_prefecture string) (arrGet []initialize.Prefect, err error) {

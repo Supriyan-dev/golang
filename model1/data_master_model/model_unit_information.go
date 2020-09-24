@@ -33,6 +33,26 @@ func (model1 ModelUnit_init) ReturnAllDataUnitInformation() (arrAll []initialize
 	return arrAll, nil
 }
 
+func (model1 ModelUnit_init) SearchUnitInformationModels(Keyword string) (arrJoin []initialize.UnitInformation, err error) {
+	var all initialize.UnitInformation
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_unit, unit_code, unit_name WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&all.Id_unit, &all.Unit_code, &all.Unit_name); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, all)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 ModelUnit_init) GetDataUnitInformation(Id_unit string) (arrGet []initialize.UnitInformation, err error) {
 	var get initialize.UnitInformation
 

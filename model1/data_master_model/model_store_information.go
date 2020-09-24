@@ -31,6 +31,26 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 	return arrStoreInformation, nil
 }
 
+func (model1 Models_init) SearchStoreInformationModels(Keyword string) (arrJoin []initialize.StoreInformation, err error) {
+	var storeInformation initialize.StoreInformation
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_code_store, code_store, store_name, latitude, longitude WHERE CONCAT_WS('', code_store, store_name, latitude, longitude) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, storeInformation)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string) (arrEmp []initialize.Filter, err error) {
 	var emp initialize.Filter
 	db := db.Connect()

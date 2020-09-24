@@ -56,6 +56,26 @@ func (model1 ModelDept_init) GetDataDepartmentInformation(Id_department string) 
 	return arraDept, nil
 }
 
+func (model1 ModelDept_init) SearchDepartmentInformationModels(Keyword string) (arrJoin []initialize.DepartementInformation, err error) {
+	var depart initialize.DepartementInformation
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',department_code, department_name, id_code) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&depart.Id_department, &depart.Department_code, &depart.Department_name, &depart.Id_code_store); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, depart)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 ModelDept_init) InsertDataDepartmentInformation(depart *initialize.DepartementInformation) (arraDept []initialize.DepartementInformation, err error) {
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO department_information (department_code,department_name,id_code_store) VALUES (?,?,?)")

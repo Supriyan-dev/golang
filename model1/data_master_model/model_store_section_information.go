@@ -32,6 +32,26 @@ func (model1 ModelSection_init) ReturnAllStoreSectionInformation() (arrAll []ini
 	return arrAll, nil
 }
 
+func (model1 ModelSection_init) SearchStoreSectionInformationModels(Keyword string) (arrJoin []initialize.StoreSectionInformation, err error) {
+	var all initialize.StoreSectionInformation
+	db := db.Connect()
+	result, err := db.Query(`SELECT id_store_section, store_section_code, store_section_name WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?`, `%` + Keyword + `%`)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Println(result)
+	defer db.Close()
+	for result.Next() {
+		if err := result.Scan(&all.Id_store_section, &all.Store_section_code, &all.Store_section_name); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrJoin = append(arrJoin, all)
+		}
+	}
+
+	return arrJoin, nil
+}
+
 func (model1 ModelSection_init) GetDataStoreSectionInformation(Id_store_section string) (arrGet []initialize.StoreSectionInformation, err error) {
 	var get initialize.StoreSectionInformation
 	db := db.Connect()
