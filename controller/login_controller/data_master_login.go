@@ -37,9 +37,7 @@ func DataMasterLogin(w http.ResponseWriter, r *http.Request) {
 	if err1 != nil {
 		log.Println(err1)
 	}
-
 	log.Println(decrypted)
-
 
 	employee_number := data.Employee_number
 	password := data.Password

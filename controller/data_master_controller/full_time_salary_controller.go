@@ -23,7 +23,7 @@ func ReturnAllFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelFull_init{DB: db}
 	ExcuteData, err := _con.ReturnAllFulltime()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -44,7 +44,6 @@ func ReturnAllFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }
 
 func SearchDataFullTimeSalary(w http.ResponseWriter, r *http.Request) {
@@ -58,9 +57,8 @@ func SearchDataFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelFull_init{DB: db}
 	result, err := _con.SearchFullTimeSalaryModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
-
 	if r.Method == "POST" {
 		if result == nil {
 			_response.Status = http.StatusBadRequest
@@ -80,7 +78,6 @@ func SearchDataFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 		_Response.ResponseJson(w, _response.Status, _response)
 	}
 }
-
 
 func ReturnAllFullTimeSalaryPagination(w http.ResponseWriter, r *http.Request) {
 	var salary initialize.FullTimeSalary
@@ -110,7 +107,6 @@ func ReturnAllFullTimeSalaryPagination(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Print(err)
 	}
-
 	for rows.Next() {
 		if err := rows.Scan(&salary.Id_full_time_salary, &salary.Id_code_store, &salary.Salary, &salary.Fish_section_salary); err != nil {
 
@@ -155,7 +151,7 @@ func GetFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelFull_init{DB: db}
 	ExcuteData, err := _con.GetDataFullTime(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -182,7 +178,6 @@ func CreateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-
 	_con := model1.ModelFull_init{DB: db}
 	ExcuteData, _ := _con.InsertDataFullTime(&init_insert)
 
@@ -204,7 +199,6 @@ func CreateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }
 
 func UpdateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
@@ -212,7 +206,6 @@ func UpdateFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	var init_insert initialize.FullTimeSalary
 	json.NewDecoder(r.Body).Decode(&init_insert)
 	db := db.Connect()
-
 	_con := model1.ModelFull_init{DB: db}
 	ExcuteData, _ := _con.UpdateDataFullTime(&init_insert)
 
@@ -243,11 +236,9 @@ func DeleteFullTimeSalary(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_full_time_salary"]
 	stmt, err := db.Exec("DELETE FROM full_time_salary WHERE id_full_time_salary = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
-
 	statment, err := stmt.RowsAffected()
-
 	if r.Method == "DELETE" {
 		if statment != 1 {
 			_response.Status = http.StatusBadRequest

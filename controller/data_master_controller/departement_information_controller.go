@@ -22,7 +22,7 @@ func ReturnAllDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelDept_init{DB: db}
 	ExcuteData, err := _con.ReadDataDepartmentInformation()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -57,7 +57,7 @@ func SearchDataDepartmentInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelDept_init{DB: db}
 	result, err := _con.SearchDepartmentInformationModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -242,7 +242,7 @@ func DeleteDepartementInformation(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_department"]
 	stmt, err := db.Exec("DELETE FROM department_information WHERE id_department = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

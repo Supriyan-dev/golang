@@ -22,7 +22,7 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUser_init{DB: db}
 	ExcuteData, err := _con.ReturnAllDataUser()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -57,7 +57,7 @@ func UserSeacrhData(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUser_init{DB: db}
 	result, err := _con.SearchUserModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -154,7 +154,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUser_init{DB: db}
 	ExcuteData, err := _con.GetDataUser(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -241,7 +241,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_user"]
 	stmt, err := db.Exec("DELETE FROM user WHERE id_user = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

@@ -23,7 +23,7 @@ func ReturnAllStoreInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.Models_init{DB: db}
 	ExcuteData, err := _con.ReturnAllStoreInformationModel()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -58,7 +58,7 @@ func SearchDataStoreInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.Models_init{DB: db}
 	result, err := _con.SearchStoreInformationModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -89,7 +89,7 @@ func ReturnAllFilterInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.Models_init{DB: db}
 	ExcuteData, err := _con.ReturnFilterStoreInformationModel(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -185,7 +185,7 @@ func GetStoreInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.Models_init{DB: db}
 	ExcuteData, err := _con.GetIdStoreInformation(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -274,7 +274,7 @@ func DeleteStoreInformation(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_code_store"]
 	stmt, err := db.Exec("DELETE FROM store_information WHERE id_code_store = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

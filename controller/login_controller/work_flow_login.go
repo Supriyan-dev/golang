@@ -24,15 +24,7 @@ func WorkFlowLogin(w http.ResponseWriter, r *http.Request) {
 	var msg Baris
 	json.NewDecoder(r.Body).Decode(&msg)
 	key := "P@ssw0rdL0g1n"
-	// json := []byte(b)
-	
-	// Unmarshal
-	// var msg Baris
-	//  json.Marshal(b, &msg)
 	hasil := msg.Data
-	
-	// log.Println(hasil)
-	// inputan := r.FormValue("data")
 	decrypted := aes256.Decrypt(hasil, key)
 	log.Println(decrypted)
 	jsonData := []byte(decrypted)
@@ -43,9 +35,6 @@ func WorkFlowLogin(w http.ResponseWriter, r *http.Request) {
 	if err1 != nil {
 		log.Println(err1)
 	}
-
-	// log.Println(decrypted)
-
 
 	employee_number := data.Employee_number
 	password := data.Password

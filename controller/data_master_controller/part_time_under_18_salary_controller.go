@@ -23,7 +23,7 @@ func ReturnAllPartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnder_init{DB: db}
 	ExcuteData, err := _con.ReturnAllDataUnder18()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -58,7 +58,7 @@ func SeacrhDataPartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnder_init{DB: db}
 	result, err := _con.SearchPartTimeUnder18SalaryModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -155,7 +155,7 @@ func GetPartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnder_init{DB: db}
 	ExcuteData, err := _con.GetAllDataPartTimeUnder(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -243,7 +243,7 @@ func DeletePartTimeUnder18Salary(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_part_time_under_18_salary"]
 	stmt, err := db.Exec("DELETE FROM part_time_under_18_salary WHERE id_part_time_under_18_salary = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

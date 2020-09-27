@@ -23,7 +23,7 @@ func ReturnAllUnitInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnit_init{DB: db}
 	ExcuteData, err := _con.ReturnAllDataUnitInformation()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -58,7 +58,7 @@ func SearchDataUnitInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnit_init{DB: db}
 	result, err := _con.SearchUnitInformationModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -155,7 +155,7 @@ func GetUnitInformation(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelUnit_init{DB: db}
 	ExcuteData, err := _con.GetDataUnitInformation(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -243,7 +243,7 @@ func DeleteUnitInformation(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_unit"]
 	stmt, err := db.Exec("DELETE FROM unit_information WHERE id_unit = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

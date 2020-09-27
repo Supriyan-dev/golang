@@ -23,9 +23,8 @@ func ReturnAllPrefect(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelPref_init{DB: db}
 	ExcuteData, err := _con.ReturnAllDataPrefecture()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
-
 
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -59,7 +58,7 @@ func SearchDataPrefecture(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelPref_init{DB: db}
 	result, err := _con.SearchPrefectureModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -157,7 +156,7 @@ func GetPrefect(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelPref_init{DB: db}
 	ExcuteData, err := _con.GetDataPrefecture(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -245,7 +244,7 @@ func DeletePrefect(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_prefecture"]
 	stmt, err := db.Exec("DELETE FROM prefecture WHERE id_prefecture = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

@@ -7,10 +7,8 @@ import (
 	"math"
 	"net/http"
 	"strconv"
-
 	_Response "../../response"
 	"github.com/gorilla/mux"
-
 	"../../db"
 	initialize "../../initialize/permission_to_drive"
 	model1 "../../model1/permission_to_drive"
@@ -22,7 +20,7 @@ func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelsPermission_init{DB: db}
 	result, err := _con.ModelPermissionToDrive()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -57,7 +55,7 @@ func PermissionToDriveSearch(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelsPermission_init{DB: db}
 	result, err := _con.ModelPermissionToDriveSearch(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -134,7 +132,7 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 			_response.CurrentPage = page
 			_response.Data = arrJoin
 			_Response.ResponseJson(w, _response.Status, _response)
-		} else if page > totalPage {
+		} else {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.TotalPage = totalPage

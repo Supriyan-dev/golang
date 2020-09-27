@@ -23,7 +23,7 @@ func ReturnAllExpCategory(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelExp_init{DB: db}
 	ExcuteData, err := _con.ReturnAllExp()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -58,7 +58,7 @@ func SearchDataExpCategory(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelExp_init{DB: db}
 	result, err := _con.SearchExpCategoryModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -156,7 +156,7 @@ func GetExpCategory(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelExp_init{DB: db}
 	ExcuteData, err := _con.GetDataExp(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -244,7 +244,7 @@ func DeleteExpCategory(w http.ResponseWriter, r *http.Request) {
 	delete := params["id_exp"]
 	stmt, err := db.Exec("DELETE FROM exp_category WHERE id_exp = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()

@@ -22,7 +22,7 @@ func ReturnAllBank(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelBank_init{DB: db}
 	ExcuteData, err := _con.ReturnAllDatabank()
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "GET" {
@@ -56,7 +56,7 @@ func SearchDataBank(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelBank_init{DB: db}
 	result, err := _con.SearchDataBankModels(Keyword.Keyword)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
@@ -151,7 +151,7 @@ func GetBank(w http.ResponseWriter, r *http.Request) {
 	_con := model1.ModelBank_init{DB: db}
 	ExcuteData, err := _con.GetDataBank(_id)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	if r.Method == "GET" {
 		if ExcuteData == nil {
@@ -240,7 +240,7 @@ func DeleteBank(w http.ResponseWriter, r *http.Request) {
 
 	stmt, err := db.Exec("DELETE FROM bank WHERE id_bank = ?", delete)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	statment, err := stmt.RowsAffected()
