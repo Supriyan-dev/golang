@@ -24,9 +24,7 @@ func (model1 ModelDept_init) ReadDataDepartmentInformation() (arrRead []initiali
 
 	for rows.Next() {
 		if err := rows.Scan(&read.Id_department, &read.Department_code, &read.Department_name, &read.Id_code_store); err != nil {
-
-			log.Fatal(err.Error())
-
+			log.Println(err.Error())
 		} else {
 			arrRead = append(arrRead, read)
 		}
@@ -41,13 +39,13 @@ func (model1 ModelDept_init) GetDataDepartmentInformation(Id_department string) 
 	db := db.Connect()
 	result, err := db.Query("SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE id_department = ?", Id_department)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 		err := result.Scan(&depart.Id_department, &depart.Department_code, &depart.Department_name, &depart.Id_code_store)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arraDept = append(arraDept, depart)
 		}
@@ -61,13 +59,13 @@ func (model1 ModelDept_init) SearchDepartmentInformationModels(Keyword string) (
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',department_code, department_name, id_code) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&depart.Id_department, &depart.Department_code, &depart.Department_name, &depart.Id_code_store); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, depart)
 		}
@@ -80,13 +78,13 @@ func (model1 ModelDept_init) InsertDataDepartmentInformation(depart *initialize.
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO department_information (department_code,department_name,id_code_store) VALUES (?,?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	_, err = stmt.Exec(depart.Department_code, depart.Department_name, depart.Id_code_store)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.DepartementInformation{
@@ -107,14 +105,14 @@ func (Model1 ModelDept_init) UpdateDataDepartmentInformation(update *initialize.
 
 	stmt, err := db.Prepare("UPDATE department_information SET department_code = ?, department_name = ?, id_code_store = ? WHERE id_department = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	defer db.Close()
 
 	_, err = stmt.Exec(update.Department_code, update.Department_name, update.Id_code_store, update.Id_department)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.DepartementInformation{
@@ -132,12 +130,12 @@ func (model1 ModelDept_init) DeleteDataDepartmentInformation(delete *initialize.
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM department_information WHERE id_department = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	_, err = stmt.Exec(delete.Id_department)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.DepartementInformation{

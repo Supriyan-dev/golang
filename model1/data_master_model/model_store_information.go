@@ -15,7 +15,7 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 	db := db.Connect()
 	rows, err := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information")
 	if err != nil {
-		log.Print(err)
+		log.Print(err.Error())
 	}
 	defer db.Close()
 
@@ -36,7 +36,7 @@ func (model1 Models_init) SearchStoreInformationModels(Keyword string) (arrJoin 
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_code_store, code_store, store_name, latitude, longitude WHERE CONCAT_WS('', code_store, store_name, latitude, longitude) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
@@ -58,7 +58,7 @@ func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string
 	INNER JOIN general_information gi ON si.id_code_store = gi.id_store_code
 	INNER JOIN basic_information bi ON bi.id_basic_information = gi.id_basic_information WHERE id_code_store = ?`, Id_code_store)
 	if err != nil {
-		log.Print(err)
+		log.Print(err.Error())
 	}
 	defer db.Close()
 
@@ -79,13 +79,13 @@ func (model1 Models_init) GetIdStoreInformation(Id_code_store string) (si []init
 	db := db.Connect()
 	result, errExcuteData := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information WHERE id_code_store = ?", Id_code_store)
 	if errExcuteData != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 		errExcuteData := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude)
 		if errExcuteData != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			si = append(si, storeInformation)
 		}
@@ -98,7 +98,7 @@ func (model1 Models_init) InsertStoreInformation(init_insert *initialize.StoreIn
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO store_information (code_store,store_name) VALUES (?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
@@ -120,7 +120,7 @@ func (model1 Models_init) UpdateStoreInformation(Update *initialize.StoreInforma
 
 	stmt, err := db.Prepare("UPDATE store_information SET code_store = ?, store_name = ? WHERE id_code_store = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	result, err := stmt.Exec(Update.Code_store, Update.Store_name, Update.Id_code_store)
@@ -143,12 +143,12 @@ func (model1 Models_init) DeleteDataStoreInformation(Id_code_store string) (arrD
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM store_information WHERE id_code_store = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(Id_code_store)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.StoreInformation{

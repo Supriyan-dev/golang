@@ -24,7 +24,7 @@ func (model1 ModelAbove_init) ReturnAllDataAbove() (arrAll []initialize.PartTime
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_part_time_above_18_salary, &all.Id_code_store, &all.Day_salary, &all.Night_salary, &all.Morning_salary, &all.Peek_time_salary); err != nil {
 
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 
 		} else {
 			arrAll = append(arrAll, all)
@@ -40,14 +40,14 @@ func (model1 ModelAbove_init) GetDataAbove(Id_part_time_above_18_salary string) 
 
 	result, err := db.Query("SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary FROM part_time_above_18_salary WHERE id_part_time_above_18_salary = ?", Id_part_time_above_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_part_time_above_18_salary, &get.Id_code_store, &get.Day_salary, &get.Night_salary, &get.Morning_salary, &get.Peek_time_salary)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -61,13 +61,13 @@ func (model1 ModelAbove_init) SearchPartTimeAbove18SalaryModel(Keyword string) (
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&get.Id_part_time_above_18_salary, &get.Id_code_store, &get.Day_salary, &get.Night_salary, &get.Morning_salary, &get.Peek_time_salary); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, get)
 		}
@@ -80,13 +80,13 @@ func (model1 ModelAbove_init) InsertDataPartTimeAbove(insert *initialize.PartTim
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO part_time_above_18_salary (id_code_store, day_salary, night_salary, morning_salary, peek_time_salary) VALUES(?,?,?,?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(insert.Id_code_store, insert.Day_salary, insert.Night_salary, insert.Morning_salary, insert.Peek_time_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeAbove18Salary{
@@ -108,13 +108,13 @@ func (model1 ModelAbove_init) UpdateDataPartTimeAbove(update *initialize.PartTim
 
 	stmt, err := db.Prepare("UPDATE part_time_above_18_salary SET id_code_store = ?, day_salary = ?, night_salary = ?, morning_salary = ?, peek_time_salary = ? WHERE id_part_time_above_18_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	defer db.Close()
 	stmt.Exec(update.Id_code_store, update.Day_salary, update.Night_salary, update.Morning_salary, update.Peek_time_salary, update.Id_part_time_above_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeAbove18Salary{
@@ -136,12 +136,12 @@ func (model1 ModelAbove_init) DeleteDataPartTimeAbove(delete *initialize.PartTim
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM part_time_above_18_salary WHERE id_part_time_above_18_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_part_time_above_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeAbove18Salary{

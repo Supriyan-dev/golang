@@ -17,14 +17,14 @@ func (model1 ModelUnit_init) ReturnAllDataUnitInformation() (arrAll []initialize
 	rows, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information")
 
 	if err != nil {
-		log.Print(err)
+		log.Print(err.Error())
 	}
 	defer db.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_unit, &all.Unit_code, &all.Unit_name); err != nil {
 
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 
 		} else {
 			arrAll = append(arrAll, all)
@@ -38,13 +38,13 @@ func (model1 ModelUnit_init) SearchUnitInformationModels(Keyword string) (arrJoi
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_unit, unit_code, unit_name WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_unit, &all.Unit_code, &all.Unit_name); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}
@@ -59,14 +59,14 @@ func (model1 ModelUnit_init) GetDataUnitInformation(Id_unit string) (arrGet []in
 	db := db.Connect()
 	result, err := db.Query("SELECT id_unit, unit_code, unit_name FROM unit_information WHERE id_unit = ?", Id_unit)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_unit, &get.Unit_code, &get.Unit_name)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -80,13 +80,13 @@ func (model1 ModelUnit_init) InsertDataUnitInformation(insert *initialize.UnitIn
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO unit_information (unit_code,unit_name) VALUES (?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(insert.Unit_code, insert.Unit_name)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.UnitInformation{
@@ -104,11 +104,11 @@ func (model1 ModelUnit_init) UpdateDataUnitInformation(update *initialize.UnitIn
 
 	stmt, err := db.Prepare("UPDATE unit_information SET unit_code = ?, unit_name = ? WHERE id_unit = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	stmt.Exec(update.Unit_code, update.Unit_name, update.Id_unit)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.UnitInformation{
@@ -126,11 +126,11 @@ func (Model1 ModelUnit_init) DeleteDataUnitInformation(delete *initialize.UnitIn
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM unit_information WHERE id_unit = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	stmt.Exec(delete.Id_unit)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.UnitInformation{

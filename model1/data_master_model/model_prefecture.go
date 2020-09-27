@@ -37,7 +37,7 @@ func (model1 ModelPref_init) SearchPrefectureModels(Keyword string) (arrJoin []i
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_prefecture, ISO, prefecture_name WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
@@ -58,14 +58,14 @@ func (model1 ModelPref_init) GetDataPrefecture(Id_prefecture string) (arrGet []i
 
 	result, err := db.Query("SELECT id_prefecture, ISO, prefecture_name FROM prefecture WHERE id_prefecture = ?", Id_prefecture)
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_prefecture, &get.ISO, &get.Prefecture_name)
 		if err != nil {
-			log.Println(err)
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -78,13 +78,13 @@ func (model1 ModelPref_init) InsertDataPrefecture(insert *initialize.Prefect) (a
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO prefecture (ISO, prefecture_name) VALUES(?,?)")
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(insert.ISO, insert.Prefecture_name)
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.Prefect{
@@ -102,12 +102,12 @@ func (model1 ModelPref_init) UpdateDataprefecture(update *initialize.Prefect) (a
 
 	stmt, err := db.Prepare("UPDATE prefecture SET ISO = ?, prefecture_name = ? WHERE id_prefecture = ?")
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(update.ISO, update.Prefecture_name, update.Id_prefecture)
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.Prefect{
@@ -125,12 +125,12 @@ func (model1 ModelPref_init) DeleteDataPrefecture(delete *initialize.Prefect) (a
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM prefecture WHERE id_prefecture = ?")
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_prefecture)
 	if err != nil {
-		log.Println(err)
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.Prefect{

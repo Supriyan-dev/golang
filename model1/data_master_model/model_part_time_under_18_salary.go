@@ -15,7 +15,6 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 	db := db.Connect()
 
 	rows, err := db.Query("SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary")
-
 	if err != nil {
 		log.Print(err)
 	}
@@ -23,9 +22,7 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_part_time_under_18_salary, &all.Id_code_store, &all.Salary); err != nil {
-
-			log.Fatal(err.Error())
-
+			log.Println(err.Error())
 		} else {
 			arrAll = append(arrAll, all)
 		}
@@ -38,13 +35,13 @@ func (model1 ModelUnder_init) SearchPartTimeUnder18SalaryModels(Keyword string) 
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_part_time_under_18_salary, id_code_store, salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_part_time_under_18_salary, &all.Id_code_store, &all.Salary); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}
@@ -59,14 +56,14 @@ func (model1 ModelUnder_init) GetAllDataPartTimeUnder(Id_part_time_under_18_sala
 
 	result, err := db.Query("SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary WHERE id_part_time_under_18_salary = ?", Id_part_time_under_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_part_time_under_18_salary, &get.Id_code_store, &get.Salary)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -79,13 +76,13 @@ func (model1 ModelUnder_init) InsertDataPartTimeUnder(insert *initialize.PartTim
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO part_time_under_18_salary (id_code_store, salary) VALUES(?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(insert.Id_code_store, insert.Salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeUnder18Salary{
@@ -103,12 +100,12 @@ func (model1 ModelUnder_init) UpdateDataPartTimeUnder(update *initialize.PartTim
 
 	stmt, err := db.Prepare("UPDATE part_time_under_18_salary SET id_code_store = ?, salary = ? WHERE id_part_time_under_18_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(update.Id_code_store, update.Salary, update.Id_part_time_under_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeUnder18Salary{
@@ -127,12 +124,12 @@ func (model1 ModelUnder_init) DeleteDataPartTimeUnder(delete *initialize.PartTim
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM part_time_under_18_salary WHERE id_part_time_under_18_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_part_time_under_18_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.PartTimeUnder18Salary{

@@ -20,7 +20,7 @@ func (model1 ModelUser_init) ReadDataUserLogin(Employee_number, Password string)
 	rows, err := model1.DB.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
 	id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE employee_number = ? && password = ?`, Employee_number, Password)
 	if err != nil {
-		log.Print(err)
+		log.Print(err.Error())
 	}
 	for rows.Next() {
 		errScan := rows.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name)
@@ -40,13 +40,13 @@ func (model1 ModelUser_init) SearchUserModels(Keyword string) (arrJoin []initial
 	id_role, email, recovery_pin, photo_url, photo_name  WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
 	id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}
@@ -106,14 +106,14 @@ func (model1 ModelUser_init) GetDataUser(Id_user string) (arrGet []initialize.Us
 
 	result, err := db.Query("SELECT id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE id_user = ?", Id_user)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_user, &get.First_name, &get.Last_name, &get.Employee_number, &get.Id_code_store, &get.Password, &get.Id_role, &get.Email, &get.Recovery_pin, &get.Photo_url, &get.Photo_name)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -134,13 +134,13 @@ func (model1 ModelUser_init) InsertDataUser(insert *initialize.Users) (arrInsert
 
 	stmt, err := db.Prepare("INSERT INTO user (id_user, first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name) VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(a, insert.First_name, insert.Last_name, insert.Employee_number, insert.Id_code_store, insert.Password, insert.Id_role, insert.Email, insert.Recovery_pin, insert.Photo_url, insert.Photo_name)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(insert.Password)
 	data := []byte(insert.Password)
@@ -171,12 +171,12 @@ func (model1 ModelUser_init) UpdateDataUser(update *initialize.Users) (arrUpdate
 
 	stmt, err := db.Prepare("UPDATE user SET first_name = ?, last_name = ?, employee_number = ?, id_code_store = ?, password = ?, id_role = ?, email = ?, recovery_pin = ?, photo_url = ?, photo_name = ? WHERE id_user = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(update.First_name, update.Last_name, update.Employee_number, update.Id_code_store, update.Password, update.Id_role, update.Email, update.Recovery_pin, update.Photo_url, update.Photo_name, update.Id_user)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.Users{
@@ -203,12 +203,12 @@ func (model1 ModelUser_init) DeleteDataUser(delete *initialize.Users) (arrDelete
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM user WHERE id_user = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_user)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.Users{

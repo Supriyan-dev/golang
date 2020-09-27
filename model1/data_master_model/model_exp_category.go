@@ -22,14 +22,11 @@ func (model1 ModelExp_init) ReturnAllExp() (arrAll []initialize.ExpCategory, err
 
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_exp, &all.Exp_category, &all.Created_date, &all.Created_time, &all.Code_category, &all.Content, &all.Rule_code); err != nil {
-
-			log.Fatal(err.Error())
-
+			log.Println(err.Error())
 		} else {
 			arrAll = append(arrAll, all)
 		}
 	}
-
 	return arrAll, nil
 }
 
@@ -44,7 +41,7 @@ func (model1 ModelExp_init) SearchExpCategoryModels(Keyword string) (arrJoin []i
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_exp, &all.Exp_category, &all.Created_date, &all.Created_time, &all.Code_category, &all.Content, &all.Rule_code); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}

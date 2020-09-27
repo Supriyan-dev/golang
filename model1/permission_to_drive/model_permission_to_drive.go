@@ -20,7 +20,7 @@ func (model ModelsPermission_init) ModelPermissionToDrive() (arrJoin []initializ
 	INNER JOIN basic_information ON basic_information.id_basic_information = general_information.id_basic_information
 	INNER JOIN commuting_basic_information ON commuting_basic_information.id_general_information = general_information.id_general_information`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 	for result.Next() {
@@ -47,7 +47,7 @@ func (model ModelsPermission_init) ModelPermissionToDriveSearch(Keyword string) 
 	INNER JOIN basic_information ON basic_information.id_basic_information = general_information.id_basic_information WHERE CONCAT_WS('',store_information.code_store, basic_information.employee_code, basic_information.first_name, basic_information.last_name,  commuting_basic_information.driver_license_expiry_date, commuting_basic_information.car_insurance_document_expiry_date, 
 	commuting_basic_information.insurance_company, commuting_basic_information.personal_injury, commuting_basic_information.property_damage, commuting_basic_information.status_approve) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
@@ -68,7 +68,7 @@ func (Model1 ModelsPermission_init) UpdateDataPermissionToDrive(update *initiali
 	db := db.Connect()
 	stmt, err := db.Prepare("UPDATE commuting_basic_information SET permitted_to_drive = ?, status_approve = ? WHERE id_commuting_basic_information = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	stmt.Exec(update.Permitted_to_drive, update.Status_approve, update.Id_commuting_basic_information)
 	if err != nil {

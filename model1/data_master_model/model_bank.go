@@ -21,11 +21,9 @@ func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err 
 		log.Print(err)
 	}
 	defer db.Close()
-
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_bank, &all.Bank_code, &all.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special); err != nil {
-
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 
 		} else {
 			arrAll = append(arrAll, all)
@@ -41,13 +39,13 @@ func (model1 ModelBank_init) SearchDataBankModels(Keyword string) (arrJoin []ini
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank" WHERE CONCAT_WS('',bank_code, bank_name, branch_code, branch_name, special) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&join.Id_bank, &join.Bank_code, &join.Bank_name, &join.Branch_code, &join.Branch_name, &join.Special); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, join)
 		}
@@ -63,14 +61,14 @@ func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Ba
 
 	result, err := db.Query("SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE id_bank = ?", Id_bank)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&all.Id_bank, &all.Bank_code, &all.Bank_name, &all.Branch_code, &all.Branch_name, &all.Special)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, all)
 		}
@@ -83,7 +81,7 @@ func (model1 ModelBank_init) InsertDataBank(insert *initialize.Bank) (arrInsert 
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO bank (bank_code, bank_name, branch_code,branch_name,special) VALUES (?,?,?,?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
@@ -110,7 +108,7 @@ func (model1 ModelBank_init) UdpateDatabank(update *initialize.Bank) (arrUpdate 
 
 	stmt, err := db.Prepare("UPDATE bank SET bank_code = ?, bank_name = ?, branch_code = ?, branch_name = ? , special = ? WHERE id_bank = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	result, err := stmt.Exec(update.Bank_code, update.Bank_name, update.Branch_code, update.Branch_name, update.Special, update.Id_bank)
@@ -134,12 +132,12 @@ func (model1 ModelBank_init) DeleteDataBank(delete *initialize.Bank) (arrDelete 
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM bank WHERE id_bank = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_bank)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.Bank{

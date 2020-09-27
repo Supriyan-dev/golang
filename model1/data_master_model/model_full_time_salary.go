@@ -24,7 +24,7 @@ func (model1 ModelFull_init) ReturnAllFulltime() (arrGet []initialize.FullTimeSa
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_full_time_salary, &all.Id_code_store, &all.Salary, &all.Fish_section_salary); err != nil {
 
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 
 		} else {
 			arrGet = append(arrGet, all)
@@ -39,13 +39,13 @@ func (model1 ModelFull_init) SearchFullTimeSalaryModels(Keyword string) (arrJoin
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_full_time_salary, id_code_store, salary, fish_section_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_full_time_salary, &all.Id_code_store, &all.Salary, &all.Fish_section_salary); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}
@@ -60,14 +60,14 @@ func (model1 ModelFull_init) GetDataFullTime(Id_full_time_salary string) (arrGet
 
 	result, err := db.Query("SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE id_full_time_salary = ?", Id_full_time_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_full_time_salary, &get.Id_code_store, &get.Salary, &get.Fish_section_salary)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -80,13 +80,13 @@ func (model1 ModelFull_init) InsertDataFullTime(insert *initialize.FullTimeSalar
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO full_time_salary (id_code_store, salary, fish_section_salary) VALUES(?,?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	stmt.Exec(insert.Id_code_store, insert.Salary, insert.Fish_section_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.FullTimeSalary{
@@ -106,12 +106,12 @@ func (model1 ModelFull_init) UpdateDataFullTime(update *initialize.FullTimeSalar
 
 	stmt, err := db.Prepare("UPDATE full_time_salary SET id_code_store = ?, salary = ?, fish_section_salary = ? WHERE id_full_time_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(update.Id_code_store, update.Salary, update.Fish_section_salary, update.Id_full_time_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.FullTimeSalary{
@@ -131,12 +131,12 @@ func (model1 ModelFull_init) DeleteDataFullTime(delete *initialize.FullTimeSalar
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM full_time_salary WHERE id_full_time_salary = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_full_time_salary)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Excute := initialize.FullTimeSalary{

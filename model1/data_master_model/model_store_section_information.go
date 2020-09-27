@@ -15,15 +15,14 @@ func (model1 ModelSection_init) ReturnAllStoreSectionInformation() (arrAll []ini
 	db := db.Connect()
 
 	rows, err := db.Query("SELECT id_store_section, store_section_code, store_section_name FROM store_section_information")
-
 	if err != nil {
-		log.Print(err)
+		log.Println(err.Error())
 	}
 	defer db.Close()
 
 	for rows.Next() {
 		if err := rows.Scan(&all.Id_store_section, &all.Store_section_code, &all.Store_section_name); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrAll = append(arrAll, all)
 		}
@@ -37,13 +36,13 @@ func (model1 ModelSection_init) SearchStoreSectionInformationModels(Keyword stri
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_store_section, store_section_code, store_section_name WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
 		if err := result.Scan(&all.Id_store_section, &all.Store_section_code, &all.Store_section_name); err != nil {
-			log.Fatal(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrJoin = append(arrJoin, all)
 		}
@@ -58,14 +57,14 @@ func (model1 ModelSection_init) GetDataStoreSectionInformation(Id_store_section 
 
 	result, err := db.Query("SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE id_store_section = ?", Id_store_section)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
 
 		err := result.Scan(&get.Id_store_section, &get.Store_section_code, &get.Store_section_name)
 		if err != nil {
-			panic(err.Error())
+			log.Println(err.Error())
 		} else {
 			arrGet = append(arrGet, get)
 		}
@@ -78,12 +77,12 @@ func (model1 ModelSection_init) InsertDataStoreSectionInformation(insert *initia
 	db := db.Connect()
 	stmt, err := db.Prepare("INSERT INTO store_section_information (store_section_code,store_section_name) VALUES (?,?)")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	defer db.Close()
 	stmt.Exec(insert.Store_section_code, insert.Store_section_name)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.StoreSectionInformation{
@@ -102,12 +101,12 @@ func (model1 ModelSection_init) UpdateDataStoreSectionInformation(update *initia
 
 	stmt, err := db.Prepare("UPDATE store_section_information SET store_section_code = ?, store_section_name = ? WHERE id_store_section = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(update.Store_section_code, update.Store_section_name, update.Id_store_section)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.StoreSectionInformation{
@@ -126,12 +125,12 @@ func (model1 ModelSection_init) DeleteDataStoreSectionInformation(delete *initia
 	db := db.Connect()
 	stmt, err := db.Prepare("DELETE FROM store_section_information WHERE id_store_section = ?")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	stmt.Exec(delete.Id_store_section)
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 
 	Execute := initialize.StoreSectionInformation{
