@@ -64,7 +64,7 @@ func (model ModelsPermission_init) ModelPermissionToDriveSearch(Keyword string) 
 	return arrJoin, nil
 }
 
-func (Model1 ModelsPermission_init) UpdateDataPermissionToDrive(update *initialize.UpdatePermissionToDrive) (arrUpdate []initialize.UpdatePermissionToDrive, err error) {
+func (Model1 ModelsPermission_init)UpdateDataPermissionToDrive(update *initialize.UpdatePermissionToDrive) (arrUpdate []initialize.UpdatePermissionToDrive, err error) {
 	db := db.Connect()
 	stmt, err := db.Prepare("UPDATE commuting_basic_information SET permitted_to_drive = ?, status_approve = ? WHERE id_commuting_basic_information = ?")
 	if err != nil {

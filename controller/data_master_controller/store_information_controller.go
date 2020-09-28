@@ -179,7 +179,6 @@ func ReturnAllStoreInformationPagination(w http.ResponseWriter, r *http.Request)
 func GetStoreInformation(w http.ResponseWriter, r *http.Request) {
 	var _response initialize.Response
 	db := db.Connect()
-
 	_id := r.URL.Query().Get("id_code_store")
 
 	_con := model1.Models_init{DB: db}

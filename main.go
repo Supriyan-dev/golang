@@ -29,12 +29,9 @@ func main() {
 	// router.HandleFunc("/login", login.CheckLogin).Methods("POST")
 	// end login user
 
-	// start profile data user encrypt
-	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
-	router.HandleFunc("/generate_hash_data_master/{password}", login.GenerateHashPasswordDataMaster).Methods("GET")
-	router.HandleFunc("/read_work_flow", login.CheckLogin(loginController.WorkFlowLogin))
-	router.HandleFunc("/read_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
-	// end profile data user encrypt
+	// login WorkFlow
+	router.HandleFunc("/login_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
+	// end End Login WorkFlow
 
 	// start forgot password
 	router.HandleFunc("/forgot-passwordWithEmail", ForgotPassword.ReturnForgotPasswordWithEmail)
@@ -45,8 +42,6 @@ func main() {
 	// start data status approve general information status approve
 	router.HandleFunc("/general_recrutment/create", generalRecrutment.DataGeneralRecrutment)
 	// end data status approve  general information status approve
-
-	router.HandleFunc("/generate_hash_work_flow/{password}", login.GenerateHashPasswordWorkFlow).Methods("GET")
 
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive)

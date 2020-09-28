@@ -79,27 +79,35 @@ func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Ba
 
 func (model1 ModelBank_init) InsertDataBank(insert *initialize.Bank) (arrInsert []initialize.Bank, err error) {
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO bank (bank_code, bank_name, branch_code,branch_name,special) VALUES (?,?,?,?,?)")
+	var id_bank int
+	Id := db.QueryRow("SELECT MAX(id_bank)+1 FROM bank LIMIT 1").Scan(&id_bank)
+	if Id != nil {
+		log.Println(err.Error())
+	}
+	log.Println(id_bank)
+	stmt, err := db.Prepare("INSERT INTO bank (id_bank, bank_code, bank_name, branch_code,branch_name,special) VALUES (?,?,?,?,?,?)")
 	if err != nil {
 		log.Println(err.Error())
 	}
 	defer db.Close()
 
-	result, err := stmt.Exec(insert.Bank_code, insert.Bank_name, insert.Branch_code, insert.Branch_name, insert.Special)
+	result, err := stmt.Exec(id_bank, insert.Bank_code, insert.Bank_name, insert.Branch_code, insert.Branch_name, insert.Special)
+	if err != nil {
+		log.Println(err.Error())
+	}
 	log.Println(result)
-
 	Execute := initialize.Bank{
+		Id_bank:	 id_bank,
 		Bank_code:   insert.Bank_code,
 		Bank_name:   insert.Bank_name,
 		Branch_code: insert.Branch_code,
 		Branch_name: insert.Branch_name,
 		Special:     insert.Special,
 	}
-
+	log.Println(Execute)
 	arrInsert = append(arrInsert, Execute)
 
 	return arrInsert, nil
-
 }
 
 func (model1 ModelBank_init) UdpateDatabank(update *initialize.Bank) (arrUpdate []initialize.Bank, err error) {

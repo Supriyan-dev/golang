@@ -20,7 +20,7 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 	defer db.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude); err != nil {
+		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
 			log.Fatal(err.Error())
 
 		} else {
@@ -34,14 +34,14 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 func (model1 Models_init) SearchStoreInformationModels(Keyword string) (arrJoin []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_code_store, code_store, store_name, latitude, longitude WHERE CONCAT_WS('', code_store, store_name, latitude, longitude) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_code_store, code_store, store_name WHERE CONCAT_WS('', code_store, store_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}
 	log.Println(result)
 	defer db.Close()
 	for result.Next() {
-		if err := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude); err != nil {
+		if err := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
 			log.Fatal(err.Error())
 		} else {
 			arrJoin = append(arrJoin, storeInformation)
@@ -77,13 +77,13 @@ func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string
 func (model1 Models_init) GetIdStoreInformation(Id_code_store string) (si []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	result, errExcuteData := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information WHERE id_code_store = ?", Id_code_store)
+	result, errExcuteData := db.Query("SELECT id_code_store, code_store, store_name FROM store_information WHERE id_code_store = ?", Id_code_store)
 	if errExcuteData != nil {
 		log.Println(err.Error())
 	}
 	defer result.Close()
 	for result.Next() {
-		errExcuteData := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name, &storeInformation.Latitude, &storeInformation.Longitude)
+		errExcuteData := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name)
 		if errExcuteData != nil {
 			log.Println(err.Error())
 		} else {
@@ -96,16 +96,18 @@ func (model1 Models_init) GetIdStoreInformation(Id_code_store string) (si []init
 
 func (model1 Models_init) InsertStoreInformation(init_insert *initialize.StoreInformation) (st []initialize.StoreInformation, condition string) {
 	db := db.Connect()
-	stmt, err := db.Prepare("INSERT INTO store_information (code_store,store_name) VALUES (?,?)")
+	stmt, err := db.Prepare("INSERT INTO store_information (code_store,store_name,latitude,longitude) VALUES (?,?,?,?)")
 	if err != nil {
 		log.Println(err.Error())
 	}
 	defer db.Close()
 
-	result, err := stmt.Exec(init_insert.Code_store, init_insert.Store_name)
+	result, err := stmt.Exec(init_insert.Code_store, init_insert.Store_name, init_insert.Latitude, init_insert.Longitude)
 	log.Println(result)
 
 	storeInsert := initialize.StoreInformation{
+		Latitude: init_insert.Latitude,
+		Longitude: init_insert.Longitude,
 		Code_store: init_insert.Code_store,
 		Store_name: init_insert.Store_name,
 	}

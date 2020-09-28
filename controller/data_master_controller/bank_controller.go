@@ -181,7 +181,6 @@ func CreateBank(w http.ResponseWriter, r *http.Request) {
 
 	_con := model1.ModelBank_init{DB: db}
 	ExcuteData, _ := _con.InsertDataBank(&init_insert)
-
 	if r.Method == "POST" {
 		if ExcuteData == nil {
 			_response.Status = http.StatusBadRequest
@@ -200,7 +199,6 @@ func CreateBank(w http.ResponseWriter, r *http.Request) {
 		_response.Data = "Null"
 		response.ResponseJson(w, _response.Status, _response)
 	}
-
 }
 
 func UpdateBank(w http.ResponseWriter, r *http.Request) {

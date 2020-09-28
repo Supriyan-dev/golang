@@ -39,17 +39,9 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		var msg Baris
 		json.NewDecoder(r.Body).Decode(&msg)
 		key := "P@ssw0rdL0g1n"
-		// json := []byte(b)
-		
-		// Unmarshal
-		// var msg Baris
-		//  json.Marshal(b, &msg)
 		hasil := msg.Data
 		
-		// log.Println(hasil)
-		// inputan := r.FormValue("data")
 		decrypted := aes256.Decrypt(hasil, key)
-		// log.Println(decrypted)
 		jsonData := []byte(decrypted)
 
 		var data Login
@@ -58,19 +50,9 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		if err1 != nil {
 			log.Println(err1)
 		}
-
-		// log.Println(decrypted)
-
-
 		employee_number := data.Employee_number
 		password := data.Password
-
-		// log.Println(employee_number,password)
-
 		res, err := model1.CheckLoginUser(employee_number, password)
-
-		// log.Println(res)
-
 		if err != nil {
 			log.Println(http.StatusInternalServerError, map[string]string{
 				"messages": err.Error(),
@@ -84,11 +66,7 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if res {
-
 		employee_number := data.Employee_number
-		// password := data.Password
-		// log.Println(employee_number,password)
-
 			db := db.Connect()
 			_con := model1.ModelLogin_init{DB: db}
 			res, err := _con.ReadDataUserLogin(employee_number)
