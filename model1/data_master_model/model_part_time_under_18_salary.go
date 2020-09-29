@@ -33,7 +33,7 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 func (model1 ModelUnder_init) SearchPartTimeUnder18SalaryModels(Keyword string) (arrJoin []initialize.PartTimeUnder18Salary, err error) {
 	var all initialize.PartTimeUnder18Salary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_part_time_under_18_salary, id_code_store, salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

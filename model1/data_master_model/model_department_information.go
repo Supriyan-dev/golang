@@ -57,7 +57,7 @@ func (model1 ModelDept_init) GetDataDepartmentInformation(Id_department string) 
 func (model1 ModelDept_init) SearchDepartmentInformationModels(Keyword string) (arrJoin []initialize.DepartementInformation, err error) {
 	var depart initialize.DepartementInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',department_code, department_name, id_code) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',department_code, department_name, id_code_store) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

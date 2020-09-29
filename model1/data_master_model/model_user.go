@@ -37,7 +37,7 @@ func (model1 ModelUser_init) SearchUserModels(Keyword string) (arrJoin []initial
 
 	db := db.Connect()
 	result, err := db.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
-	id_role, email, recovery_pin, photo_url, photo_name  WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
 	id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())

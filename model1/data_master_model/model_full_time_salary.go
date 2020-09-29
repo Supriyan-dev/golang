@@ -37,7 +37,7 @@ func (model1 ModelFull_init) ReturnAllFulltime() (arrGet []initialize.FullTimeSa
 func (model1 ModelFull_init) SearchFullTimeSalaryModels(Keyword string) (arrJoin []initialize.FullTimeSalary, err error) {
 	var all initialize.FullTimeSalary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_full_time_salary, id_code_store, salary, fish_section_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

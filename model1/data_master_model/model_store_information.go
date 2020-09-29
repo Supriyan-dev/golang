@@ -34,7 +34,7 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 func (model1 Models_init) SearchStoreInformationModels(Keyword string) (arrJoin []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_code_store, code_store, store_name WHERE CONCAT_WS('', code_store, store_name) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_code_store, code_store, store_name FROM store_information WHERE CONCAT_WS('', code_store, store_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

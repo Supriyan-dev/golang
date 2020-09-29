@@ -37,7 +37,7 @@ func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err 
 func (model1 ModelBank_init) SearchDataBankModels(Keyword string) (arrJoin []initialize.Bank, err error) {
 	var join initialize.Bank
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank" WHERE CONCAT_WS('',bank_code, bank_name, branch_code, branch_name, special) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE CONCAT_WS('',bank_code, bank_name, branch_code, branch_name, special) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

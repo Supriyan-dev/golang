@@ -60,12 +60,11 @@ func SearchDataStoreInformation(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err.Error())
 	}
-
 	if r.Method == "POST" {
 		if result == nil {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.Data = "Null"
+			_response.Data = []string{}
 			_Response.ResponseJson(w, _response.Status, _response)
 		} else {
 			_response.Status = http.StatusOK
@@ -76,7 +75,7 @@ func SearchDataStoreInformation(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
-		_response.Data = "Null"
+		_response.Data = []string{}
 		_Response.ResponseJson(w, _response.Status, _response)
 	}
 }

@@ -59,7 +59,7 @@ func (model1 ModelAbove_init) GetDataAbove(Id_part_time_above_18_salary string) 
 func (model1 ModelAbove_init) SearchPartTimeAbove18SalaryModel(Keyword string) (arrJoin []initialize.PartTimeAbove18Salary, err error) {
 	var get initialize.PartTimeAbove18Salary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary FROM part_time_above_18_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

@@ -33,7 +33,7 @@ func (model1 ModelExp_init) ReturnAllExp() (arrAll []initialize.ExpCategory, err
 func (model1 ModelExp_init) SearchExpCategoryModels(Keyword string) (arrJoin []initialize.ExpCategory, err error) {
 	var all initialize.ExpCategory
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code  WHERE CONCAT_WS('',exp_category, created_date, created_time, code_category, content, rule_code ) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code FROM exp_category WHERE CONCAT_WS('',exp_category, created_date, created_time, code_category, content, rule_code ) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		panic(err.Error())
 	}

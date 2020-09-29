@@ -34,7 +34,7 @@ func (model1 ModelSection_init) ReturnAllStoreSectionInformation() (arrAll []ini
 func (model1 ModelSection_init) SearchStoreSectionInformationModels(Keyword string) (arrJoin []initialize.StoreSectionInformation, err error) {
 	var all initialize.StoreSectionInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_store_section, store_section_code, store_section_name WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

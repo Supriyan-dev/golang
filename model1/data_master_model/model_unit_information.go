@@ -36,7 +36,7 @@ func (model1 ModelUnit_init) ReturnAllDataUnitInformation() (arrAll []initialize
 func (model1 ModelUnit_init) SearchUnitInformationModels(Keyword string) (arrJoin []initialize.UnitInformation, err error) {
 	var all initialize.UnitInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_unit, unit_code, unit_name WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_unit, unit_code, unit_name FROM unit_information WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}

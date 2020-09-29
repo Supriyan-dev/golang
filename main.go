@@ -25,10 +25,6 @@ import (
 func main() {
 
 	router := mux.NewRouter()
-	// start login user
-	// router.HandleFunc("/login", login.CheckLogin).Methods("POST")
-	// end login user
-
 	// login WorkFlow
 	router.HandleFunc("/login_data_master", login.CheckLoginDataMaster(loginController.DataMasterLogin))
 	// end End Login WorkFlow
@@ -116,7 +112,7 @@ func main() {
 	router.HandleFunc("/full-time-salary", controllerDataMaster.ReturnAllFullTimeSalary)
 	router.HandleFunc("/full-time-salary/{page}/{perPage}", controllerDataMaster.ReturnAllFullTimeSalaryPagination)
 	router.HandleFunc("/full-time-salary/get", controllerDataMaster.GetFullTimeSalary)
-	router.HandleFunc("/full-time-salary/search", controllerDataMaster.GetFullTimeSalary)
+	router.HandleFunc("/full-time-salary/search", controllerDataMaster.SearchDataFullTimeSalary)
 	router.HandleFunc("/full-time-salary/create", controllerDataMaster.CreateFullTimeSalary)
 	router.HandleFunc("/full-time-salary/update", controllerDataMaster.UpdateFullTimeSalary)
 	router.HandleFunc("/full-time-salary/{id_full_time_salary}", controllerDataMaster.DeleteFullTimeSalary)
@@ -126,6 +122,7 @@ func main() {
 	router.HandleFunc("/part-time-above-18-salary", controllerDataMaster.ReturnAllPartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeAbove18SalaryPagination)
 	router.HandleFunc("/part-time-above-18-salary/get", controllerDataMaster.GetPartTimeAbove18Salary)
+	router.HandleFunc("/part-time-above-18-salary/search", controllerDataMaster.SearchDatapartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/create", controllerDataMaster.CreatePartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/update", controllerDataMaster.UpdatePartTimeAbove18Salary)
 	router.HandleFunc("/part-time-above-18-salary/{id_part_time_above_18_salary}", controllerDataMaster.DeletePartTimeAbove18Salary)
@@ -135,6 +132,7 @@ func main() {
 	router.HandleFunc("/part-time-under-18-salary", controllerDataMaster.ReturnAllPartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/{page}/{perPage}", controllerDataMaster.ReturnAllPartTimeUnder18SalaryPagination)
 	router.HandleFunc("/part-time-under-18-salary/get", controllerDataMaster.GetPartTimeUnder18Salary)
+	router.HandleFunc("/part-time-under-18-salary/search", controllerDataMaster.SeacrhDataPartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/create", controllerDataMaster.CreatePartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/update", controllerDataMaster.UpdatePartTimeUnder18Salary)
 	router.HandleFunc("/part-time-under-18-salary/{id_part_time_under_18_salary}", controllerDataMaster.DeletePartTimeUnder18Salary)
@@ -144,6 +142,7 @@ func main() {
 	router.HandleFunc("/user", controllerDataMaster.ReturnAllUser)
 	router.HandleFunc("/user/{page}/{perPage}", controllerDataMaster.ReturnAllUserPagination)
 	router.HandleFunc("/user/get", controllerDataMaster.GetUser)
+	router.HandleFunc("/user/search", controllerDataMaster.UserSeacrhData)
 	router.HandleFunc("/user/create", controllerDataMaster.CreateUser)
 	router.HandleFunc("/user/update", controllerDataMaster.UpdateUser)
 	router.HandleFunc("/user/{id_user}", controllerDataMaster.DeleteUser)
@@ -154,6 +153,7 @@ func main() {
 	router.HandleFunc("/exp-category", controllerDataMaster.ReturnAllExpCategory)
 	router.HandleFunc("/exp-category/{page}/{perPage}", controllerDataMaster.ReturnAllExpCategoryPagination)
 	router.HandleFunc("/exp-category/get", controllerDataMaster.GetExpCategory)
+	router.HandleFunc("/exp-category/search", controllerDataMaster.SearchDataExpCategory)
 	router.HandleFunc("/exp-category/create", controllerDataMaster.CreateExpCategory)
 	router.HandleFunc("/exp-category/update", controllerDataMaster.UpdateExpCategory)
 	router.HandleFunc("/exp-category/{id_exp}", controllerDataMaster.DeleteExpCategory)

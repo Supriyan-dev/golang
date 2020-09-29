@@ -35,7 +35,7 @@ func (model1 ModelPref_init) ReturnAllDataPrefecture() (arrAll []initialize.Pref
 func (model1 ModelPref_init) SearchPrefectureModels(Keyword string) (arrJoin []initialize.Prefect, err error) {
 	var all initialize.Prefect
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_prefecture, ISO, prefecture_name WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?`, `%` + Keyword + `%`)
+	result, err := db.Query(`SELECT id_prefecture, ISO, prefecture_name FROM prefecture WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?`, `%` + Keyword + `%`)
 	if err != nil {
 		log.Println(err.Error())
 	}
