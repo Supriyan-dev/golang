@@ -1,38 +1,33 @@
 package login
 
 import (
-	"database/sql"
-	"fmt"
-"log"
+	"log"
 	"../../db"
-	"../../helpers"
 	"../../initialize"
 	"../../models"
+	"crypto/md5"
+	"encoding/hex"
 )
 
 type ModelLogin_init models.DB_init
 
 func CheckLoginUser(employee_number, password string) (bool, error) {
-	var login initialize.Users
-	var pwd string	
-
+	var login initialize.Login
+	var pwd string
+	hasher := md5.New()
+	hasher.Write([]byte(password))
+	NewPasswordString := hex.EncodeToString(hasher.Sum(nil))
+	log.Println(NewPasswordString)
 	db := db.Connect()
-	sqlStatement := "SELECT id_user, employee_number, password FROM user WHERE employee_number = ?"
-	err := db.QueryRow(sqlStatement, employee_number).Scan(
+	sqlStatement := "SELECT id_user, employee_number, password FROM user WHERE employee_number = ? and password = ?"
+
+	err := db.QueryRow(sqlStatement, employee_number,NewPasswordString).Scan(
 		&login.Id_user, &login.Employee_number, &pwd,
 	)
-	if err == sql.ErrNoRows {
-		fmt.Println("employee_number not found")
-		return false, err
-	}
-	if err != nil {
-		fmt.Println("Query Error")
-		return false, err
-	}
-	match, err := helpers.CheckPasswordHash(password, pwd)
-	if !match {
-		fmt.Println("hash and password doesn't match")
-		return false, err
+	var datacheck int
+	db.QueryRow(`SELECT count(*) FROM user WHERE employee_number = ? and password = ?`,employee_number,NewPasswordString).Scan(&datacheck)
+	if datacheck <1 {
+		return  false , err
 	}
 	return true, nil
 }

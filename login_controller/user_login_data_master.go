@@ -38,48 +38,41 @@ func CheckLoginDataMaster(handler http.HandlerFunc) http.HandlerFunc {
 		}
 		var msg Baris
 		json.NewDecoder(r.Body).Decode(&msg)
+		log.Println(msg)
 		key := "P@ssw0rdL0g1n"
 		hasil := msg.Data
-		
 		decrypted := aes256.Decrypt(hasil, key)
+		log.Println(decrypted)
 		jsonData := []byte(decrypted)
-
 		var data Login
-
 		err1 := json.Unmarshal(jsonData, &data)
 		if err1 != nil {
 			log.Println(err1)
 		}
 		employee_number := data.Employee_number
 		password := data.Password
-		res, err := model1.CheckLoginUser(employee_number, password)
-		if err != nil {
-			log.Println(http.StatusInternalServerError, map[string]string{
-				"messages": err.Error(),
-			})
-		}
-		if !res {
+		log.Println(employee_number)
+		log.Println(password)
+		res, _ := model1.CheckLoginUser(employee_number, password)
+		if res == false {
 			_response.Status = http.StatusBadRequest
 			_response.Message = "Sorry Your Input Missing Body Bad Request"
 			_response.Data = "Null"
 			response.ResponseJson(w, _response.Status, _response)
 		}
-
-		if res {
-		employee_number := data.Employee_number
+		if res  == true{
+			employee_number := data.Employee_number
 			db := db.Connect()
 			_con := model1.ModelLogin_init{DB: db}
 			res, err := _con.ReadDataUserLogin(employee_number)
 			if err != nil {
-				panic(err.Error())
+				log.Println(err.Error())
 			}
 			if r.Method == "POST" {
 				_response.Status = http.StatusOK
 				_response.Message = "Success"
 				_response.Data = res
 				response.ResponseJson(w, _response.Status, _response)
-				// data := []byte(aes256.Encrypt(ExcuteData, key))
-				// w.Write(data)
 			} else {
 				_response.Status = http.StatusMethodNotAllowed
 				_response.Message = "Sorry Your Method Missing Not Allowed"

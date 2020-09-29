@@ -13,7 +13,7 @@ type Models_init models.DB_init
 func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	rows, err := db.Query("SELECT id_code_store, code_store, store_name, latitude, longitude FROM store_information")
+	rows, err := db.Query("SELECT id_code_store, code_store, store_name FROM store_information")
 	if err != nil {
 		log.Print(err.Error())
 	}
