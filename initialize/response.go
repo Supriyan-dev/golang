@@ -17,6 +17,15 @@ type ResponseWithPagination struct {
 	Data        interface{} `json:"data"`
 }
 
+type ResponseSearch struct {
+	Status          int         `json:"status"`
+	Message         string      `json:"message"`
+	TotalPage   int         `json:"totalPage"`
+	TotalData       int         `json:"totalData"`
+	Data            interface{} `json:"data"`
+}
+
+
 type ResponseMaster struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
@@ -28,4 +37,9 @@ type NameTest struct {
 	TypeOfTransport  string `json:"type_of_transport"`
 	AttendanceCode   string `json:"attendance_code"`
 	Purpose          string `json:"purpose"`
+}
+
+type ResponseDataNull struct {
+	Status          int         `json:"status"`
+	Message         string      `json:"message"`
 }

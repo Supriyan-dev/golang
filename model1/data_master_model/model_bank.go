@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -33,26 +33,38 @@ func (model1 ModelBank_init) ReturnAllDatabank() (arrAll []initialize.Bank, err 
 	return arrAll, nil
 }
 
-
-func (model1 ModelBank_init) SearchDataBankModels(Keyword string) (arrJoin []initialize.Bank, err error) {
-	var join initialize.Bank
+func (model1 ModelBank_init) SearchDataBankModels(Keyword string, page int ,limit int) (arrSearch []initialize.Bank, err error, CheckData int) {
+	var Search initialize.Bank
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE CONCAT_WS('',bank_code, bank_name, branch_code, branch_name, special) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM bank WHERE CONCAT_WS('', bank_code, bank_name, branch_code, branch_name, special) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_bank, bank_code, bank_name, branch_code, branch_name, special FROM bank WHERE CONCAT_WS('',bank_code, bank_name, branch_code, branch_name, special) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&join.Id_bank, &join.Bank_code, &join.Bank_name, &join.Branch_code, &join.Branch_name, &join.Special); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_bank, &Search.Bank_code, &Search.Bank_name, &Search.Branch_code, &Search.Branch_name, &Search.Special); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, join)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
+
 
 func (model1 ModelBank_init) GetDataBank(Id_bank string) (arrGet []initialize.Bank, err error) {
 	var all initialize.Bank

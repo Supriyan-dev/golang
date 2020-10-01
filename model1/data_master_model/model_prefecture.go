@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -32,24 +32,36 @@ func (model1 ModelPref_init) ReturnAllDataPrefecture() (arrAll []initialize.Pref
 	return arrAll, nil
 }
 
-func (model1 ModelPref_init) SearchPrefectureModels(Keyword string) (arrJoin []initialize.Prefect, err error) {
-	var all initialize.Prefect
+func (model1 ModelPref_init) SearchPrefectureModels(Keyword string, page int ,limit int) (arrSearch []initialize.Prefect, err error, CheckData int) {
+	var Search initialize.Prefect
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_prefecture, ISO, prefecture_name FROM prefecture WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM prefecture WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_prefecture, ISO, prefecture_name FROM prefecture WHERE CONCAT_WS('', ISO, prefecture_name) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_prefecture, &all.ISO, &all.Prefecture_name); err != nil {
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_prefecture, &Search.ISO, &Search.Prefecture_name); err != nil {
 			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelPref_init) GetDataPrefecture(Id_prefecture string) (arrGet []initialize.Prefect, err error) {

@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -33,24 +33,36 @@ func (model1 ModelUnit_init) ReturnAllDataUnitInformation() (arrAll []initialize
 	return arrAll, nil
 }
 
-func (model1 ModelUnit_init) SearchUnitInformationModels(Keyword string) (arrJoin []initialize.UnitInformation, err error) {
-	var all initialize.UnitInformation
+func (model1 ModelUnit_init) SearchUnitInformationModels(Keyword string, page int ,limit int) (arrSearch []initialize.UnitInformation, err error, CheckData int) {
+	var Search initialize.UnitInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_unit, unit_code, unit_name FROM unit_information WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM unit_information WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_unit, unit_code, unit_name FROM unit_information WHERE CONCAT_WS('', unit_code, unit_name) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_unit, &all.Unit_code, &all.Unit_name); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_unit, &Search.Unit_code, &Search.Unit_name); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelUnit_init) GetDataUnitInformation(Id_unit string) (arrGet []initialize.UnitInformation, err error) {

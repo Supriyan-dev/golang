@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -30,24 +30,36 @@ func (model1 ModelUnder_init) ReturnAllDataUnder18() (arrAll []initialize.PartTi
 	return arrAll, nil
 }
 
-func (model1 ModelUnder_init) SearchPartTimeUnder18SalaryModels(Keyword string) (arrJoin []initialize.PartTimeUnder18Salary, err error) {
-	var all initialize.PartTimeUnder18Salary
+func (model1 ModelUnder_init) SearchPartTimeUnder18SalaryModels(Keyword string, page int ,limit int) (arrSearch []initialize.PartTimeUnder18Salary, err error, CheckData int) {
+	var Search initialize.PartTimeUnder18Salary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM part_time_under_18_salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_part_time_under_18_salary, id_code_store, salary FROM part_time_under_18_salary WHERE CONCAT_WS('', id_code_store, salary) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_part_time_under_18_salary, &all.Id_code_store, &all.Salary); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_part_time_under_18_salary, &Search.Id_code_store, &Search.Salary); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelUnder_init) GetAllDataPartTimeUnder(Id_part_time_under_18_salary string) (arrGet []initialize.PartTimeUnder18Salary, err error) {

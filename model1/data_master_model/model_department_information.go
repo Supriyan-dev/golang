@@ -2,6 +2,7 @@ package model1
 
 import (
 	"log"
+	"strconv"
 
 	"../../db"
 	"../../initialize"
@@ -54,24 +55,36 @@ func (model1 ModelDept_init) GetDataDepartmentInformation(Id_department string) 
 	return arraDept, nil
 }
 
-func (model1 ModelDept_init) SearchDepartmentInformationModels(Keyword string) (arrJoin []initialize.DepartementInformation, err error) {
-	var depart initialize.DepartementInformation
+func (model1 ModelDept_init) SearchDepartmentInformationModels(Keyword string, page int ,limit int) (arrSearch []initialize.DepartementInformation, err error, CheckData int) {
+	var Search initialize.DepartementInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',department_code, department_name, id_code_store) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM department_information WHERE CONCAT_WS('',id_department, department_code, department_name, id_code_store) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_department, department_code, department_name, id_code_store FROM department_information WHERE CONCAT_WS('',id_department, department_code, department_name, id_code_store) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&depart.Id_department, &depart.Department_code, &depart.Department_name, &depart.Id_code_store); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_department, &Search.Department_code, &Search.Department_name, &Search.Id_code_store); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, depart)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelDept_init) InsertDataDepartmentInformation(depart *initialize.DepartementInformation) (arraDept []initialize.DepartementInformation, err error) {

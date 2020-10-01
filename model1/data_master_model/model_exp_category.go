@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -30,24 +30,36 @@ func (model1 ModelExp_init) ReturnAllExp() (arrAll []initialize.ExpCategory, err
 	return arrAll, nil
 }
 
-func (model1 ModelExp_init) SearchExpCategoryModels(Keyword string) (arrJoin []initialize.ExpCategory, err error) {
-	var all initialize.ExpCategory
+func (model1 ModelExp_init) SearchExpCategoryModels(Keyword string, page int ,limit int) (arrSearch []initialize.ExpCategory, err error, CheckData int) {
+	var Search initialize.ExpCategory
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code FROM exp_category WHERE CONCAT_WS('',exp_category, created_date, created_time, code_category, content, rule_code ) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		panic(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM exp_category WHERE CONCAT_WS('',exp_category, created_date, created_time, code_category, content, rule_code ) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_exp, exp_category, created_date, created_time, code_category, content, rule_code FROM exp_category WHERE CONCAT_WS('',exp_category, created_date, created_time, code_category, content, rule_code ) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_exp, &all.Exp_category, &all.Created_date, &all.Created_time, &all.Code_category, &all.Content, &all.Rule_code); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_exp, &Search.Exp_category, &Search.Created_date, &Search.Created_time, &Search.Code_category, &Search.Content, &Search.Rule_code); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelExp_init) GetDataExp(Id_exp string) (arrGet []initialize.ExpCategory, err error) {

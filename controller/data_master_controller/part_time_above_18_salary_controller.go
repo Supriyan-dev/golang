@@ -7,8 +7,6 @@ import (
 	"math"
 	"net/http"
 	"strconv"
-	_Response "../../response"
-
 	"../../db"
 	"../../initialize"
 	model1 "../../model1/data_master_model"
@@ -48,36 +46,40 @@ func ReturnAllPartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchDatapartTimeAbove18Salary(w http.ResponseWriter, r *http.Request) {
-	var _response initialize.Response
+	var _response initialize.ResponseSearch
 	db := db.Connect()
 	type Name struct {
-		Keyword string `json:"keyword"`
+		Keyword  string `json:"keyword"`
+		Page     int    `json:"page"`
+		Show_data int    `json:"show_data"`
 	}
 	var Keyword Name
 	json.NewDecoder(r.Body).Decode(&Keyword)
 	_con := model1.ModelAbove_init{DB: db}
-	result, err := _con.SearchPartTimeAbove18SalaryModel(Keyword.Keyword)
+	result, err, totalDataSearch := _con.SearchPartTimeAbove18SalaryModel(Keyword.Keyword, Keyword.Page, Keyword.Show_data)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
 		if result == nil {
+			var _response initialize.ResponseDataNull
 			_response.Status = http.StatusBadRequest
-			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.Data = "Null"
-			_Response.ResponseJson(w, _response.Status, _response)
+			_response.Message = "Part Time Above 18 Salary Data doesn't exists."
+			response.ResponseJson(w, _response.Status, _response)
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
+			_response.TotalData = totalDataSearch
+			_response.TotalPage = (totalDataSearch / Keyword.Show_data) + 1
 			_response.Data = result
-			_Response.ResponseJson(w, _response.Status, _response)
+			response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
+		var _response initialize.ResponseDataNull
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
-		_response.Data = "Null"
-		_Response.ResponseJson(w, _response.Status, _response)
+		response.ResponseJson(w, _response.Status, _response)
 	}
 }
 

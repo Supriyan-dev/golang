@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -56,24 +56,36 @@ func (model1 ModelAbove_init) GetDataAbove(Id_part_time_above_18_salary string) 
 	return arrGet, nil
 }
 
-func (model1 ModelAbove_init) SearchPartTimeAbove18SalaryModel(Keyword string) (arrJoin []initialize.PartTimeAbove18Salary, err error) {
-	var get initialize.PartTimeAbove18Salary
+func (model1 ModelAbove_init) SearchPartTimeAbove18SalaryModel(Keyword string, page int ,limit int) (arrSearch []initialize.PartTimeAbove18Salary, err error, CheckData int) {
+	var Search initialize.PartTimeAbove18Salary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary FROM part_time_above_18_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM part_time_above_18_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_part_time_above_18_salary, id_code_store, day_salary,night_salary, morning_salary, peek_time_salary FROM part_time_above_18_salary WHERE CONCAT_WS('', id_code_store, day_salary,night_salary, morning_salary, peek_time_salary ) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&get.Id_part_time_above_18_salary, &get.Id_code_store, &get.Day_salary, &get.Night_salary, &get.Morning_salary, &get.Peek_time_salary); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_part_time_above_18_salary, &Search.Id_code_store, &Search.Day_salary, &Search.Night_salary, &Search.Morning_salary, &Search.Peek_time_salary); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, get)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelAbove_init) InsertDataPartTimeAbove(insert *initialize.PartTimeAbove18Salary) (arrInsert []initialize.PartTimeAbove18Salary, err error) {

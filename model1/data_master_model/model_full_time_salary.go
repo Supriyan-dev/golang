@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -34,24 +34,36 @@ func (model1 ModelFull_init) ReturnAllFulltime() (arrGet []initialize.FullTimeSa
 	return arrGet, nil
 }
 
-func (model1 ModelFull_init) SearchFullTimeSalaryModels(Keyword string) (arrJoin []initialize.FullTimeSalary, err error) {
-	var all initialize.FullTimeSalary
+func (model1 ModelFull_init) SearchFullTimeSalaryModels(Keyword string, page int ,limit int) (arrSearch []initialize.FullTimeSalary, err error, CheckData int) {
+	var Search initialize.FullTimeSalary
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM full_time_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_full_time_salary, id_code_store, salary, fish_section_salary FROM full_time_salary WHERE CONCAT_WS('',id_code_store, salary, fish_section_salary) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_full_time_salary, &all.Id_code_store, &all.Salary, &all.Fish_section_salary); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_full_time_salary, &Search.Id_code_store, &Search.Salary, &Search.Fish_section_salary); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelFull_init) GetDataFullTime(Id_full_time_salary string) (arrGet []initialize.FullTimeSalary, err error) {

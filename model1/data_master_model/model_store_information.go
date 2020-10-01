@@ -2,7 +2,8 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
+	"fmt"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -31,24 +32,89 @@ func (model1 Models_init) ReturnAllStoreInformationModel() (arrStoreInformation 
 	return arrStoreInformation, nil
 }
 
-func (model1 Models_init) SearchStoreInformationModels(Keyword string) (arrJoin []initialize.StoreInformation, err error) {
+
+func (model1 Models_init) SortDESCStoreInformationModel(Sort, Col string) (arrStoreInformation []initialize.StoreInformation, err error) {
 	var storeInformation initialize.StoreInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_code_store, code_store, store_name FROM store_information WHERE CONCAT_WS('', code_store, store_name) LIKE ?`, `%` + Keyword + `%`)
+	// ASC := "ASC"
+	// DESC := "DESC"
+	// code_store := "code_store"
+
+	qtext := fmt.Sprintf("SELECT id_code_store, code_store, store_name FROM store_information ORDER BY code_store DESC LIMIT 5")
+	rows, err := db.Query(qtext)
+
 	if err != nil {
-		log.Println(err.Error())
+		log.Print(err.Error())
 	}
-	log.Println(result)
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
+
+	for rows.Next() {
+		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
 			log.Fatal(err.Error())
+
 		} else {
-			arrJoin = append(arrJoin, storeInformation)
+			arrStoreInformation = append(arrStoreInformation, storeInformation)
 		}
 	}
 
-	return arrJoin, nil
+	return arrStoreInformation, nil
+}
+
+func (model1 Models_init) SortASCStoreInformationModel(Sort, Col string) (arrStoreInformation []initialize.StoreInformation, err error) {
+	var storeInformation initialize.StoreInformation
+	db := db.Connect()
+	code_store := "code_store"
+
+	qtext := fmt.Sprintf("SELECT id_code_store, code_store, store_name FROM store_information ORDER BY %s ASC", code_store)
+	rows, err := db.Query(qtext)
+
+	if err != nil {
+		log.Print(err.Error())
+	}
+	defer db.Close()
+
+	for rows.Next() {
+		if err := rows.Scan(&storeInformation.Id_code_store, &storeInformation.Code_store, &storeInformation.Store_name); err != nil {
+			log.Fatal(err.Error())
+
+		} else {
+			arrStoreInformation = append(arrStoreInformation, storeInformation)
+		}
+	}
+
+	return arrStoreInformation, nil
+}
+
+func (model1 Models_init) SearchStoreInformationModels(Keyword string, page int ,limit int) (arrSearch []initialize.StoreInformation, err error, CheckData int) {
+	var Search initialize.StoreInformation
+	db := db.Connect()
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
+	}
+	db.QueryRow("SELECT count(*) FROM store_information WHERE CONCAT_WS('', code_store, store_name) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_code_store, code_store, store_name FROM store_information WHERE CONCAT_WS('', code_store, store_name) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer db.Close()
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_code_store, &Search.Code_store, &Search.Store_name); err != nil {
+			log.Fatal(err.Error())
+		} else {
+			arrSearch = append(arrSearch, Search)
+		}
+	}
+
+	return arrSearch, nil, CheckData
 }
 
 func (model1 Models_init) ReturnFilterStoreInformationModel(Id_code_store string) (arrEmp []initialize.Filter, err error) {

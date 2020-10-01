@@ -15,10 +15,16 @@ import (
 )
 
 func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
-	var _response initialize.Response
+	var _response initialize.ResponseAll
 	db := db.Connect()
+	var totalData int
+
+	rows := db.QueryRow(`SELECT COUNT(*) FROM general_information INNER JOIN store_information ON general_information.id_store_code = store_information.id_code_store 
+	INNER JOIN basic_information ON general_information.id_basic_information = basic_information.id_basic_information 
+	INNER JOIN commuting_basic_information ON commuting_basic_information.id_general_information = general_information.id_general_information`).Scan(&totalData)
+log.Println(rows)
 	_con := model1.ModelsPermission_init{DB: db}
-	result, err := _con.ModelPermissionToDrive()
+	result, err := _con.ModelPermissionToDrive(totalData)
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -32,6 +38,7 @@ func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
+			_response.TotalData = totalData
 			_response.Data = result
 			_Response.ResponseJson(w, _response.Status, _response)
 		}
@@ -45,35 +52,39 @@ func PermissionToDrive(w http.ResponseWriter, r *http.Request) {
 }
 
 func PermissionToDriveSearch(w http.ResponseWriter, r *http.Request) {
-	var _response initialize.Response
+	var _response initialize.ResponseSearch
 	db := db.Connect()
 	type Name struct {
-		Keyword string `json:"keyword"`
+		Keyword  string `json:"keyword"`
+		Page     int    `json:"page"`
+		Show_data int    `json:"show_data"`
 	}
 	var Keyword Name
 	json.NewDecoder(r.Body).Decode(&Keyword)
 	_con := model1.ModelsPermission_init{DB: db}
-	result, err := _con.ModelPermissionToDriveSearch(Keyword.Keyword)
+	result, err, totalDataSearch := _con.ModelPermissionToDriveSearch(Keyword.Keyword, Keyword.Page, Keyword.Show_data)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
 	if r.Method == "POST" {
 		if result == nil {
+			var _response initialize.ResponseDataNull
 			_response.Status = http.StatusBadRequest
-			_response.Message = "Sorry Your Input Missing Body Bad Request"
-			_response.Data = "Null"
+			_response.Message = "Department Information Data doesn't exists."
 			_Response.ResponseJson(w, _response.Status, _response)
 		} else {
 			_response.Status = http.StatusOK
 			_response.Message = "Success"
+			_response.TotalData = totalDataSearch
+			_response.TotalPage = (totalDataSearch / Keyword.Show_data) + 1
 			_response.Data = result
 			_Response.ResponseJson(w, _response.Status, _response)
 		}
 	} else {
+		var _response initialize.ResponseDataNull
 		_response.Status = http.StatusMethodNotAllowed
 		_response.Message = "Sorry Your Method Missing Not Allowed"
-		_response.Data = "Null"
 		_Response.ResponseJson(w, _response.Status, _response)
 	}
 }
@@ -91,7 +102,9 @@ func PermissionToDrivePagination(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(code["page"])
 
 	var totalData int
-	err := db.QueryRow("SELECT COUNT(*) FROM general_information").Scan(&totalData)
+	err := db.QueryRow(`SELECT COUNT(*) FROM general_information INNER JOIN store_information ON general_information.id_store_code = store_information.id_code_store 
+	INNER JOIN basic_information ON general_information.id_basic_information = basic_information.id_basic_information 
+	INNER JOIN commuting_basic_information ON commuting_basic_information.id_general_information = general_information.id_general_information`).Scan(&totalData)
 
 	totalPage := int(math.Ceil(float64(totalData) / float64(totalDataPerPage)))
 	if page > totalPage {

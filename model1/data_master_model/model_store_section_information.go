@@ -2,7 +2,7 @@ package model1
 
 import (
 	"log"
-
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -31,24 +31,36 @@ func (model1 ModelSection_init) ReturnAllStoreSectionInformation() (arrAll []ini
 	return arrAll, nil
 }
 
-func (model1 ModelSection_init) SearchStoreSectionInformationModels(Keyword string) (arrJoin []initialize.StoreSectionInformation, err error) {
-	var all initialize.StoreSectionInformation
+func (model1 ModelSection_init) SearchStoreSectionInformationModels(Keyword string, page int ,limit int) (arrSearch []initialize.StoreSectionInformation, err error, CheckData int) {
+	var Search initialize.StoreSectionInformation
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("FROM store_section_information WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_store_section, store_section_code, store_section_name FROM store_section_information WHERE CONCAT_WS('', store_section_code, store_section_name) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_store_section, &all.Store_section_code, &all.Store_section_name); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_store_section, &Search.Store_section_code, &Search.Store_section_name); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelSection_init) GetDataStoreSectionInformation(Id_store_section string) (arrGet []initialize.StoreSectionInformation, err error) {

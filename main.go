@@ -6,7 +6,6 @@ import (
 	list_GR "./controller/list_general_recruitment"
 
 	controllerDataMaster "./controller/data_master_controller"
-	generalRecrutment "./controller/general_recrutment_controller"
 	controllerPermissionToDrive "./controller/list_input_information"
 	"github.com/gorilla/handlers"
 	"github.com/rs/cors"
@@ -35,10 +34,6 @@ func main() {
 	router.HandleFunc("/forgot-password-action", ForgotPassword.ReturnForgotPasswordAction)
 	// end forgot password
 
-	// start data status approve general information status approve
-	router.HandleFunc("/general_recrutment/create", generalRecrutment.DataGeneralRecrutment)
-	// end data status approve  general information status approve
-
 	// Start permission to drive
 	router.HandleFunc("/permission_to_drive", controllerPermissionToDrive.PermissionToDrive)
 	router.HandleFunc("/permission_to_drive/search", controllerPermissionToDrive.PermissionToDriveSearch)
@@ -52,6 +47,7 @@ func main() {
 	router.HandleFunc("/storeinformation/filter", controllerDataMaster.ReturnAllFilterInformation)
 	router.HandleFunc("/storeinformation/{page}/{perPage}", controllerDataMaster.ReturnAllStoreInformationPagination)
 	router.HandleFunc("/storeinformation/get", controllerDataMaster.GetStoreInformation)
+	router.HandleFunc("/storeinformation/sort", controllerDataMaster.SortStoreInformation)
 	router.HandleFunc("/storeinformation/search", controllerDataMaster.SearchDataStoreInformation)
 	router.HandleFunc("/storeinformation/create", controllerDataMaster.CreateStoreInformation)
 	router.HandleFunc("/storeinformation/update", controllerDataMaster.UpdateStoreInformation)

@@ -2,7 +2,8 @@ package model1
 
 import (
 	"log"
-"fmt"
+	"fmt"
+	"strconv"
 	"../../db"
 	"../../initialize"
 	"../../models"
@@ -31,28 +32,40 @@ func (model1 ModelUser_init) ReadDataUserLogin(Employee_number, Password string)
 	return all, nil
 }
 
-func (model1 ModelUser_init) SearchUserModels(Keyword string) (arrJoin []initialize.Users, err error) {
-	var all initialize.Users
-	var allNull initialize.NullString
+func (model1 ModelUser_init) SearchUserModels(Keyword string, page int ,limit int) (arrSearch []initialize.Users, err error, CheckData int) {
+	var Search initialize.Users
+	var SearchNull initialize.NullString
 
 	db := db.Connect()
-	result, err := db.Query(`SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
-	id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
-	id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?`, `%` + Keyword + `%`)
-	if err != nil {
-		log.Println(err.Error())
+	querylimit := ``
+	if strconv.Itoa(page) == "" && strconv.Itoa(limit) == ""{
+		querylimit = ``
+	}else {
+		pageacheck := strconv.Itoa((page-1)*limit)
+		showadata := strconv.Itoa(limit)
+		querylimit = ` LIMIT `+pageacheck+`,`+showadata
 	}
-	log.Println(result)
+	db.QueryRow("SELECT count(*) FROM user WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?", "%" + Keyword + "%").Scan(&CheckData)
+	queryT := `SELECT id_user, first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name FROM user WHERE CONCAT_WS('', first_name, last_name, employee_number, id_code_store, password, 
+	id_role, email, recovery_pin, photo_url, photo_name ) LIKE ?` +querylimit
+
+	rows, err := db.Query(queryT, "%" + Keyword + "%")
+
+	if err != nil {
+		log.Print(err)
+	}
+
 	defer db.Close()
-	for result.Next() {
-		if err := result.Scan(&all.Id_user, &all.First_name, &all.Last_name, &all.Employee_number, &all.Id_code_store, &all.Password, &all.Id_role, &allNull.Email, &allNull.Recovery_pin, &allNull.Photo_url, &allNull.Photo_name); err != nil {
-			log.Println(err.Error())
+	for rows.Next() {
+		if err := rows.Scan(&Search.Id_user, &Search.First_name, &Search.Last_name, &Search.Employee_number, &Search.Id_code_store, &Search.Password, &Search.Id_role, &SearchNull.Email, &SearchNull.Recovery_pin, &SearchNull.Photo_url, &SearchNull.Photo_name); err != nil {
+			log.Fatal(err.Error())
 		} else {
-			arrJoin = append(arrJoin, all)
+			arrSearch = append(arrSearch, Search)
 		}
 	}
 
-	return arrJoin, nil
+	return arrSearch, nil, CheckData
 }
 
 func (model1 ModelUser_init) ReturnAllDataUser() (arrAll []initialize.Users, err error) {
